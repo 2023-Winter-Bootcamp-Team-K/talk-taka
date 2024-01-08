@@ -1,13 +1,18 @@
 import { styled } from 'styled-components';
 
-type TextProps = {
+interface AllProps {
   type: string;
   placeholder: string;
-};
+  marginBottom: string;
+}
 
-export default function LoginInput({ type, placeholder }: TextProps) {
+export default function LoginInput({
+  type,
+  placeholder,
+  marginBottom,
+}: AllProps) {
   return (
-    <Layout>
+    <Layout margin-bottom={marginBottom}>
       <InputType>{type}</InputType>
       <InputLayout>
         <input placeholder={placeholder}></input>
@@ -16,10 +21,16 @@ export default function LoginInput({ type, placeholder }: TextProps) {
   );
 }
 
-const Layout = styled.div`
+// const Layout = styled.div<Container>`
+//   width: 29.55rem;
+//   height: 6.96669rem;
+//   margin: ${(props) => props.marginBottom ? ""};
+// `;
+
+const Layout = styled.div<AllProps>`
   width: 29.55rem;
   height: 6.96669rem;
-  margin-bottom: 50px;
+  margin-bottom: ${(props) => props.};
 `;
 
 const InputType = styled.div`

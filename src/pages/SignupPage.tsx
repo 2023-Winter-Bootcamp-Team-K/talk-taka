@@ -6,7 +6,11 @@ export default function SignupPage() {
     <BackGround>
       <LoginLayout>
         <Login>회원가입</Login>
-        <IdSignup type="아이디" placeholder="영문 + 숫자"></IdSignup>
+        <LoginInput type="아이디" placeholder="영문 + 숫자"></LoginInput>
+        <IdCheck>
+          <CheckMark></CheckMark>
+        </IdCheck>
+        <LoginInput type="회원가입" placeholder="6자리 이상"></LoginInput>
       </LoginLayout>
     </BackGround>
   );
@@ -54,6 +58,13 @@ const Login = styled.div`
   margin-bottom: 3.44rem;
 `;
 
-const IdSignup = styled(LoginInput)`
-  width: 19.0625rem;
+const IdCheck = styled.div`
+  width: 17.95856rem;
+  height: 1.84725rem;
+`;
+
+const CheckMark = styled.div`
+  background-image: url('src/assets/img/checkb.png');
+  width: 0.9375rem;
+  height: 0.9375rem;
 `;

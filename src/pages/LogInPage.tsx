@@ -7,22 +7,22 @@ export default function LoginPage() {
     <BackGround>
       <LoginLayout>
         <Login>로그인</Login>
-        <IdInput type="아이디" placeholder="영문 + 숫자"></IdInput>
-        <PwInput type="비밀번호" placeholder="6자리 이상"></PwInput>
+        <LoginInput
+          marginBottom="50px"
+          type="아이디"
+          placeholder="영문 + 숫자"
+        ></LoginInput>
+        <LoginInput
+          marginBottom="50px"
+          type="비밀번호"
+          placeholder="6자리 이상"
+        ></LoginInput>
         <Button title="로그인"></Button>
         <SignUp>회원가입 하러가기</SignUp>
       </LoginLayout>
     </BackGround>
   );
 }
-
-const IdInput = styled(LoginInput)`
-  margin-bottom: 2.77rem;
-`;
-
-const PwInput = styled(LoginInput)`
-  margin-bottom: 4.14rem;
-`;
 
 const BackGround = styled.div`
   background-image: url('src/assets/img/Login_bg.png');
