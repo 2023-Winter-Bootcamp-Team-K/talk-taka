@@ -25,12 +25,12 @@ const OpponentMessageContainer = styled.div`
 const StyledOpponentMessage = styled.div`
   display: flex;
   flex: 1;
-  padding: 1.5rem 2.2rem;
+  padding: 0.75rem 1rem;
   flex-direction: column;
   margin-right: auto;
   gap: 0.5rem;
   max-width: 15rem;
-  border-radius: 1.75rem 1.75rem 1.75rem 0rem;
+  border-radius: 1rem 1rem 1rem 0rem;
   background: #997852;
   color: white;
   word-wrap: break-word;

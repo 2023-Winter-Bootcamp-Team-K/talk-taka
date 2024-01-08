@@ -24,12 +24,12 @@ const MyMessageContainer = styled.div`
 
 const StyledMyMessage = styled.div`
   display: flex;
-  padding: 1.5rem 2.2rem;
+  padding: 0.75rem 1rem;
   flex-direction: column;
   margin-left: auto;
   gap: 0.5rem;
   max-width: 15rem;
-  border-radius: 1.75rem 1.75rem 0rem 1.75rem;
+  border-radius: 1rem 1rem 0rem 1rem;
   background: #526699;
   color: white;
   word-wrap: break-word;
