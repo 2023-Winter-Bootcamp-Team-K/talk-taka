@@ -1,58 +1,53 @@
 import { styled } from 'styled-components';
 
 interface AllProps {
-  type: string;
-  placeholder: string;
-  marginBottom: string;
+  type?: string;
+  placeholder?: string;
+  marginBottom?: string;
+  width?: string;
 }
 
 export default function LoginInput({
-  type,
-  placeholder,
-  marginBottom,
+  type = '타입',
+  placeholder = 'placeholder',
+  marginBottom = '0px',
+  width = '29.55rem',
 }: AllProps) {
-
   return (
-    <Layout marginBottom={marginBottom}>
+    <Layout width={width} marginBottom={marginBottom}>
       <InputType>{type}</InputType>
-      <InputLayout>
+      <InputLayout width={width}>
         <input placeholder={placeholder}></input>
       </InputLayout>
     </Layout>
   );
 }
 
-// const Layout = styled.div<Container>`
-//   width: 29.55rem;
-//   height: 6.96669rem;
-//   margin: ${(props) => props.marginBottom ? ""};
-// `;
-
-const Layout = styled.div<{ marginBottom }>`
-  width: 29.55rem;
-  height: 6.96669rem;
+const Layout = styled.div<{ marginBottom: string; width: string }>`
+  width: ${(props) => (props.width === 'normal' ? '29.55rem' : props.width)};
   margin-bottom: ${(props) =>
-    props.marginBottom === 'normal' ? '50px' : '100px'};
+    props.marginBottom === 'normal' ? '50px' : props.marginBottom};
 `;
 
 const InputType = styled.div`
-  width: 5.32956rem;
+  width: 8rem;
   height: 1.425rem;
-  color: #2c2c2c;
-  text-align: center;
+  color: #414141;
+  text-align: left;
+  font-weight: bold;
   font-family: Noto Sans;
   font-size: 1.25rem;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
-  margin-bottom: 1.74rem;
+  margin-bottom: 0.76rem;
 `;
 
-const InputLayout = styled.div`
+const InputLayout = styled.div<{ width: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 29.55rem;
+  width: ${(props) => (props.width === 'normal' ? '29.55rem' : props.width)};
   height: 3.8rem;
   border-radius: 0.875rem;
   background: #f0f0f0;
@@ -61,17 +56,18 @@ const InputLayout = styled.div`
   input {
     all: unset;
     display: flex;
-    width: 27.26438rem;
+    width: ${(props) => (props.width === 'normal' ? '29.55rem' : props.width)};
     height: 1.84725rem;
     flex-direction: column;
     justify-content: center;
     background-color: #f0f0f0;
-    color: #b2b2b2;
+    color: #585858;
     font-family: Noto Sans;
     font-size: 1.25rem;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
     text-align: left;
+    margin-left: 0.94rem;
   }
 `;

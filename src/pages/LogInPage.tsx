@@ -8,12 +8,12 @@ export default function LoginPage() {
       <LoginLayout>
         <Login>로그인</Login>
         <LoginInput
-          marginBottom='normal'
+          marginBottom="2.74rem"
           type="아이디"
           placeholder="영문 + 숫자"
         ></LoginInput>
         <LoginInput
-          marginBottom="50px"
+          marginBottom="4.12rem"
           type="비밀번호"
           placeholder="6자리 이상"
         ></LoginInput>
