@@ -19,11 +19,8 @@ const Btn = styled.button`
   height: 2.375rem;
   color: #FFF;
   text-align: center;
-  font-family: Noto Sans;
   font-size: 1.5rem;
-  font-style: normal;
   font-weight: 800;
-  line-height: normal;
 
   /* button */
   width: 14.24731rem;

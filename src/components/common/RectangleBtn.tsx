@@ -19,11 +19,8 @@ const RectangleBtn = styled.button`
   height: 2.25rem;
   color: #FFF;
   text-align: center;
-  font-family: Noto Sans;
-  font-size: 1.75rem;
-  font-style: normal;
+  font-size: 1.5rem;
   font-weight: 800;
-  line-height: normal;
   
   /* button */
   width: 22.1875rem;
