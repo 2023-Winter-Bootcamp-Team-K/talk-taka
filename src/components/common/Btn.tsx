@@ -1,23 +1,23 @@
-import styled from 'styled-components'
+import styled from 'styled-components';
 
 type ButtonProps = {
-    title: string;
+  title: string;
 };
 
 export default function Button({ title }: ButtonProps) {
-    return (
-        <ButtonLayout>
-            <Btn>{title}</Btn>
-        </ButtonLayout>
-    )
-};
+  return (
+    <ButtonLayout>
+      <Btn>{title}</Btn>
+    </ButtonLayout>
+  );
+}
 
 const ButtonLayout = styled.div``;
 const Btn = styled.button`
   /* text */
   width: 7.1875rem;
   height: 2.375rem;
-  color: #FFF;
+  color: #fff;
   text-align: center;
   font-size: 1.5rem;
   font-weight: 800;
@@ -26,5 +26,10 @@ const Btn = styled.button`
   width: 14.24731rem;
   height: 3.69444rem;
   border-radius: 5rem;
-  background: #2C2C2C;
+  background: #2c2c2c;
+
+  cursor: pointer;
+  &:active {
+    opacity: 0.3;
+  }
 `;
