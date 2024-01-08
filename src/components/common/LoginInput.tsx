@@ -1,11 +1,16 @@
 import { styled } from 'styled-components';
 
-export default function LoginInput() {
+type TextProps = {
+  type: string;
+  placeholder: string;
+};
+
+export default function LoginInput({ type, placeholder }: TextProps) {
   return (
     <Layout>
-      <InputType>아이디</InputType>
+      <InputType>{type}</InputType>
       <InputLayout>
-        <input placeholder="영문"></input>
+        <input placeholder={placeholder}></input>
       </InputLayout>
     </Layout>
   );
@@ -14,6 +19,7 @@ export default function LoginInput() {
 const Layout = styled.div`
   width: 29.55rem;
   height: 6.96669rem;
+  margin-bottom: 50px;
 `;
 
 const InputType = styled.div`
@@ -53,5 +59,6 @@ const InputLayout = styled.div`
     font-style: normal;
     font-weight: 400;
     line-height: normal;
+    text-align: left;
   }
 `;
