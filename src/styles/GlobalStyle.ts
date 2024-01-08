@@ -1,7 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
 export const GlobalStyle = createGlobalStyle`
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;800;900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
 @font-face {
   font-family: 'Cafe24Dongdong';
   src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.1/Cafe24Dongdong.woff')
@@ -9,6 +7,7 @@ export const GlobalStyle = createGlobalStyle`
   font-weight: normal;
   font-style: normal;
 }
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;200;300;400;500;600;700;800;900&display=swap');
 html, body, div, span, applet, object, iframe,
 h1, h2, h3, h4, h5, h6, p, blockquote, pre,
 a, abbr, acronym, address, big, cite, code,
@@ -44,9 +43,8 @@ body {
   margin-right: auto;
   line-height: 1;
   font-weight: 300;
-  font-family: 'Pretendard-Regular', 'Source Sans Pro', sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   line-height: 1.2;
-  background-color: ${(props) => props.theme.bgColor};
   overflow-x: hidden;
 }
 menu, ol, ul {
