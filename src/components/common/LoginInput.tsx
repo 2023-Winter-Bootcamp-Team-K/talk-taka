@@ -11,8 +11,9 @@ export default function LoginInput({
   placeholder,
   marginBottom,
 }: AllProps) {
+
   return (
-    <Layout margin-bottom={marginBottom}>
+    <Layout marginBottom={marginBottom}>
       <InputType>{type}</InputType>
       <InputLayout>
         <input placeholder={placeholder}></input>
@@ -27,10 +28,11 @@ export default function LoginInput({
 //   margin: ${(props) => props.marginBottom ? ""};
 // `;
 
-const Layout = styled.div<AllProps>`
+const Layout = styled.div<{ marginBottom }>`
   width: 29.55rem;
   height: 6.96669rem;
-  margin-bottom: ${(props) => props.};
+  margin-bottom: ${(props) =>
+    props.marginBottom === 'normal' ? '50px' : '100px'};
 `;
 
 const InputType = styled.div`
