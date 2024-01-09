@@ -21,6 +21,8 @@ const router = createBrowserRouter([
     path: '/main',
     element: <MainPage />,
   },
+=======
 ]);
-
-export default router; 
+  
+export default router;
+  
