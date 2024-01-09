@@ -1,45 +1,54 @@
 import { styled } from 'styled-components';
 
-type TextProps = {
-  type: string;
-  placeholder: string;
-};
+interface AllProps {
+  type?: string;
+  typeI?: string;
+  placeholder?: string;
+  marginBottom?: string;
+  width?: string;
+}
 
-export default function LoginInput({ type, placeholder }: TextProps) {
+export default function LoginInput({
+  type = '종류',
+  typeI = 'text',
+  placeholder = 'placeholder',
+  marginBottom = '0px',
+  width = '29.55rem',
+}: AllProps) {
   return (
-    <Layout>
+    <Layout width={width} marginBottom={marginBottom}>
       <InputType>{type}</InputType>
-      <InputLayout>
-        <input placeholder={placeholder}></input>
+      <InputLayout width={width}>
+        <input placeholder={placeholder} type={typeI}></input>
       </InputLayout>
     </Layout>
   );
 }
 
-const Layout = styled.div`
-  width: 29.55rem;
-  height: 6.96669rem;
-  margin-bottom: 50px;
+const Layout = styled.div<{ marginBottom: string; width: string }>`
+  width: ${(props) => (props.width === 'normal' ? '29.55rem' : props.width)};
+  margin-bottom: ${(props) =>
+    props.marginBottom === 'normal' ? '50px' : props.marginBottom};
 `;
 
 const InputType = styled.div`
-  width: 5.32956rem;
+  width: 8rem;
   height: 1.425rem;
-  color: #2c2c2c;
-  text-align: center;
-  font-family: Noto Sans;
+  color: #414141;
+  text-align: left;
+  font-weight: bold;
   font-size: 1.25rem;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
-  margin-bottom: 1.74rem;
+  margin-bottom: 0.76rem;
 `;
 
-const InputLayout = styled.div`
+const InputLayout = styled.div<{ width: string }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 29.55rem;
+  width: ${(props) => (props.width === 'normal' ? '29.55rem' : props.width)};
   height: 3.8rem;
   border-radius: 0.875rem;
   background: #f0f0f0;
@@ -48,17 +57,17 @@ const InputLayout = styled.div`
   input {
     all: unset;
     display: flex;
-    width: 27.26438rem;
+    width: ${(props) => (props.width === 'normal' ? '29.55rem' : props.width)};
     height: 1.84725rem;
     flex-direction: column;
     justify-content: center;
     background-color: #f0f0f0;
-    color: #b2b2b2;
-    font-family: Noto Sans;
+    color: #585858;
     font-size: 1.25rem;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
     text-align: left;
+    margin-left: 0.94rem;
   }
 `;
