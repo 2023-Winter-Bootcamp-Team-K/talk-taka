@@ -8,7 +8,7 @@ import { MaleSvg, FemaleSvg } from '../assets/SVG';
 export default function SignupPage() {
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
-  const goToMain = () => {
+  const goToLogin = () => {
     navigate('/login');
   };
   const [selectedGender, setSelectedGender] = useState<null | string>(null);
@@ -68,7 +68,7 @@ export default function SignupPage() {
               title="다음"
               width="14.24731rem"
             ></Button>
-            <SignUp onClick={goToMain}>로그인 하러가기</SignUp>
+            <SignUp onClick={goToLogin}>로그인 하러가기</SignUp>
           </>
         ) : (
           <>
@@ -100,8 +100,13 @@ export default function SignupPage() {
                 <FemaleSvg />
               </GenderButton>
             </GenderButtonLayout>
-            <Button title="확인" width="14.24731rem" marginT="1.06rem"></Button>
-            <SignUp onClick={goToMain}>로그인 하러가기</SignUp>
+            <Button
+              title="확인"
+              width="14.24731rem"
+              marginT="1.06rem"
+              onClick={goToLogin}
+            ></Button>
+            <SignUp onClick={goToLogin}>로그인 하러가기</SignUp>
           </>
         )}
       </LoginLayout>

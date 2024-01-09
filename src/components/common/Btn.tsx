@@ -44,6 +44,7 @@ const Btn = styled.button<{
   borderR: string;
 }>`
   /* text */
+  all: unset;
   width: 7.1875rem;
   height: 2.375rem;
   color: #fff;
