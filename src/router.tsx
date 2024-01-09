@@ -2,6 +2,7 @@ import LoginPage from './pages/LogInPage';
 import SignupPage from './pages/SignupPage';
 import IntroPage from './pages/IntroPage';
 import MainPage from './pages/MainPage';
+import CameraBox from './components/common/Camera';
 import { createBrowserRouter } from 'react-router-dom';
 
 const router = createBrowserRouter([
@@ -21,7 +22,10 @@ const router = createBrowserRouter([
     path: '/main',
     element: <MainPage />,
   },
+  {
+    path: '/test',
+    element: <CameraBox />,
+  },
 ]);
-  
+
 export default router;
-  
