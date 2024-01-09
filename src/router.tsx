@@ -1,12 +1,13 @@
 // import { createBrowserRouter } from 'react-router-dom';
 import LoginPage from './pages/LogInPage';
 import SignupPage from './pages/SignupPage';
+import IntroPage from './pages/IntroPage';
 import { createBrowserRouter } from 'react-router-dom';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <div>기본페이지 입니다. 허허</div>,
+    element: <IntroPage />,
   },
   {
     path: '/login',
