@@ -1,8 +1,14 @@
 import LoginInput from '../components/common/LoginInput';
 import Button from '../components/common/Btn';
 import { styled } from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
+  const navigate = useNavigate();
+  const goToMain = () => {
+    navigate('/signup');
+  };
+
   return (
     <BackGround>
       <LoginLayout>
@@ -18,7 +24,7 @@ export default function LoginPage() {
           placeholder="6자리 이상"
         ></LoginInput>
         <Button title="로그인"></Button>
-        <SignUp>회원가입 하러가기</SignUp>
+        <SignUp onClick={goToMain}>회원가입 하러가기</SignUp>
       </LoginLayout>
     </BackGround>
   );
@@ -51,7 +57,6 @@ const Login = styled.div`
   width: 8.4375rem;
   height: 3.1875rem;
   color: #000;
-  font-family: Noto Sans;
   font-size: 2.75rem;
   font-style: normal;
   font-weight: 700;
@@ -72,7 +77,6 @@ const SignUp = styled.button`
   color: #b2b2b2;
 
   text-align: center;
-  font-family: Noto Sans;
   font-size: 1.125rem;
   font-style: normal;
   font-weight: 400;

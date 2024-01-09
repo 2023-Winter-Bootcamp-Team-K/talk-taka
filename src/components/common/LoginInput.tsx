@@ -2,13 +2,15 @@ import { styled } from 'styled-components';
 
 interface AllProps {
   type?: string;
+  typeI?: string;
   placeholder?: string;
   marginBottom?: string;
   width?: string;
 }
 
 export default function LoginInput({
-  type = '타입',
+  type = '종류',
+  typeI = 'text',
   placeholder = 'placeholder',
   marginBottom = '0px',
   width = '29.55rem',
@@ -17,7 +19,7 @@ export default function LoginInput({
     <Layout width={width} marginBottom={marginBottom}>
       <InputType>{type}</InputType>
       <InputLayout width={width}>
-        <input placeholder={placeholder}></input>
+        <input placeholder={placeholder} type={typeI}></input>
       </InputLayout>
     </Layout>
   );
@@ -35,7 +37,6 @@ const InputType = styled.div`
   color: #414141;
   text-align: left;
   font-weight: bold;
-  font-family: Noto Sans;
   font-size: 1.25rem;
   font-style: normal;
   font-weight: 700;
@@ -62,7 +63,6 @@ const InputLayout = styled.div<{ width: string }>`
     justify-content: center;
     background-color: #f0f0f0;
     color: #585858;
-    font-family: Noto Sans;
     font-size: 1.25rem;
     font-style: normal;
     font-weight: 400;

@@ -7,6 +7,7 @@ type ButtonProps = {
   marginT?: string;
   fontS?: string;
   borderR?: string;
+  onClick?: () => void;
 };
 
 export default function Button({
@@ -16,6 +17,7 @@ export default function Button({
   marginT = '0',
   fontS = '1.5rem',
   borderR = '5rem',
+  onClick,
 }: ButtonProps) {
   return (
     <ButtonLayout>
@@ -25,6 +27,7 @@ export default function Button({
         marginT={marginT}
         fontS={fontS}
         borderR={borderR}
+        onClick={onClick}
       >
         {title}
       </Btn>
