@@ -1,7 +1,7 @@
 import { styled } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/common/RectangleBtn';
-import { LogoutIconSvg } from '../assets/svg';
+import { LogoutIconSvg } from '../assets/SVG';
 
 export default function MainPage() {
   const navigate = useNavigate();
