@@ -33,8 +33,11 @@ export default function LoginPage() {
 const BackGround = styled.div`
   background-image: url('src/assets/img/Login_bg.png');
   margin: auto;
-  width: 1440px;
-  height: 1024px;
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-position-x: 50%;
+  background-position-y: 75%;
   display: flex;
   text-align: center;
   align-items: center;

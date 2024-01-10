@@ -11,10 +11,10 @@ export default function MainPage() {
 
   return (
     <BackGround>
-        <LogoutBtn onClick={goToIntro}>
-          <LogoutIconSvg />
-          로그아웃
-        </LogoutBtn>
+      <LogoutBtn onClick={goToIntro}>
+        <LogoutIconSvg />
+        로그아웃
+      </LogoutBtn>
       <MainLayout>
         {/* 달력 컴포넌트 추가 필요 */}
         <Button title="대화하러 가기 >"></Button>
@@ -31,8 +31,11 @@ const BackGround = styled.div`
   background-image: url('src/assets/img/Main_bg.png');
   position: relative;
   margin: auto;
-  width: 1440px;
-  height: 1024px;
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+  background-position-x: 50%;
+  background-position-y: 75%;
   display: flex;
   text-align: center;
   align-items: center;
@@ -49,7 +52,7 @@ const MainLayout = styled.div`
   /* Layout 위치 */
   margin-top: 11.44rem;
   margin-bottom: 6rem;
-  margin-left: 10.25rem;
+  margin-left: 20%;
 
   /* button 위치 */
   display: flex;

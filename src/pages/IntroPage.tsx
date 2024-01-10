@@ -22,12 +22,15 @@ export default function IntroPage() {
 
 const BackGround = styled.div`
   background-image: url('src/assets/img/인트로페이지.png');
-  margin: auto;
+  /* margin: auto; */
   width: 100vw;
   height: 100vh;
   background-repeat: no-repeat;
+  background-position-x: 50%;
+  background-position-y: 75%;
   display: flex;
   text-align: center;
   align-items: center;
   justify-content: center;
+  object-fit: fill;
 `;
