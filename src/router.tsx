@@ -2,7 +2,7 @@ import LoginPage from './pages/LogInPage';
 import SignupPage from './pages/SignupPage';
 import IntroPage from './pages/IntroPage';
 import MainPage from './pages/MainPage';
-import CameraBox from './components/common/Camera';
+import Diary from './components/common/Diary';
 import { createBrowserRouter } from 'react-router-dom';
 
 const router = createBrowserRouter([
@@ -24,7 +24,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/test',
-    element: <CameraBox />,
+    element: '',
   },
 ]);
 
