@@ -13,9 +13,10 @@ services:
 
   web:
     build: ./backend
-    command: sh -c "python manage.py runserver 0.0.0.0:8000 && python manage.py migrate"
+    command: sh -c "dockerize -wait tcp://db:3306 -timeout 1m && python manage.py makemigrations apps
+      && python manage.py migrate apps && python manage.py runserver 0.0.0.0:8000"
     volumes:
-      - .:/backend
+      - .:/app
     ports:
       - "8000:8000"
     depends_on:
