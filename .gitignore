@@ -188,4 +188,5 @@ sketch
 */static
 migrations
 
-.idea
+.idea/
+/.idea
