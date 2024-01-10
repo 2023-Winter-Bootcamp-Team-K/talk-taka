@@ -1,8 +1,10 @@
+import { createBrowserRouter } from 'react-router-dom';
 import LoginPage from './pages/LogInPage';
 import SignupPage from './pages/SignupPage';
 import IntroPage from './pages/IntroPage';
 import MainPage from './pages/MainPage';
-import { createBrowserRouter } from 'react-router-dom';
+import CameraBox from './components/common/Camera';
+import ChatPage from './pages/ChatPage';
 
 const router = createBrowserRouter([
   {
@@ -24,6 +26,10 @@ const router = createBrowserRouter([
   {
     path: '/test',
     element: '',
+  },
+  {
+    path: '/chat',
+    element: <ChatPage />,
   },
 ]);
 
