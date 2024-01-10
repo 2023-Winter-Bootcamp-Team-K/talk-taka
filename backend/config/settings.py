@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from .my_settings import *
 #여기
 import pymysql
 pymysql.install_as_MySQLdb()
@@ -11,7 +12,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-b9%x!n&-qcj(@ns=)w_cawbbx#xf9%54%i*+u=fmk55w=e)%8q"
+SECRET_KEY = SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -65,16 +66,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        "NAME": 'projectDB',
-        "USER": 'developer',
-        "PASSWORD": 'Pratics!',
-        "HOST": 'db',
-        "PORT": '3306',
-    }
-}
+DATABASES = DATABASES
 
 
 # Password validation

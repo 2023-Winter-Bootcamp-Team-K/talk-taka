@@ -185,8 +185,11 @@ sketch
 
 .docker
 
+my_settings.py
+
 */static
 migrations
 
 .idea/
 /.idea
+
