@@ -91,7 +91,7 @@ const FeelingLayout = styled.div`
   display: flex;
 `;
 
-const Feeling = styled.div`
+const Feeling = styled.div<{ isSelected: boolean }>`
   display: flex;
   flex-direction: column;
   cursor: pointer;
