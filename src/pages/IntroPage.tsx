@@ -9,13 +9,14 @@ export default function IntroPage() {
   };
   return (
     <BackGround>
-      <Button
-        borderR="0.5625rem"
-        title="바로 시작하기"
-        onClick={goToMain}
-        marginT="55rem"
-        width="22.1875rem"
-      />
+      <div style={{ position: 'relative', top: '90%', height: '2.3125rem' }}>
+        <Button
+          borderR="0.5625rem"
+          title="바로 시작하기"
+          onClick={goToMain}
+          width="22.1875rem"
+        />
+      </div>
     </BackGround>
   );
 }
@@ -30,7 +31,13 @@ const BackGround = styled.div`
   background-position-y: 75%;
   display: flex;
   text-align: center;
-  align-items: center;
   justify-content: center;
   object-fit: fill;
+  position: absolute;
+  justify-content: center;
+  object-fit: fill;
+
+  @media (max-width: 767px) {
+    background-image: url('src/assets/img/introP.png');
+  }
 `;
