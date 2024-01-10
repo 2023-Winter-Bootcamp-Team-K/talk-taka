@@ -38,4 +38,5 @@ const Layout = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  box-shadow: 0px 14px 24px rgba(0, 0, 0, 0.13);
 `;

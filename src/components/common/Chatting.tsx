@@ -26,7 +26,7 @@ const ChatLayout = styled.div`
   max-height: 43.75rem;
   min-height: 43.75rem;
   border-radius: 1.75rem;
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 1);
   box-shadow: 0px 14px 24px rgba(0, 0, 0, 0.13);
   display: flex;
   align-items: center;
