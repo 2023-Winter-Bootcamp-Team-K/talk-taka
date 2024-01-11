@@ -49,6 +49,7 @@ class GPTAnswerView(APIView):
 
 
 class ImageView(APIView):
+    parser_classes = (JSONParser,)
     def post(self, request, *args, **kwargs):
         # 요약 내용을 요청 데이터에서 받아옵니다.
         summary = request.data.get('summary')
