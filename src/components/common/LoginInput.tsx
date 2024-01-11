@@ -42,12 +42,12 @@ const Layout = styled.div<{
   marginBottomP: string;
   widthP: string;
 }>`
-  @media all and (min-width: 791px) {
+  @media all and (min-width: 391px) {
     width: ${(props) => (props.width === 'normal' ? '29.55rem' : props.width)};
     margin-bottom: ${(props) =>
       props.marginBottom === 'normal' ? '50px' : props.marginBottom};
   }
-  @media all and (max-width: 790px) {
+  @media all and (max-width: 390px) {
     width: ${(props) =>
       props.widthP === 'normal' ? '17.75rem' : props.widthP};
     margin-bottom: ${(props) =>
@@ -63,13 +63,13 @@ const InputType = styled.div<{ marginBottomPTT: string }>`
   font-weight: 700;
   line-height: normal;
 
-  @media all and (min-width: 791px) {
+  @media all and (min-width: 391px) {
     width: 8rem;
     height: 1.425rem;
     font-size: 1.25rem;
     margin-bottom: 0.76rem;
   }
-  @media all and (min-width: 390px) and (max-width: 790px) {
+  @media all and (min-width: 390px) and (max-width: 390px) {
     width: 9rem;
     height: 1.58481rem;
     font-size: 1rem;
@@ -88,12 +88,12 @@ const InputLayout = styled.div<{
   background: #f0f0f0;
   align-items: center;
 
-  @media all and (min-width: 791px) {
+  @media all and (min-width: 391px) {
     width: ${(props) => (props.width === 'normal' ? '29.55rem' : props.width)};
     height: 3.8rem;
     border-radius: 0.875rem;
   }
-  @media all and (min-width: 390px) and (max-width: 790px) {
+  @media all and (min-width: 390px) and (max-width: 390px) {
     width: ${(props) =>
       props.widthP === 'normal' ? '16.37706rem' : props.widthP};
     height: 2.35031rem;
@@ -111,13 +111,13 @@ const InputLayout = styled.div<{
     line-height: normal;
     text-align: left;
 
-    @media all and (min-width: 791px) {
+    @media all and (min-width: 391px) {
       width: 100%;
       height: 1.84725rem;
       font-size: 1.25rem;
       margin-left: 0.94rem;
     }
-    @media all and (min-width: 390px) and (max-width: 790px) {
+    @media all and (min-width: 390px) and (max-width: 390px) {
       width: 100%;
       height: 1.1425rem;
       font-size: 1rem;
