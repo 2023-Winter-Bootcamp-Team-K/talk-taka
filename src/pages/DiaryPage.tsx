@@ -1,13 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
+import Calender from '../components/calender/Calender';
+import Diary from '../components/common/Diary';
 
-export default function Diary() {
+export default function DiaryPage() {
   return (
     <>
       <BackGround>
         <Book>
-          {/* <Left></Left>
-          <Right></Right> */}
+          <Left>
+            <Calender />
+          </Left>
+          <Right>
+            <Diary />
+          </Right>
         </Book>
       </BackGround>
     </>
@@ -34,4 +40,18 @@ const Book = styled.div`
   width: 73.75rem;
   height: 53.125rem;
   display: flex;
+`;
+
+const Left = styled.div`
+  display: flex;
+  justify-content: center;
+  padding-left: 3rem;
+  padding-top: 6rem;
+`;
+
+const Right = styled.div`
+  display: flex;
+  justify-content: center;
+  padding-top: 6rem;
+  padding-left: 7.5rem;
 `;
