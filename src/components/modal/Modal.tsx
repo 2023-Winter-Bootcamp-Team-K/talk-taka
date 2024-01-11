@@ -74,16 +74,32 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
 
-  width: 30rem;
-  height: 30rem;
   border-radius: 1.4375rem;
   background: #fff;
 
-  p {
-    font-family: 'Cafe24Dongdong';
-    font-size: 1.5rem;
-    text-align: center;
-    margin-bottom: 3rem;
+  @media all and (min-width: 391px) {
+    width: 30rem;
+    height: 30rem;
+
+    p {
+      font-family: 'Cafe24Dongdong';
+      font-size: 1.5rem;
+      text-align: center;
+      margin-bottom: 3rem;
+      font-weight: 400;
+    }
+  }
+  @media all and (max-width: 390px) {
+    width: 21.4375rem;
+    height: 24.8125rem;
+
+    p {
+      font-family: 'Cafe24Dongdong';
+      font-size: 1.125rem;
+      text-align: center;
+      margin-bottom: 2.8rem;
+      font-weight: 600;
+    }
   }
 `;
 
@@ -91,25 +107,40 @@ const FeelingLayout = styled.div`
   display: flex;
 `;
 
-const Feeling = styled.div`
+const Feeling = styled.div<{ isSelected: boolean }>`
   display: flex;
   flex-direction: column;
   cursor: pointer;
 
   ${({ isSelected }) =>
-    isSelected &&
-    `
-      img {
-        transform: scale(1.2);
-      }
-      p {
-        font-weight: bold;
-      }
-    `}
+    isSelected
+      ? `
+        img {
+          transform: scale(1.2);
+        }
+        p {
+          font-weight: bold;
+        }
+      `
+      : `
+        img {
+          transform: scale(1);
+        }
+        p {
+          font-weight: normal;
+        }
+      `}
 
   img {
-    width: 10rem;
-    height: 9rem;
+    @media all and (min-width: 391px) {
+      width: 10rem;
+      height: 9rem;
+    }
+    @media all and (max-width: 390px) {
+      width: 7rem;
+      height: 7rem;
+    }
+
     transition: transform 0.3s ease-in-out;
     &:hover {
       transition: transform 0.3s ease-in-out;
@@ -124,18 +155,26 @@ const Feeling = styled.div`
 
 const Confirm = styled.button`
   all: unset;
-  width: 7.125rem;
-  height: 3.125rem;
   border-radius: 0.9375rem;
   background: #ff888c;
   color: white;
   font-family: 'Cafe24Dongdong';
   text-align: center;
-  font-size: 1.25rem;
 
   transition:
     transform 0.3s ease-in-out,
     box-shadow 0.3s ease-in-out;
+
+  @media all and (min-width: 391px) {
+    width: 7.125rem;
+    height: 3.125rem;
+    font-size: 1.25rem;
+  }
+  @media all and (max-width: 390px) {
+    width: 6.5rem;
+    height: 2.27006rem;
+    font-size: 1.125rem;
+  }
 
   &:hover {
     transform: translateY(-2px);
