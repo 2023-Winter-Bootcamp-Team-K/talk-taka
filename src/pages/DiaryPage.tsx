@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import Calender from '../components/calender/Calender';
 import Diary from '../components/common/Diary';
