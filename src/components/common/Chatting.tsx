@@ -6,9 +6,9 @@ import MicGIF from '../gif/Mic';
 
 type ChatBoxProps = {
   isShowChar: () => void;
-}
+};
 
-export default function ChatBox({isShowChar: isShowChar}:ChatBoxProps) {
+export default function ChatBox({ isShowChar: isShowChar }: ChatBoxProps) {
   const [messages, setmessages] = useState([]);
   const [currentTypingId, setCurrentTypingId] = useState(null);
 
@@ -28,11 +28,11 @@ export default function ChatBox({isShowChar: isShowChar}:ChatBoxProps) {
 }
 
 const ChatLayout = styled.div`
-  width: 35.0625rem;
+  width: 31.25rem;
   /* max-height: 43.75rem;
   min-height: 43.75rem; */
-  max-height: 44.75rem;
-  min-height: 44.75rem;
+  max-height: 43.75rem;
+  min-height: 43.75rem;
   border-radius: 1.75rem;
   background: rgba(255, 255, 255, 1);
   box-shadow: 0px 14px 24px rgba(0, 0, 0, 0.13);
@@ -50,7 +50,7 @@ const ChatLayout = styled.div`
 `;
 
 const ChatBoxLayout = styled.div`
-  width: 35rem;
+  width: 31.25rem;
   margin-top: 2.19rem;
   flex-grow: 1;
   overflow-y: auto;
