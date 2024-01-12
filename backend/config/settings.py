@@ -43,11 +43,11 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     'drf_yasg',
     'users',
-<<<<<<< HEAD
+
     'main',
-=======
+
     'apps',
->>>>>>> develop
+
 ]
 
 MIDDLEWARE = [

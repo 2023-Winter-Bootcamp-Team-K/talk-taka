@@ -12,10 +12,10 @@ class ChatRoom(models.Model):
         (ANGRY, 'Angry'),
     ]
     id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE)  # member를 user로 변경
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE,db_column="user_id")  # 모델의 1:N 관계를 나타내기 위해 사용
     mood = models.CharField(max_length=10, choices=MOOD_CHOICES)
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
     delete_at = models.DateTimeField(null=True)
 
 
