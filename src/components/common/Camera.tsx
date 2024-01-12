@@ -2,14 +2,18 @@ import styled from 'styled-components';
 import Webcam from 'react-webcam';
 import MicGIF from '../gif/Mic';
 
-export default function CameraBox() {
+type CameraBoxProps = {
+  isShowChar: () => void;
+};
+
+export default function CameraBox({ isShowChar: isShowChar }: CameraBoxProps) {
   return (
     <CameraLayout>
       <CameraBoxLayout>
         <Webcam style={{ borderRadius: '1.75rem' }} mirrored={true} />
       </CameraBoxLayout>
       <TextBox>말을 다하면 나를 눌러줘</TextBox>
-      <MicButtonLayout>
+      <MicButtonLayout onClick={isShowChar}>
         {/* <Mic src="/src/assets/img/BlackMic.png" /> */}
 
         <MicGIF />
@@ -103,18 +107,3 @@ const Mic = styled.img`
     background-size: 100%;
   }
 `;
-
-// const Mic = styled.div`
-//   background-repeat: no-repeat;
-//   background-image: url('src/assets/img/Mic.png');
-//   @media all and (min-width: 391px) {
-//     width: 3.75rem;
-//     height: 3.75rem;
-//     background-size: 100%;
-//   }
-// @media all and (max-width: 390px) {
-//   width: 30px;
-//   height: 30px;
-//   background-size: 100%;
-// }
-// `;

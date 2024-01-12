@@ -3,7 +3,12 @@ import MyMessage from './MyMessage';
 import OpponentMessage from './OpponentMessage';
 import { useState } from 'react';
 import MicGIF from '../gif/Mic';
-export default function ChatBox() {
+
+type ChatBoxProps = {
+  isShowChar: () => void;
+}
+
+export default function ChatBox({isShowChar: isShowChar}:ChatBoxProps) {
   const [messages, setmessages] = useState([]);
   const [currentTypingId, setCurrentTypingId] = useState(null);
 
@@ -14,7 +19,7 @@ export default function ChatBox() {
         <OpponentMessage chatMessage="안녕" />
       </ChatBoxLayout>
       <TextBox>말을 다하면 나를 눌러줘</TextBox>
-      <MicButtonLayout>
+      <MicButtonLayout onClick={isShowChar}>
         {/* <Mic src="/src/assets/img/BlackMic.png" /> */}
         <MicGIF />
       </MicButtonLayout>
