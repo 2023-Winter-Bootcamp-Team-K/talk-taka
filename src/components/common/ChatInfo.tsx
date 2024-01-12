@@ -33,14 +33,8 @@ const InfoWrapper = styled.div`
   @media all and (min-width: 391px) {
     margin-right: 14.5rem;
     margin-bottom: 1rem;
-    /* top: calc(15%);
-    left: 74%;
-    transform: translate(-50%, -100%); */
   }
   @media all and (max-width: 390px) {
-    /* top: 3.56rem;
-    left: 50%;
-    transform: translateX(-50%); */
   }
 `;
 
