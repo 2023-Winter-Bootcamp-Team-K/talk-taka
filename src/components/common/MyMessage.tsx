@@ -20,20 +20,27 @@ const MyMessageContainer = styled.div`
   margin-bottom: 0.62rem;
   padding-right: 1.87rem;
   box-sizing: border-box;
-`;
+  @media all and (max-width: 390px) {
+    margin-bottom: 0.37rem;
+    padding-right: 1.38rem;
 
+  }
+`;
 const StyledMyMessage = styled.div`
   display: flex;
   padding: 0.75rem 1rem;
   flex-direction: column;
   margin-left: auto;
-  gap: 0.5rem;
   max-width: 15rem;
   border-radius: 1rem 1rem 0rem 1rem;
   background: #526699;
   color: white;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  font-size: 1.25rem;
+  @media all and (max-width: 390px) {
+    font-size: 1rem;
+  }
 `;
 
 export default MyMessage;

@@ -20,6 +20,10 @@ const OpponentMessageContainer = styled.div`
   margin-bottom: 0.62rem;
   padding-left: 1.87rem;
   box-sizing: border-box;
+  @media all and (max-width: 390px) {
+    margin-bottom: 0.37rem;
+    padding-left: 1.38rem;
+  }
 `;
 
 const StyledOpponentMessage = styled.div`
@@ -28,13 +32,18 @@ const StyledOpponentMessage = styled.div`
   padding: 0.75rem 1rem;
   flex-direction: column;
   margin-right: auto;
-  gap: 0.5rem;
   max-width: 15rem;
   border-radius: 1rem 1rem 1rem 0rem;
   background: #997852;
   color: white;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  font-size: 1.25rem;
+
+  @media all and (max-width: 390px) {
+    margin-bottom: 0.37rem;
+    font-size: 1rem;
+  }
 `;
 
 export default OpponentMessage;

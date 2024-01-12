@@ -43,16 +43,14 @@ const BackGround = styled.div`
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  @media all and (min-width: 768px) {
+  width: 100vw;
+  height: 100vh;
+  @media all and (min-width: 391px) {
     background-image: url('src/assets/img/Login_bg.png');
     background-position-x: 50%;
     background-position-y: 75%;
-    width: 100vw;
-    height: 100vh;
   }
-  @media all and (min-width: 390px) and (max-width: 767px) {
-    width: 100vw;
-    height: 100vh;
+  @media all and (max-width: 390px) {
     background-position: center;
     background-image: url('src/assets/img/LoginPage_p_bg.png');
   }
@@ -62,8 +60,6 @@ const LoginLayout = styled.div`
   position: absolute;
   z-index: 2;
   background-color: white;
-  width: 34.75rem;
-  height: 41.125rem;
   border-radius: 0.9375rem;
   background: var(--, #fffbfb);
   box-shadow: 16.5px -10px 28.2px 0px rgba(0, 0, 0, 0.25);
@@ -71,11 +67,11 @@ const LoginLayout = styled.div`
   flex-direction: column;
   align-items: center;
 
-  @media all and (min-width: 768px) {
+  @media all and (min-width: 391px) {
     width: 34.75rem;
     height: 41.125rem;
   }
-  @media all and (min-width: 390px) and (max-width: 767px) {
+  @media (max-width: 390px) {
     width: 21.4375rem;
     height: 32.625rem;
   }
@@ -88,14 +84,14 @@ const Login = styled.div`
   font-weight: 700;
   line-height: normal;
 
-  @media all and (min-width: 768px) {
+  @media all and (min-width: 391px) {
     margin-top: 2.94rem;
     margin-bottom: 4.43rem;
     width: 8.4375rem;
     height: 3.1875rem;
     font-size: 2.75rem;
   }
-  @media all and (min-width: 390px) and (max-width: 767px) {
+  @media (max-width: 390px) {
     margin-top: 3.37rem;
     margin-bottom: 2.56rem;
     width: 8.92025rem;
@@ -118,13 +114,13 @@ const SignUp = styled.button`
   cursor: pointer;
   text-decoration-line: underline;
 
-  @media all and (min-width: 768px) {
+  @media all and (min-width: 391px) {
     margin-top: 1.06rem;
     width: 13.9375rem;
     height: 1.875rem;
     font-size: 1.125rem;
   }
-  @media all and (min-width: 390px) and (max-width: 767px) {
+  @media (max-width: 390px) {
     width: 9.77631rem;
     height: 1.48625rem;
     font-size: 0.875rem;
@@ -136,9 +132,9 @@ const SignUp = styled.button`
 `;
 
 const Character = styled.div`
-  @media all and (min-width: 768px) {
+  @media all and (min-width: 391px) {
   }
-  @media all and (min-width: 390px) and (max-width: 767px) {
+  @media all and (max-width: 390px) {
     all: unset;
     position: relative;
     width: 9.9375rem;

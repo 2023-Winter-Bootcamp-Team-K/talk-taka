@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Voice from '../gif/Voice';
 
 type CharComponentProps = {
   isListening: boolean;
@@ -6,12 +7,12 @@ type CharComponentProps = {
 
 export default function CharComponent({ isListening }: CharComponentProps) {
   const micOn = 'src/assets/img/mingcute_voice-fill.svg';
-  const micOff = 'src/assets/img/mingcute_voice-fill.svg';  // 움직이는 이미지로 수정해야 함
 
   return (
     <Layout>
       <SpeakingQuakka src="src/assets/img/SpeakingQuakka.png" />
-      <MicIcon src={isListening ? micOn : micOff} />
+      {/* <MicIcon src={isListening ? micOn : <Voice />} /> */}
+      <Voice />
     </Layout>
   );
 }
@@ -19,7 +20,6 @@ export default function CharComponent({ isListening }: CharComponentProps) {
 const SpeakingQuakka = styled.img`
   width: 30rem;
   margin-top: 6.25rem;
-  margin-bottom: 1rem;
 `;
 
 const MicIcon = styled.img`

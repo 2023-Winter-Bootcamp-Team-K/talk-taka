@@ -1,4 +1,9 @@
 import React from 'react';
+import styled from 'styled-components';
+
+type SizeProps = {
+  size?: string;
+};
 
 export const CameraIconSvg = React.memo(function CameraSvg() {
   return (
@@ -128,12 +133,12 @@ export const FemaleSvg = React.memo(function ManSvg() {
   );
 });
 
-export const Mic = React.memo(function Mic() {
+export const Mic = React.memo(function Mic({ size = '60' }: SizeProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="60"
-      height="60"
+      width={size}
+      height={size}
       viewBox="0 0 512 512"
     >
       <path
