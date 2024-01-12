@@ -5,15 +5,11 @@ from django.shortcuts import render
 import os
 import openai
 from django.shortcuts import get_object_or_404
-<<<<<<< HEAD
-from django.views.decorators.csrf import csrf_exempt
-from drf_yasg.utils import swagger_auto_schema
-from rest_framework.utils import json
-=======
+
 from dotenv import load_dotenv
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
->>>>>>> develop
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
