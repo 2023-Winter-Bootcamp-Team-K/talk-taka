@@ -26,7 +26,6 @@ const MyMessageContainer = styled.div`
 
   }
 `;
-
 const StyledMyMessage = styled.div`
   display: flex;
   padding: 0.75rem 1rem;
@@ -40,7 +39,7 @@ const StyledMyMessage = styled.div`
   overflow-wrap: break-word;
   font-size: 1.25rem;
   @media all and (max-width: 390px) {
-    font-size: 1.125rem;
+    font-size: 1rem;
   }
 `;
 

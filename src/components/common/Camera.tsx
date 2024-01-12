@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import Webcam from 'react-webcam';
+import MicGIF from '../gif/Mic';
 
 export default function CameraBox() {
   return (
@@ -9,7 +10,9 @@ export default function CameraBox() {
       </CameraBoxLayout>
       <TextBox>말을 다하면 나를 눌러줘</TextBox>
       <MicButtonLayout>
-        <Mic />
+        {/* <Mic src="/src/assets/img/BlackMic.png" /> */}
+
+        <MicGIF />
       </MicButtonLayout>
     </CameraLayout>
   );
@@ -62,7 +65,6 @@ const TextBox = styled.div`
   line-height: normal;
 
   @media all and (min-width: 391px) {
-    margin-bottom: 2.25rem;
     font-size: 1.5rem;
   }
   @media all and (max-width: 390px) {
@@ -74,11 +76,10 @@ const TextBox = styled.div`
 const MicButtonLayout = styled.button`
   all: unset;
   display: flex;
-  width: 2.75994rem;
-  height: 2.75994rem;
-  @media all and (min-width: 391px) {
-    margin-bottom: 1.19rem;
-  }
+  justify-content: center;
+  width: 12rem;
+  height: 4rem;
+
   @media all and (max-width: 390px) {
     margin-bottom: 1.5rem;
     margin-top: 0.68rem;
@@ -89,17 +90,31 @@ const MicButtonLayout = styled.button`
   }
 `;
 
-const Mic = styled.div`
-  background-repeat: no-repeat;
-  background-image: url('src/assets/img/Mic.png');
-  @media all and (min-width: 391px) {
-    width: 3.75rem;
-    height: 3.75rem;
-    background-size: 100%;
-  }
+const Mic = styled.img`
+  all: unset;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+
   @media all and (max-width: 390px) {
     width: 30px;
     height: 30px;
     background-size: 100%;
   }
 `;
+
+// const Mic = styled.div`
+//   background-repeat: no-repeat;
+//   background-image: url('src/assets/img/Mic.png');
+//   @media all and (min-width: 391px) {
+//     width: 3.75rem;
+//     height: 3.75rem;
+//     background-size: 100%;
+//   }
+// @media all and (max-width: 390px) {
+//   width: 30px;
+//   height: 30px;
+//   background-size: 100%;
+// }
+// `;
