@@ -2,37 +2,59 @@ from django.shortcuts import render
 import os
 import openai
 from django.shortcuts import get_object_or_404
+from dotenv import load_dotenv
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import *
 from rest_framework.parsers import JSONParser
+
+from .models import GPTQuestion, UserAnswer
 
 
 def index(request):
     return render(request, 'chat/index.html', {})
 
-def room(request, room_name):
-    return render(request, "chat/room.html", {"room_name": room_name})
-
+load_dotenv
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
 class GPTAnswerView(APIView):
     parser_classes = (JSONParser,)
 
+    @swagger_auto_schema(
+        operation_description="GPT 답변 생성 및 저장",
+        operation_id="GPT 답변 생성 및 저장",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'question_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='question_id 입력'),
+            },
+        ),
+        responses={
+            201: openapi.Response(description="GPT 답변 생성 완료"),
+            400: "Bad request",
+        },
+    )
     def post(self, request, *args, **kwargs):
+        # 클라이언트 요청에서 'question_id'를 안전하게 추출
         question_id = request.data.get('question_id')
-        question = get_object_or_404(GPTQuestion, pk=question_id)
+        if not question_id:
+            return Response({"error": "question_id is required"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # question_id를 사용하여 GPTQuestion 객체를 가져옴
+        question = get_object_or_404(GPTQuestion, id=question_id)
+
+        # GPT-3를 사용하여 답변 생성
         gpt_answer_content = self.generate_gpt_answer(question.content)
-
         if gpt_answer_content is None:
-            return Response({"message": "GPT 답변 생성 실패"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"error": "Failed to generate GPT answer"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-        gpt_answer = GPTQuestion(content=gpt_answer_content, question=question)
-        gpt_answer.save()
+        # 생성된 답변을 UserAnswer 모델에 저장
+        user_answer = UserAnswer(question=question, content=gpt_answer_content)
+        user_answer.save()
 
-        return Response({"message": "GPT 답변 생성 완료"}, status=status.HTTP_200_OK)
+        return Response({"message": "GPT answer generated successfully"}, status=status.HTTP_200_OK)
 
     def generate_gpt_answer(self, question_content):
         response = openai.ChatCompletion.create(
@@ -46,7 +68,6 @@ class GPTAnswerView(APIView):
         gpt_answer_content = response['choices'][0]['message']['content']
 
         return gpt_answer_content
-
 
 class ImageView(APIView):
     parser_classes = (JSONParser,)
