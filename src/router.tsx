@@ -6,7 +6,7 @@ import DiaryPage from './pages/DiaryPage';
 import BookCover from './pages/BookCover';
 import MainPage from './pages/MainPage';
 import ChatPage from './pages/ChatPage';
-import Modal from './components/modal/Modal';
+import Result from './pages/Result';
 
 const router = createBrowserRouter([
   {
@@ -35,11 +35,15 @@ const router = createBrowserRouter([
   },
   {
     path: '/test',
-    element: <Modal />,
+    element: <Result />,
   },
   {
     path: '/chat',
     element: <ChatPage />,
+  },
+  {
+    path: '/result',
+    element: <Result />,
   },
 ]);
 
