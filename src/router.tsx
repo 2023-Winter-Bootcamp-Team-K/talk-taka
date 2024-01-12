@@ -7,6 +7,7 @@ import BookCover from './pages/BookCover';
 import MainPage from './pages/MainPage';
 import ChatPage from './pages/ChatPage';
 import Result from './pages/Result';
+import CameraModal from './components/modal/CameraModal';
 
 const router = createBrowserRouter([
   {
@@ -35,7 +36,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/test',
-    element: <Result />,
+    element: <CameraModal />,
   },
   {
     path: '/chat',
