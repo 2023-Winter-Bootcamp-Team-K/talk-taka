@@ -83,7 +83,7 @@ const Btn = styled.button<{
     opacity: 0.3;
   }
 
-  @media all and (min-width: 768px) {
+  @media all and (min-width: 391px) {
     font-size: ${(props) =>
       props.fontS === 'normal' ? '1.5rem' : props.fontS};
     width: ${(props) =>
@@ -94,7 +94,7 @@ const Btn = styled.button<{
       props.marginT === 'normal' ? '10rem' : props.marginT};
     height: ${(props) => (props.height === 'normal' ? '1rem' : props.height)};
   }
-  @media all and (min-width: 390px) and (max-width: 767px) {
+  @media all and (max-width: 390px) {
     font-size: ${(props) =>
       props.fontSP === 'normal' ? '1.5rem' : props.fontSP};
     width: ${(props) =>

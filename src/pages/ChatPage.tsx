@@ -20,7 +20,7 @@ export default function ChatPage() {
   };
   const handleModalConfirm = () => {
     setIsModalOpen(false);
-  }
+  };
 
   return (
     <BackGround>
@@ -35,11 +35,11 @@ export default function ChatPage() {
       <ToggleContainer onClick={handleToggle} toggle={toggle}>
         <Circle toggle={toggle}>
           <CameraIconSvg />
-          </Circle>
+        </Circle>
       </ToggleContainer>
       <QuitChatBtn onClick={goToMain}>
         대화 끝내기
-        <ButtonImage src='src/assets/img/QuitIcon.png'/>  
+        <ButtonImage src="src/assets/img/QuitIcon.png" />
       </QuitChatBtn>
     </BackGround>
   );
@@ -135,7 +135,7 @@ const QuitChatBtn = styled.button`
 const ButtonImage = styled.img`
   width: 2.5rem;
   height: 2.5rem;
-`
+`;
 
 const TodayDate = () => {
   const today = new Date();
