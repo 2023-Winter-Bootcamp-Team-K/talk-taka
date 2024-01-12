@@ -71,7 +71,7 @@ const LoginLayout = styled.div`
     width: 34.75rem;
     height: 41.125rem;
   }
-  @media all and (max-width: 390px) {
+  @media (max-width: 390px) {
     width: 21.4375rem;
     height: 32.625rem;
   }
@@ -91,7 +91,7 @@ const Login = styled.div`
     height: 3.1875rem;
     font-size: 2.75rem;
   }
-  @media all and (max-width: 390px) {
+  @media (max-width: 390px) {
     margin-top: 3.37rem;
     margin-bottom: 2.56rem;
     width: 8.92025rem;
@@ -120,7 +120,7 @@ const SignUp = styled.button`
     height: 1.875rem;
     font-size: 1.125rem;
   }
-  @media all and (max-width: 390px) {
+  @media (max-width: 390px) {
     width: 9.77631rem;
     height: 1.48625rem;
     font-size: 0.875rem;
