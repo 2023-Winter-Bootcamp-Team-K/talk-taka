@@ -1,14 +1,21 @@
+from datetime import timezone
+
+from django.http import JsonResponse
 from django.shortcuts import render
 import os
 import openai
 from django.shortcuts import get_object_or_404
+
 from dotenv import load_dotenv
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import JSONParser
+from .serializers import ChatRoomSerializer
+from users.models import User
 
 from .models import GPTQuestion, UserAnswer
 
@@ -98,3 +105,16 @@ class ImageView(APIView):
             # 오류 처리
             print(f"이미지 생성 중 예외 발생: {e}")
             return None
+
+class ChatRoomCreateView(APIView):
+
+    @swagger_auto_schema(
+        operation_id="채팅방",
+    )
+    def post(self, request, format=None):
+        serializer = ChatRoomSerializer(data=request.data)
+        if serializer.is_valid():
+            chat_room = serializer.save()
+            # 여기에서 chat_room에 다른 필요한 값들을 설정할 수 있습니다.
+            return Response(ChatRoomSerializer(chat_room).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
