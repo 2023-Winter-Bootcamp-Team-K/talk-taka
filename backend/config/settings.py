@@ -2,10 +2,15 @@ import os
 from datetime import timedelta
 from pathlib import Path
 from .my_settings import *
-#여기
+from dotenv import load_dotenv
 import pymysql
 pymysql.install_as_MySQLdb()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv()
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -27,7 +32,6 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'daphne',
     'channels',
-    'apps',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,6 +43,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     'drf_yasg',
     'users',
+    'apps',
 ]
 
 MIDDLEWARE = [
@@ -143,4 +148,4 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = "users.User"
+AUTH_USER_MODEL = 'users.User'
