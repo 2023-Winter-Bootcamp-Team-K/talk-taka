@@ -38,8 +38,11 @@ const StyledOpponentMessage = styled.div`
   color: white;
   word-wrap: break-word;
   overflow-wrap: break-word;
+  font-size: 1.25rem;
+
   @media all and (max-width: 390px) {
     margin-bottom: 0.37rem;
+    font-size: 1rem;
   }
 `;
 
