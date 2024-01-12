@@ -12,6 +12,11 @@ export const CalendarContainer = styled.div`
   align-items: center;
   padding: 1.25rem;
   box-sizing: border-box;
+  @media (max-width: 391px) {
+    padding: 0rem;
+    width: 100%;
+    height: 85%;
+  }
 `;
 
 export const HeaderContainer = styled.div`
@@ -19,16 +24,26 @@ export const HeaderContainer = styled.div`
   display: flex;
   align-items: center;
   padding: 10px 0;
+  @media (max-width: 391px) {
+    width: 75%;
+    padding: 0;
+  }
 `;
 
 export const HeaderYear = styled.div`
   font-size: 1.5rem;
   text-align: center;
+  @media (max-width: 391px) {
+    font-size: 1rem;
+  }
 `;
 
 export const HeaderDate = styled.div`
   font-size: 2.5rem;
   text-align: center;
+  @media (max-width: 391px) {
+    font-size: 1.6rem;
+  }
 `;
 
 export const DateContainer = styled.div`
@@ -42,16 +57,16 @@ export const DateContainer = styled.div`
 export const ArrowBackIcon = styled(MdOutlineArrowBackIosNew)`
   cursor: pointer;
   font-size: 2rem;
-  &:hover {
-    color: #000000;
+  @media (max-width: 391px) {
+    font-size: 1.5rem;
   }
 `;
 
 export const ArrowForwardIcon = styled(MdOutlineArrowForwardIos)`
   cursor: pointer;
   font-size: 2rem;
-  &:hover {
-    color: #000000;
+  @media (max-width: 391px) {
+    font-size: 1.5rem;
   }
 `;
 
@@ -59,6 +74,13 @@ export const WeekWrap = styled.div`
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   width: 100%;
+  @media (max-width: 391px) {
+    width: 30%;
+    font-size: 0.9rem;
+    display: flex;
+    justify-content: center;
+    letter-spacing: -0.1em;
+  }
 `;
 
 export const DayName = styled.div`
@@ -78,6 +100,11 @@ export const DaysWrap = styled.div<{ rows: number }>`
   ); // 동적으로 행 수 설정
   background-color: #ddd;
   width: 100%;
+
+  @media (max-width: 391px) {
+    width: auto;
+    height: auto;
+  }
 `;
 
 export const DaysCol = styled.div`
@@ -101,5 +128,15 @@ export const DaysCol = styled.div`
 
   > div {
     margin-top: 0.5rem;
+
+    @media (max-width: 391px) {
+      font-size: 0.8rem;
+      margin-top: 0rem;
+    }
+  }
+
+  @media (max-width: 391px) {
+    width: 2.2rem;
+    height: 3.2rem;
   }
 `;
