@@ -2,14 +2,18 @@ import styled from 'styled-components';
 import Webcam from 'react-webcam';
 import { Mic } from '../../assets/SVG';
 
-export default function CameraBox() {
+type CameraBoxProps = {
+  isShowChar: () => void;
+};
+
+export default function CameraBox({ isShowChar: isShowChar }: CameraBoxProps) {
   return (
     <CameraLayout>
       <CameraBoxLayout>
         <Webcam style={{ borderRadius: '1.75rem' }} />
       </CameraBoxLayout>
       <TextBox>말을 다하면 나를 눌러줘</TextBox>
-      <MicButtonLayout>
+      <MicButtonLayout onClick={isShowChar}>
         <Mic />
       </MicButtonLayout>
     </CameraLayout>

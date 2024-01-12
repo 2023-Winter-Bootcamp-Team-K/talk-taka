@@ -4,7 +4,11 @@ import OpponentMessage from './OpponentMessage';
 import { Mic } from '../../assets/SVG';
 import { useState } from 'react';
 
-export default function ChatBox() {
+type ChatBoxProps = {
+  isShowChar: () => void;
+}
+
+export default function ChatBox({isShowChar: isShowChar}:ChatBoxProps) {
   const [messages, setmessages] = useState([]);
   const [currentTypingId, setCurrentTypingId] = useState(null);
 
@@ -14,7 +18,7 @@ export default function ChatBox() {
         <MyMessage chatMessage="안녕" />
         <OpponentMessage chatMessage="안녕" />
       </ChatBoxLayout>
-      <MicButtonLayout>
+      <MicButtonLayout onClick={isShowChar}>
         <Mic />
       </MicButtonLayout>
     </ChatLayout>
