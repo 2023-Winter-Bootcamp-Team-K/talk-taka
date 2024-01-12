@@ -37,7 +37,7 @@ const BackGround = styled.div`
   justify-content: center;
   object-fit: fill;
 
-  @media (max-width: 767px) {
+  @media (max-width: 391px) {
     background-image: url('src/assets/img/introP.png');
   }
 `;

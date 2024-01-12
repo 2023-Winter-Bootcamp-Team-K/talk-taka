@@ -1,7 +1,8 @@
 import { styled } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import Button from '../components/common/RectangleBtn';
+import Button from '../components/common/Btn';
 import { LogoutIconSvg } from '../assets/SVG';
+import Calender from '../components/calender/Calender';
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -16,8 +17,8 @@ export default function MainPage() {
         로그아웃
       </LogoutBtn>
       <MainLayout>
-        {/* 달력 컴포넌트 추가 필요 */}
-        <Button title="대화하러 가기 >"></Button>
+        <Calender />
+        <StyledButton>대화하러 가기</StyledButton>
       </MainLayout>
       <GreetingLayout>
         다시 돌아오지 않는 <TodayDate /> <br />
@@ -34,31 +35,71 @@ const BackGround = styled.div`
   width: 100vw;
   height: 100vh;
   background-repeat: no-repeat;
-  background-position-x: 50%;
+  background-position-x: 100%;
   background-position-y: 75%;
   display: flex;
   text-align: center;
   align-items: center;
   justify-content: flex-start;
+
+  @media (max-width: 391px) {
+    background-image: url('src/assets/img/mainP.png');
+    background-position: center;
+    background-position-x: 50%;
+    background-position-y: 30%;
+  }
 `;
 
 const MainLayout = styled.div`
-  width: 34.75rem;
-  height: 46.5625rem;
+  padding-top: 2rem;
+  width: 36rem;
+  height: 48rem;
   border-radius: 0.9375rem;
   background: #fff;
   box-shadow: 16.5px -10px 28.2px 0px rgba(0, 0, 0, 0.25);
 
-  /* Layout 위치 */
-  margin-top: 11.44rem;
+  margin-top: 11rem;
   margin-bottom: 6rem;
   margin-left: 20%;
 
-  /* button 위치 */
   display: flex;
-  justify-content: center;
   align-items: flex-end;
-  padding-bottom: 3.88rem;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  @media (max-width: 391px) {
+    margin-left: auto; // 좌측 여백 자동 조정
+    margin-right: auto; // 우측 여백 자동 조정
+    align-items: center; // 수평 중앙 정렬
+    width: 21rem;
+    height: 34rem;
+    margin-bottom: 17rem;
+  }
+`;
+
+const StyledButton = styled.button`
+  /* text */
+  width: 16rem;
+  height: 2.25rem;
+  color: #fff;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+
+  /* button */
+  width: 23rem;
+  height: 4.125rem;
+  border-radius: 0.5625rem;
+  background: #222;
+  margin-top: 7rem;
+
+  @media (max-width: 391px) {
+    font-size: 1rem;
+    width: 15.25rem;
+    height: 3rem;
+    margin-top: 0rem;
+  }
 `;
 
 const LogoutBtn = styled.button`
@@ -89,6 +130,9 @@ const GreetingLayout = styled.div`
   margin-top: 16.87rem;
   margin-bottom: 45.69rem;
   margin-left: 12.06rem;
+  @media (max-width: 1400px) {
+    display: none;
+  }
 `;
 
 const TodayDate = () => {

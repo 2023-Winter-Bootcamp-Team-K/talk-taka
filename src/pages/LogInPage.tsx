@@ -50,7 +50,7 @@ const BackGround = styled.div`
     width: 100vw;
     height: 100vh;
   }
-  @media all and (min-width: 390px) and (max-width: 767px) {
+  @media (max-width: 767px) {
     width: 100vw;
     height: 100vh;
     background-position: center;
