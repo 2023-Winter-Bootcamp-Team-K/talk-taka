@@ -78,7 +78,7 @@ class GPTAnswerView(APIView):
 def generate_image(content): # openai 이용하여 이미지 생성하는 함수
 
     messages = []
-    promptmessages = "요약 내요을 바탕으로 이미지를 생성해줘."
+    promptmessages = "요약 내용을 바탕으로 이미지를 생성해줘."
 
     story_content = promptmessages+content
     messages.append({"role": "user", "content": story_content})
