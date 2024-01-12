@@ -16,14 +16,10 @@ from rest_framework import status
 from rest_framework.parsers import JSONParser
 from .serializers import ChatRoomSerializer
 from users.models import User
+from .models import ChatRoom
+import json
 
 from .models import GPTQuestion, UserAnswer
-
-
-def index(request):
-    return render(request, 'chat/index.html', {})
-
-load_dotenv
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
 class GPTAnswerView(APIView):

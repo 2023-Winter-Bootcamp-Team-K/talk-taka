@@ -20,6 +20,15 @@ class ChatRoom(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True)
     delete_at = models.DateTimeField(null=True)
 
+    def add_mood(self, mood):
+        if mood == 'Joy':
+            self.mood = self.JOY
+        elif mood == 'Sad':
+            self.mood = self.SAD
+        elif mood == 'Angry':
+            self.mood = self.ANGRY
+        self.save()
+
 
 class GPTQuestion(models.Model):
     id = models.AutoField(primary_key=True)

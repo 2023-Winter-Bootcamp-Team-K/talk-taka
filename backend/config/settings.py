@@ -24,7 +24,13 @@ SECRET_KEY = "django-insecure-b9%x!n&-qcj(@ns=)w_cawbbx#xf9%54%i*+u=fmk55w=e)%8q
 DEBUG = True
 
 # 접속 모두 허용
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "[::1]",
+    "django",
+    "52.79.131.251",
+]
 
 
 # Application definition
