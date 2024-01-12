@@ -15,7 +15,8 @@ services:
     build: ./backend
     command: sh -c "dockerize -wait tcp://db:3306 -timeout 1m && python manage.py makemigrations users
       && python manage.py migrate users && python manage.py makemigrations apps
-      && python manage.py migrate apps && python manage.py runserver 0.0.0.0:8000"
+      && python manage.py migrate apps && python manage.py makemigrations diary
+      && python manage.py migrate diary && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
     ports:
