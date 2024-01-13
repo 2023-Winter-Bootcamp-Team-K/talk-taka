@@ -4,22 +4,23 @@ from django.contrib.auth import get_user_model, authenticate
 User = get_user_model()
 
 class LoginSerializer(serializers.Serializer):
-    id = serializers.CharField()  # 'username' 대신 'id'를 사용
+    id = serializers.CharField()
     password = serializers.CharField()
 
     def validate(self, data):
-        user_id = data.get("id", "")
+        id = data.get("id", "")
         password = data.get("password", "")
 
-        if user_id and password:
-            # 'username' 대신 'id'를 사용하여 인증
-            user = authenticate(request=self.context.get('request'), username=user_id, password=password)
+        if id and password:
+            user = authenticate(username=id, password=password)
 
             if user is None:
                 raise serializers.ValidationError("이메일 혹은 비밀번호가 틀렸습니다.")
 
+            # soft-delete
             if user.is_deleted:
                 raise serializers.ValidationError("삭제된 계정입니다.")
+
         else:
             raise serializers.ValidationError('이메일과 비밀번호를 입력하세요.')
 
@@ -39,9 +40,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'id', 'password', 'age', 'gender')
+        fields = ('id', 'username', 'password', 'age', 'gender')
 
-    def validate_username(self, value):  # validate_email을 validate_username으로 변경
+    def validate_username(self, value):
         # Check if the username is already in use
         if User.objects.filter(username=value).exists():
             raise serializers.ValidationError("이미 존재하는 계정입니다.")
@@ -49,6 +50,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = User(
+            id=validated_data['id'],
             username=validated_data['username'],
             age=validated_data.get('age'),
             gender=validated_data.get('gender'),
