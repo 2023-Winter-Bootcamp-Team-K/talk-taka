@@ -16,14 +16,16 @@ export default function MainPage() {
         <LogoutIconSvg />
         로그아웃
       </LogoutBtn>
-      <MainLayout>
-        <Calender />
-        <StyledButton>대화하러 가기</StyledButton>
-      </MainLayout>
-      <GreetingLayout>
-        다시 돌아오지 않는 <TodayDate /> <br />
-        길동이의 하루를 기록으로 남겨보세요
-      </GreetingLayout>
+      <div style={{ display: 'flex' }}>
+        <MainLayout>
+          <Calender />
+          <StyledButton>대화하러 가기</StyledButton>
+        </MainLayout>
+        <GreetingLayout>
+          다시 돌아오지 않는 <TodayDate /> <br />
+          길동이의 하루를 기록으로 남겨보세요
+        </GreetingLayout>
+      </div>
     </BackGround>
   );
 }
@@ -35,7 +37,7 @@ const BackGround = styled.div`
   width: 100vw;
   height: 100vh;
   background-repeat: no-repeat;
-  background-position-x: 100%;
+  background-position-x: 50%;
   background-position-y: 75%;
   display: flex;
   text-align: center;
@@ -118,7 +120,9 @@ const LogoutBtn = styled.button`
 
 const GreetingLayout = styled.div`
   display: flex;
-  width: 28rem;
+  /* width: 28rem; */
+  width: 35rem;
+  line-height: 170%;
   height: 1.4375rem;
   flex-direction: column;
   justify-content: center;
