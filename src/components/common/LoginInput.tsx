@@ -1,4 +1,5 @@
 import { styled } from 'styled-components';
+import { useInput } from '../../hooks/useInput';
 
 interface AllProps {
   type?: string;
@@ -10,11 +11,7 @@ interface AllProps {
   width?: string;
   widthp?: string;
   value?: string;
-  onChange?: (
-    e:
-      | React.ChangeEvent<HTMLInputElement>
-      | React.ChangeEvent<HTMLTextAreaElement>
-  ) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function LoginInput({
@@ -24,8 +21,8 @@ export default function LoginInput({
   marginbottom = '0px',
   marginbottomp = '0px',
   marginbottomptt = '0.92rem',
-  width = 'normal',
-  widthp = 'normal',
+  width = '29.55rem',
+  widthp = '29.55rem',
   value,
   onChange,
 }: AllProps) {
@@ -43,6 +40,7 @@ export default function LoginInput({
           onChange={onChange}
           placeholder={placeholder}
           type={typeI}
+          autoComplete="true"
         ></input>
       </InputLayout>
     </Layout>

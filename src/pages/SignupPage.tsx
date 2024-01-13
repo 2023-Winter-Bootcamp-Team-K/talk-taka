@@ -2,21 +2,127 @@ import { styled } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import LoginInput from '../components/common/LoginInput';
 import Button from '../components/common/Btn';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { MaleSvg, FemaleSvg } from '../assets/SVG';
+import { baseInstance } from '../api/config';
+import { useInput } from '../hooks/useInput';
 
 export default function SignupPage() {
+  //회원가입 변수
+  const [id, setId] = useState('');
+  const [pw, setPw] = useState('');
+  const [pwCk, setPwCk] = useState('');
+  const [username, usernameHandleChange] = useInput('');
+  const [birth, birthHandleChange] = useInput('');
+  const [selectedGender, setSelectedGender] = useState<null | string>(null);
+  const gender = selectedGender;
+
+  //회원가입 유효성 검사 변수
+  const [isId, setIsId] = useState<boolean>(false);
+  const [isPassword, setIsPassword] = useState<boolean>(false);
+  const [isPasswordConfirm, setIsPasswordConfirm] = useState<boolean>(false);
+
+  // 오류메시지 상태저장
+  const [idMessage, setIdMessage] =
+    useState<string>('영문+숫자 조합으로 입력해주세요!');
+  const [passwordMessage, setPasswordMessage] =
+    useState<string>('영문+숫자 조합으로 입력해주세요!');
+  const [passwordConfirmMessage, setPasswordConfirmMessage] =
+    useState<string>('비밀번호가 일치하지 않음!');
+
+  // 페이지 내 이동 변수
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
+
+  // 버튼 활성화
+  const isButtonDisabled = !id || !isPasswordConfirm;
+
+  const genderDisabled = () => {
+    if (gender == null) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const isConfirmDisabled = isButtonDisabled || genderDisabled();
+
+  //외부 페이지 이동
   const goToLogin = () => {
     navigate('/login');
   };
-  const [selectedGender, setSelectedGender] = useState<null | string>(null);
 
+  // 성별 선택 토글
   const toggleGender = (gender: string) => {
     setSelectedGender(selectedGender === gender ? null : gender);
   };
 
+  //유효성 검사
+  ///아이디
+  const onChangeId = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const IdRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{0,25}$/; // 조건 넣으면 됨
+    const IdCurrent = e.target.value;
+    setId(IdCurrent);
+
+    if (!IdRegex.test(IdCurrent)) {
+      setIdMessage('영문+숫자 조합으로 입력해주세요!');
+      setIsId(false);
+    } else {
+      setIdMessage('정확해!');
+      setIsId(true);
+    }
+  }, []);
+  ///비밀번호
+  const onChangePw = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const PwRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{0,25}$/; // 조건 넣으면 됨
+    const PwCurrent = e.target.value;
+    setPw(PwCurrent);
+
+    if (!PwRegex.test(PwCurrent)) {
+      setPasswordMessage('영문+숫자 조합으로 입력해주세요!');
+      setIsPassword(false);
+    } else {
+      setPasswordMessage('잘했어!');
+      setIsPassword(true);
+    }
+  }, []);
+  ///비밀번호 확인
+  const onChangePwCk = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const PwCkCurrent = e.target.value;
+      setPwCk(PwCkCurrent);
+
+      if (pw !== PwCkCurrent) {
+        setPasswordConfirmMessage('비밀번호가 일치하지 않음!');
+        setIsPasswordConfirm(false);
+      } else {
+        setPasswordConfirmMessage('잘했어!');
+        setIsPasswordConfirm(true);
+      }
+    },
+    [pw] //???? 이거 왜 써야함? 외부에서 인자 받아와야해서 그런가?
+  );
+
+  // 회원가입
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const data = {
+      username: username,
+      id: id,
+      password: pw,
+      birth: birth,
+      gender: gender,
+    };
+
+    try {
+      const response = await baseInstance.post('/members', data);
+      console.log(response);
+    } catch (error) {
+      // alert('다시 작성해주세요');
+      console.error(error);
+    }
+  };
+
+  // 리턴 값
   return (
     <BackGround>
       <LoginLayout>
@@ -25,6 +131,8 @@ export default function SignupPage() {
             <Login>회원가입</Login>
             <DirectionRow>
               <LoginInput
+                value={id}
+                onChange={onChangeId}
                 width="19.0625rem"
                 widthp="11.569rem"
                 type="아이디"
@@ -43,22 +151,32 @@ export default function SignupPage() {
                 fonts="1.125rem"
                 fontsp="0.875rem"
                 borderr="0.875rem"
+                onClick={onSubmit}
               ></Button>
             </DirectionRow>
             <Left>
               <IdCheck>
-                <CheckMark>✔사용 가능한 아이디 입니다.</CheckMark>
+                <CheckMark>✔{idMessage}</CheckMark>
               </IdCheck>
             </Left>
             <LoginInput
+              value={pw}
+              onChange={onChangePw}
               type="비밀번호"
               typeI="password"
               placeholder="6자리 이상"
-              marginbottom="1.31rem"
+              marginbottom="0.47rem"
               marginbottomp="2.09rem"
               marginbottomptt="0.06rem"
             ></LoginInput>
+            <Left>
+              <IdCheck>
+                <CheckMark>✔{passwordMessage}</CheckMark>
+              </IdCheck>
+            </Left>
             <LoginInput
+              value={pwCk}
+              onChange={onChangePwCk}
               type="비밀번호 확인"
               typeI="password"
               placeholder="6자리 이상"
@@ -67,13 +185,14 @@ export default function SignupPage() {
             ></LoginInput>
             <Left>
               <IdCheck>
-                <CheckMark>✔일치합니다.</CheckMark>
+                <CheckMark>✔{passwordConfirmMessage}</CheckMark>
               </IdCheck>
             </Left>
             <Button
               onClick={() => {
                 setPage(2);
               }}
+              disabled={isButtonDisabled}
               title="다음"
               width="14.24731rem"
             ></Button>
@@ -83,6 +202,8 @@ export default function SignupPage() {
           <>
             <Login>회원가입</Login>
             <LoginInput
+              value={username}
+              onChange={usernameHandleChange}
               type="이름"
               placeholder="자녀분의 이름을 입력해주세요."
               marginbottom="2.25rem"
@@ -90,6 +211,8 @@ export default function SignupPage() {
               marginbottomptt="0.06rem"
             ></LoginInput>
             <LoginInput
+              value={birth}
+              onChange={birthHandleChange}
               type="생년월일"
               placeholder="EX.) 2017-01-01"
               marginbottom="2.25rem"
@@ -115,6 +238,7 @@ export default function SignupPage() {
             </GenderButtonLayout>
             <Button
               title="확인"
+              disabled={isConfirmDisabled}
               width="14.24731rem"
               margint="1.5rem"
               margintp="0.6rem"
@@ -208,6 +332,7 @@ const Left = styled.div`
   width: 100%;
   @media all and (min-width: 791px) {
     padding-left: 2.87rem;
+    margin-bottom: 0.5rem;
   }
   @media all and (max-width: 790px) {
     padding-left: 2rem;
