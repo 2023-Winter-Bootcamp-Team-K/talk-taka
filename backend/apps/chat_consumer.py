@@ -2,23 +2,126 @@ import json
 import os
 import random
 import time
-
+import base64
+from django.core.files.base import ContentFile
 import openai
 from channels.generic.websocket import WebsocketConsumer
 from dotenv import load_dotenv
+import asyncio
+
+from backend.storage import get_file_url
+from backend.stt import speach_to_text
 from .models import *
+import logging
+
 load_dotenv()
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-
+logger = logging.getLogger(__name__)
 
 class ChatConsumer(WebsocketConsumer):
-    # 클라이언트와 연결
-    def connect(self):
-        self.accept()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.chat_room_id = None
+        self.chatroom = None
+        self.present_question_id = None
+        self.user = None
+        self.endTime = 10
         # 대화 기록을 저장할 리스트
         self.conversation = []
+        self.client = openai.OpenAI()
+
+    # 클라이언트와 연결
+    def connect(self, text_data=None):
+        # JSON 문자열을 파이썬 객체로 변환
+        if text_data is not None:
+            json.loads(text_data)
+
+        self.chat_room_id = self.scope["url_route"]["kwargs"]["roomid"]
+        self.accept()
+
+        # chatroom를 찾아서 chatroom 오브젝트 생성
+        self.chatroom = ChatRoom.objects.get(id=self.chat_room_id)
+        # user 찾기
+        self.user = self.chatroom.user_id
+        # 연결 완료 전송 (프론트에 기분 화면 활성화)
+        self.send(
+            text_data=json.dumps(
+                {
+                    "event": "connected",
+                    "data": {
+                        "message": "연결 됐습니다.",
+                        "roomId": self.chat_room_id,
+                    }
+                }
+            )
+        )
+
+        #종료 메세지 보내기
+        asyncio.ensure_future(self.send_end_message())
+    def receive(self, text_data):
+        if text_data:
+            res = json.loads(text_data)
+            event = res.get("event")
+            data = res.get("data")
+            logger.info(res)
+            # 첫 대화 시작
+            if event == "conversation_start":
+                # 기분 room에 추가
+                mood = data.get("mood")
+                if mood == None:
+                    self.send(
+                        text_data=json.dumps(
+                            {
+                                "event": "error",
+                                "data": "기분이 정상적으로 넘어오지 않았습니다.",
+                            }
+                        )
+                    )
+                # 기분 저장
+                self.chatroom.add_mood(mood)
+                self.situation_tuning(self.user, mood=mood)
+                # 첫 질문 전송
+                question_content = self.pick_random_question()
+                self.default_conversation(self.chatroom, question_content)
+                self.add_answer(answer=None)
+                self.add_question(question=question_content)
+            # 음성 대답
+            elif event == "user_answer":
+                # base64 디코딩
+                audio_blob = data["audioBlob"]
+                audio_data = base64.b64decode(audio_blob)
+
+                # 오디오 파일로 변환
+                audio_file = ContentFile(audio_data)
+
+                # 오디오 파일 STT로 텍스트 변환
+                answer = speach_to_text(audio_file)
+
+                # answer을 conversation 저장
+                self.add_answer(answer=answer)
+
+                # 텍스트 GPT에게 전송
+                question = self.continue_conversation(self.chatroom)
+
+                # conversation 질문, 답변 저장
+                self.add_question(question=question)
+
+                # GPT 질문 전송 (음성 파일로 줘야됨?)
+                self.continue_conversation(self, self.chatroom)
+
+                # 오디오 파일 S3에 저장
+                url = get_file_url('audio', audio_file)
+
+                # UserAnswer DB 저장 (택스트, 오디오 파일 URL)
+                answer = UserAnswer.objects.create(question_id=self.present_question_id, content=answer, audio_url=url)
+                answer.save()
+            # 대화 종료
+            elif event == "conversation_end":
+                self.send(json.dumps({"message": "", "finish_reason": ""}))
+
 
     def disconnect(self, closed_code):
+        """
         # ChatRoom 모델에서 현재 사용자의 ID에 해당하는 데이터를 가져옴
         try:
             chatroom = ChatRoom.objects.get(chatroom_id=closed_code)
@@ -32,15 +135,17 @@ class ChatConsumer(WebsocketConsumer):
 
         # 마지막으로 ChatRoom 자체를 삭제합니다.
         chatroom.delete()
-
+        """
     # 질문과 대화 저장
-    def add_question_answer(self, question, answer=None):
+    def add_question(self, question):
+
         self.conversation.append(
             {
                 "role": "assistant",
                 "content": question
             }
         )
+    def add_answer(self, answer=None):
         if answer is not None:
             self.conversation.append(
                 {
@@ -55,8 +160,7 @@ class ChatConsumer(WebsocketConsumer):
                     "content": "Another question, give me only one."
                 }
             )
-
-    def continue_conversation(self, form_object):
+    def continue_conversation(self, chatroom):
         messages = ""
         for chunk in openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
@@ -66,7 +170,7 @@ class ChatConsumer(WebsocketConsumer):
         ):
             finish_reason = chunk.choices[0].finish_reason
             if chunk.choices[0].finish_reason == "stop":
-                self.send(json.dumps({"message": "", "finish_reason": finish_reason}))
+                self.send(json.dumps({"event":"conversation","message": "chat stop", "finish_reason": finish_reason}))
                 break
 
             message = chunk.choices[0].delta["content"]
@@ -74,9 +178,10 @@ class ChatConsumer(WebsocketConsumer):
             messages += message
             # 메시지를 클라이언트로 바로 전송
             self.send(json.dumps({"message": message, "finish_reason": finish_reason}))
-        print(self.conversation)
-        GPTQuestion.objects.create(content=messages, form_id=form_object)
-
+        # print(self.conversation)
+        question = GPTQuestion.objects.create(content=messages, chatroom_id=chatroom)
+        question.save()
+        return messages
 
     def default_conversation(self, chatroom, question_content):
         messages = ""
@@ -88,7 +193,7 @@ class ChatConsumer(WebsocketConsumer):
                 is_last_char = "stop"
 
             # 메시지를 클라이언트로 바로 전송
-            self.send(json.dumps({"message": chunk, "finish_reason": is_last_char}))
+            self.send(json.dumps({"event": "conversation", "message": chunk, "finish_reason": is_last_char}))
 
             # 마지막 글자에 도달하면 루프 종료
             if is_last_char == "stop":
@@ -96,11 +201,11 @@ class ChatConsumer(WebsocketConsumer):
 
             messages += chunk
             time.sleep(0.05)
-
         # GPTQuestion 객체를 생성하고 데이터베이스에 저장
-        GPTQuestion.objects.create(content=messages, chatroom=chatroom)
+        question = GPTQuestion.objects.create(content=messages, chatroom_id=chatroom)
+        question.save()
 
-    def pick_random_question(self, username):
+    def pick_random_question(self):
         pick_question = []
         while True:
             basic_questions_list = [
@@ -131,10 +236,31 @@ class ChatConsumer(WebsocketConsumer):
 
         return question
 
-    def situation_tuning(self, username, age, gender):
+    def situation_tuning(self, user, mood):
         self.conversation = [
             {
                 "role": "system",
-                "content": 'My name is '+username+' and My age is '+age+' and My gender is ' + gender + 'and you will talk to the child. Your purpose is to find out what the child is thinking. Continue the conversation with only soft and easy words like talking to the child. Please ask questions by referring to age, name, and gender. Just ask me one question unconditionally. And we will talk in Korean.'
+                "content": 'My name is '+user.username+' and My age is '+user.age+' and My gender is ' + user.gender + 'and My mood is '+ mood +'and you will talk to the child. Your purpose is to find out what the child is thinking. Continue the conversation with only soft and easy words like talking to the child. Please ask questions by referring to age, name, and gender. Just ask me one question unconditionally. And we will talk in Korean.'
             },
         ]
+
+    async def send_end_message(self):
+        content = "채팅을 종료 해야할 것 같아"
+        await asyncio.sleep(self.endTime)
+        messages = ""
+        # question_content의 index와 원소를 순차적으로 반환하여 스트리밍 형식으로 출력
+        for index, chunk in enumerate(content):
+            is_last_char = "incomplete"
+            # 현재 글자가 마지막 글자인지 확인
+            if index == len(content) - 1:
+                is_last_char = "stop"
+
+            # 메시지를 클라이언트로 바로 전송
+            self.send(json.dumps({"event": "chat_end","message": chunk, "finish_reason": is_last_char}))
+
+            # 마지막 글자에 도달하면 루프 종료
+            if is_last_char == "stop":
+                break
+
+            messages += chunk
+            time.sleep(0.05)
