@@ -2,32 +2,59 @@ import LoginInput from '../components/common/LoginInput';
 import Button from '../components/common/Btn';
 import { styled } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import { useInput } from '../hooks/useInput';
+import { baseInstance } from '../api/config';
 
 export default function LoginPage() {
+  const [id, idHandleChange] = useInput('');
+  const [pw, pwHandleChange] = useInput('');
+
   const navigate = useNavigate();
   const goToMain = () => {
     navigate('/signup');
+  };
+
+  const isButtonDisabled = !id || !pw;
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const data = { id: id, password: pw };
+
+    try {
+      const response = await baseInstance.post('/login', data);
+      console.log(response);
+    } catch (error) {
+      alert('다시 작성해주세요');
+      console.error(error);
+    }
   };
 
   return (
     <BackGround>
       <LoginLayout>
         <Login>로그인</Login>
+        <form onSubmit={onSubmit}></form>
         <LoginInput
-          marginBottom="2.74rem"
-          marginBottomP="2.71rem"
+          value={id}
+          onChange={idHandleChange}
+          marginbottom="2.74rem"
+          marginbottomp="2.71rem"
           type="아이디"
           placeholder="영문 + 숫자"
         ></LoginInput>
+
         <LoginInput
-          marginBottom="4.12rem"
-          marginBottomP="2.84rem"
+          value={pw}
+          onChange={pwHandleChange}
+          marginbottom="4.12rem"
+          marginbottomp="2.84rem"
           type="비밀번호"
           typeI="password"
           placeholder="6자리 이상"
         ></LoginInput>
-        <Button title="로그인"></Button>
-        <SignUp onClick={goToMain}>회원가입 하러가기</SignUp>
+        <Button disabled={isButtonDisabled} title="로그인"></Button>
+        <SignUp type="submit" onSubmit={goToMain}>
+          회원가입 하러가기
+        </SignUp>
       </LoginLayout>
       <Character />
     </BackGround>

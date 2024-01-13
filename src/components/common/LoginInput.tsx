@@ -1,61 +1,68 @@
 import { styled } from 'styled-components';
+import { useInput } from '../../hooks/useInput';
 
 interface AllProps {
   type?: string;
   typeI?: string;
   placeholder?: string;
-  marginBottom?: string;
-  marginBottomP?: string;
-  marginBottomPTT?: string;
+  marginbottom?: string;
+  marginbottomp?: string;
+  marginbottomptt?: string;
   width?: string;
-  widthP?: string;
+  widthp?: string;
 }
 
 export default function LoginInput({
   type = '종류',
   typeI = 'text',
   placeholder = 'placeholder',
-  marginBottom = '0px',
-  marginBottomP = '0px',
-  marginBottomPTT = '0.92rem',
+  marginbottom = '0px',
+  marginbottomp,
+  marginbottomptt,
   width = 'normal',
-  widthP = 'normal',
+  widthp,
+  value,
+  onChange,
 }: AllProps) {
   return (
     <Layout
       width={width}
-      widthP={widthP}
-      marginBottom={marginBottom}
-      marginBottomP={marginBottomP}
+      widthp={widthp}
+      marginbottom={marginbottom}
+      marginbottomp={marginbottomp}
     >
-      <InputType marginBottomPTT={marginBottomPTT}>{type}</InputType>
-      <InputLayout width={width} widthP={widthP}>
-        <input placeholder={placeholder} type={typeI}></input>
+      <InputType marginbottomptt={marginbottomptt}>{type}</InputType>
+      <InputLayout width={width} widthp={widthp}>
+        <input
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+          type={typeI}
+        ></input>
       </InputLayout>
     </Layout>
   );
 }
 
 const Layout = styled.div<{
-  marginBottom: string;
+  marginbottom: string;
   width: string;
-  marginBottomP: string;
-  widthP: string;
+  marginbottomp: string;
+  widthp: string;
 }>`
   @media all and (min-width: 391px) {
     width: ${(props) => (props.width === 'normal' ? '29.55rem' : props.width)};
     margin-bottom: ${(props) =>
-      props.marginBottom === 'normal' ? '50px' : props.marginBottom};
+      props.marginbottom === 'normal' ? '50px' : props.marginbottom};
   }
   @media (max-width: 390px) {
     width: ${(props) =>
-      props.widthP === 'normal' ? '17.75rem' : props.widthP};
-    margin-bottom: ${(props) =>
-      props.marginBottomP === 'normal' ? '2.71' : props.marginBottomP};
+      props.widthp === 'normal' ? '17.75rem' : props.widthp};
+    margin-bottom: ${(props) => props.marginbottomp};
   }
 `;
 
-const InputType = styled.div<{ marginBottomPTT: string }>`
+const InputType = styled.div<{ marginbottomptt: string }>`
   color: #414141;
   text-align: left;
   font-weight: bold;
@@ -73,14 +80,13 @@ const InputType = styled.div<{ marginBottomPTT: string }>`
     width: 9rem;
     height: 1.58481rem;
     font-size: 1rem;
-    margin-bottom: ${(props) =>
-      props.marginBottomPTT === 'normal' ? '0.92rem' : props.marginBottomPTT};
+    margin-bottom: ${(props) => props.marginbottomptt};
   }
 `;
 
 const InputLayout = styled.div<{
   width: string;
-  widthP: string;
+  widthp: string;
 }>`
   display: flex;
   align-items: center;
@@ -95,7 +101,7 @@ const InputLayout = styled.div<{
   }
   @media (max-width: 390px) {
     width: ${(props) =>
-      props.widthP === 'normal' ? '16.37706rem' : props.widthP};
+      props.widthp === 'normal' ? '16.37706rem' : props.widthp};
     height: 2.35031rem;
     border-radius: 0.44rem;
   }

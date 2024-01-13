@@ -26,23 +26,23 @@ export default function SignupPage() {
             <DirectionRow>
               <LoginInput
                 width="19.0625rem"
-                widthP="11.569rem"
+                widthp="11.569rem"
                 type="아이디"
                 placeholder="영문 + 숫자"
-                marginBottom="0.47rem"
-                marginBottomPTT="0.06rem"
+                marginbottom="0.47rem"
+                marginbottomptt="0.06rem"
               ></LoginInput>
               <Button
                 title="중복확인"
                 width="9.1875rem"
-                widthP="5.8125rem"
-                marginL="1.31rem"
-                marginLP="0.76rem"
-                marginT="1.4rem"
-                marginTP="1.5rem"
+                widthp="5.8125rem"
+                marginl="1.31rem"
+                marginlp="0.76rem"
+                margint="1.4rem"
+                margintp="1.5rem"
                 fontS="1.125rem"
                 fontSP="0.875rem"
-                borderR="0.875rem"
+                borderr="0.875rem"
               ></Button>
             </DirectionRow>
             <Left>
@@ -54,16 +54,16 @@ export default function SignupPage() {
               type="비밀번호"
               typeI="password"
               placeholder="6자리 이상"
-              marginBottom="1.31rem"
-              marginBottomP="2.09rem"
-              marginBottomPTT="0.06rem"
+              marginbottom="1.31rem"
+              marginbottomP="2.09rem"
+              marginbottomptt="0.06rem"
             ></LoginInput>
             <LoginInput
               type="비밀번호 확인"
               typeI="password"
               placeholder="6자리 이상"
-              marginBottom="0.47rem"
-              marginBottomPTT="0.06rem"
+              marginbottom="0.47rem"
+              marginbottomptt="0.06rem"
             ></LoginInput>
             <Left>
               <IdCheck>
@@ -85,16 +85,16 @@ export default function SignupPage() {
             <LoginInput
               type="이름"
               placeholder="자녀분의 이름을 입력해주세요."
-              marginBottom="2.25rem"
-              marginBottomP="2.2rem"
-              marginBottomPTT="0.06rem"
+              marginbottom="2.25rem"
+              marginbottomP="2.2rem"
+              marginbottomptt="0.06rem"
             ></LoginInput>
             <LoginInput
               type="생년월일"
               placeholder="EX.) 2017-01-01"
-              marginBottom="2.25rem"
-              marginBottomP="1.7rem"
-              marginBottomPTT="0.03rem"
+              marginbottom="2.25rem"
+              marginbottomP="1.7rem"
+              marginbottomptt="0.03rem"
             ></LoginInput>
             <GenderLayout>
               <Gender>성별</Gender>
@@ -116,8 +116,8 @@ export default function SignupPage() {
             <Button
               title="확인"
               width="14.24731rem"
-              marginT="1.5rem"
-              marginTP="0.6rem"
+              margint="1.5rem"
+              margintp="0.6rem"
               onClick={goToLogin}
             ></Button>
             <SignUp onClick={goToLogin}>로그인 하러가기</SignUp>
