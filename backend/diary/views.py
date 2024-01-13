@@ -1,9 +1,34 @@
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Diary
 from django.http import Http404
+
+class DiaryCreateView(APIView):
+    @swagger_auto_schema(operation_id='일기 생성')
+    @method_decorator(login_required)
+    def post(self, request, format=None):
+        user = request.user
+        content = request.data.get('content')
+        summary = request.data.get('summary')  # gpt가 요약해준 내용
+        img_url = request.data.get('img_url')  # dall-e가 생성해 준 이미지
+
+        diary = Diary.objects.create(
+            user=user,
+            content=content,
+            summary=summary,
+            img_url=img_url
+        )
+        return Response(
+            {
+                "status": status.HTTP_201_CREATED,
+                "message": "일기 생성 성공",
+                "diaryId": diary.id
+            }, status=status.HTTP_201_CREATED
+        )
 
 class DiaryView(APIView):
     def get_object(self, diary_id):
