@@ -8,14 +8,13 @@ import openai
 from channels.generic.websocket import WebsocketConsumer
 from dotenv import load_dotenv
 import asyncio
-
-from backend.storage import get_file_url
-from backend.stt import speach_to_text
+from storage import get_file_url
+from stt import speach_to_text
 from .models import *
 import logging
 
 load_dotenv()
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 logger = logging.getLogger(__name__)
 
 class ChatConsumer(WebsocketConsumer):
@@ -35,7 +34,6 @@ class ChatConsumer(WebsocketConsumer):
         # JSON 문자열을 파이썬 객체로 변환
         if text_data is not None:
             json.loads(text_data)
-
         self.chat_room_id = self.scope["url_route"]["kwargs"]["roomid"]
         self.accept()
 
@@ -56,8 +54,9 @@ class ChatConsumer(WebsocketConsumer):
             )
         )
 
-        #종료 메세지 보내기
-        asyncio.ensure_future(self.send_end_message())
+        # 종료 메세지 보내기
+        # loop = asyncio.get_event_loop()
+        # asyncio.create_task(self.send_end_message())
     def receive(self, text_data):
         if text_data:
             res = json.loads(text_data)
@@ -85,8 +84,10 @@ class ChatConsumer(WebsocketConsumer):
                 self.default_conversation(self.chatroom, question_content)
                 self.add_answer(answer=None)
                 self.add_question(question=question_content)
+                print(self.conversation)
             # 음성 대답
             elif event == "user_answer":
+                """
                 # base64 디코딩
                 audio_blob = data["audioBlob"]
                 audio_data = base64.b64decode(audio_blob)
@@ -96,6 +97,9 @@ class ChatConsumer(WebsocketConsumer):
 
                 # 오디오 파일 STT로 텍스트 변환
                 answer = speach_to_text(audio_file)
+                """
+                # 임시 코드
+                answer = "재밌게 놀았어"
 
                 # answer을 conversation 저장
                 self.add_answer(answer=answer)
@@ -105,7 +109,7 @@ class ChatConsumer(WebsocketConsumer):
 
                 # conversation 질문, 답변 저장
                 self.add_question(question=question)
-
+                """
                 # GPT 질문 전송 (음성 파일로 줘야됨?)
                 self.continue_conversation(self, self.chatroom)
 
@@ -115,6 +119,7 @@ class ChatConsumer(WebsocketConsumer):
                 # UserAnswer DB 저장 (택스트, 오디오 파일 URL)
                 answer = UserAnswer.objects.create(question_id=self.present_question_id, content=answer, audio_url=url)
                 answer.save()
+                """
             # 대화 종료
             elif event == "conversation_end":
                 self.send(json.dumps({"message": "", "finish_reason": ""}))
@@ -140,6 +145,8 @@ class ChatConsumer(WebsocketConsumer):
         # 사용자 답변 저장
         UserAnswer.objects.create(question_id=question, content=answer)
 
+
+    def add_question(self, question):
         self.conversation.append(
             {
                 "role": "assistant",
@@ -163,7 +170,7 @@ class ChatConsumer(WebsocketConsumer):
             )
     def continue_conversation(self, chatroom):
         messages = ""
-        for chunk in openai.ChatCompletion.create(
+        for chunk in openai.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=self.conversation,
                 temperature=0.9,
@@ -241,7 +248,7 @@ class ChatConsumer(WebsocketConsumer):
         self.conversation = [
             {
                 "role": "system",
-                "content": 'My name is '+user.username+' and My age is '+user.age+' and My gender is ' + user.gender + 'and My mood is '+ mood +'and you will talk to the child. Your purpose is to find out what the child is thinking. Continue the conversation with only soft and easy words like talking to the child. Please ask questions by referring to age, name, and gender. Just ask me one question unconditionally. And we will talk in Korean.'
+                "content": 'My name is '+user.username+' and My age is '+str(user.age)+' and My gender is ' + user.gender + 'and My mood is '+ mood +'and you will talk to the child. Your purpose is to find out what the child is thinking. Continue the conversation with only soft and easy words like talking to the child. Please ask questions by referring to age, name, and gender. Just ask me one question unconditionally. And we will talk in Korean.'
             },
         ]
 

@@ -1,9 +1,13 @@
 import os
 import sys
 import requests
+from dotenv import load_dotenv
+
+
 def speach_to_text(data):
-    client_id = os.getenv("clova_id")
-    client_secret = os.getenv("clova_secret")
+    load_dotenv()
+    client_id = os.getenv("CLOVA_ID")
+    client_secret = os.getenv("CLOVA_SECRET")
     lang = "Kor"  # 언어 코드 ( Kor, Jpn, Eng, Chn )
     url = "https://naveropenapi.apigw.ntruss.com/recog/v1/stt?lang=" + lang
     headers = {
@@ -14,7 +18,6 @@ def speach_to_text(data):
     response = requests.post(url, data=data, headers=headers)
     rescode = response.status_code
     if (rescode == 200):
-        print(response.text)
         return response.text
     else:
         print("Error : " + response.text)
