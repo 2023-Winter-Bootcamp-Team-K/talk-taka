@@ -13,7 +13,8 @@ type ButtonProps = {
   fonts?: string;
   fontsp?: string;
   borderr?: string;
-  onClick?: () => void;
+  disabled?: boolean;
+  onClick: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
 };
 
 export default function Button({
@@ -30,11 +31,12 @@ export default function Button({
   fontsp = '1.125rem',
   borderr = '5rem',
   onClick,
-  disabled,
+  disabled = false,
 }: ButtonProps) {
   return (
     <ButtonLayout>
       <Btn
+        onClick={onClick}
         width={width}
         widthp={widthp}
         height={height}
@@ -46,7 +48,6 @@ export default function Button({
         fonts={fonts}
         fontsp={fontsp}
         borderr={borderr}
-        onClick={onClick}
         disabled={disabled}
       >
         {title}
@@ -70,6 +71,7 @@ const Btn = styled.button<{
   fontsp: string;
   borderr: string;
   disabled: boolean;
+  onClick: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
 }>`
   /* text */
   all: unset;

@@ -20,10 +20,10 @@ export default function LoginPage() {
     const data = { id: id, password: pw };
 
     try {
-      const response = await baseInstance.post('/login', data);
+      const response = await baseInstance.post('/auth/login/', data);
       console.log(response);
     } catch (error) {
-      alert('다시 작성해주세요');
+      // alert('다시 작성해주세요');
       console.error(error);
     }
   };
@@ -32,7 +32,7 @@ export default function LoginPage() {
     <BackGround>
       <LoginLayout>
         <Login>로그인</Login>
-        <form onSubmit={onSubmit}></form>
+        {/* <form onSubmit={onSubmit}> */}
         <LoginInput
           value={id}
           onChange={idHandleChange}
@@ -51,10 +51,15 @@ export default function LoginPage() {
           typeI="password"
           placeholder="6자리 이상"
         ></LoginInput>
-        <Button disabled={isButtonDisabled} title="로그인"></Button>
-        <SignUp type="submit" onSubmit={goToMain}>
+        <Button
+          onClick={onSubmit}
+          disabled={isButtonDisabled}
+          title="로그인"
+        ></Button>
+        <SignUp type="submit" onClick={goToMain}>
           회원가입 하러가기
         </SignUp>
+        {/* </form> */}
       </LoginLayout>
       <Character />
     </BackGround>

@@ -1,5 +1,4 @@
 import { styled } from 'styled-components';
-import { useInput } from '../../hooks/useInput';
 
 interface AllProps {
   type?: string;
@@ -10,6 +9,12 @@ interface AllProps {
   marginbottomptt?: string;
   width?: string;
   widthp?: string;
+  value?: string;
+  onChange?: (
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLTextAreaElement>
+  ) => void;
 }
 
 export default function LoginInput({
@@ -17,10 +22,10 @@ export default function LoginInput({
   typeI = 'text',
   placeholder = 'placeholder',
   marginbottom = '0px',
-  marginbottomp,
-  marginbottomptt,
+  marginbottomp = '0px',
+  marginbottomptt = '0.92rem',
   width = 'normal',
-  widthp,
+  widthp = 'normal',
   value,
   onChange,
 }: AllProps) {
@@ -47,7 +52,7 @@ export default function LoginInput({
 const Layout = styled.div<{
   marginbottom: string;
   width: string;
-  marginbottomp: string;
+  marginbottomp?: string;
   widthp: string;
 }>`
   @media all and (min-width: 391px) {

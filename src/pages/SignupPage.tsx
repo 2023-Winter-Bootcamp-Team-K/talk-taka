@@ -40,8 +40,8 @@ export default function SignupPage() {
                 marginlp="0.76rem"
                 margint="1.4rem"
                 margintp="1.5rem"
-                fontS="1.125rem"
-                fontSP="0.875rem"
+                fonts="1.125rem"
+                fontsp="0.875rem"
                 borderr="0.875rem"
               ></Button>
             </DirectionRow>
@@ -55,7 +55,7 @@ export default function SignupPage() {
               typeI="password"
               placeholder="6자리 이상"
               marginbottom="1.31rem"
-              marginbottomP="2.09rem"
+              marginbottomp="2.09rem"
               marginbottomptt="0.06rem"
             ></LoginInput>
             <LoginInput
@@ -86,14 +86,14 @@ export default function SignupPage() {
               type="이름"
               placeholder="자녀분의 이름을 입력해주세요."
               marginbottom="2.25rem"
-              marginbottomP="2.2rem"
+              marginbottomp="2.2rem"
               marginbottomptt="0.06rem"
             ></LoginInput>
             <LoginInput
               type="생년월일"
               placeholder="EX.) 2017-01-01"
               marginbottom="2.25rem"
-              marginbottomP="1.7rem"
+              marginbottomp="1.7rem"
               marginbottomptt="0.03rem"
             ></LoginInput>
             <GenderLayout>
