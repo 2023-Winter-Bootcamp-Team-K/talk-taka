@@ -15,7 +15,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import JSONParser
 from .serializers import ChatRoomSerializer
-from users.models import User
 
 from .models import GPTQuestion, UserAnswer
 
@@ -23,7 +22,7 @@ from .models import GPTQuestion, UserAnswer
 def index(request):
     return render(request, 'chat/index.html', {})
 
-load_dotenv
+load_dotenv()
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
 class GPTAnswerView(APIView):
@@ -76,35 +75,28 @@ class GPTAnswerView(APIView):
 
         return gpt_answer_content
 
-class ImageView(APIView):
-    parser_classes = (JSONParser,)
-    def post(self, request, *args, **kwargs):
-        # 요약 내용을 요청 데이터에서 받아옵니다.
-        summary = request.data.get('summary')
+def generate_image(content): # openai 이용하여 이미지 생성하는 함수
 
-        # 요약 내용을 이용하여 이미지를 생성합니다.
-        image_url = self.generate_image(summary)
-        if image_url is None:
-            return Response({"message": "이미지 생성 실패"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    messages = []
+    promptmessages = "요약 내용을 바탕으로 이미지를 생성해줘."
 
-        return Response({'image_url': image_url}, status=status.HTTP_200_OK)
+    story_content = promptmessages+content
+    messages.append({"role": "user", "content": story_content})
 
-    def generate_image(self, prompt):
-        try:
-            response = openai.images.generate(
-                model="dall-e-3",
-                prompt=prompt,  # 요약된 내용을 prompt로 사용
-                size="1024x1024",
-                quality="standard",
-                n=1,
-            )
-            # 이미지 URL 추출 및 반환
-            image_url = response.data[0].url
-            return image_url
-        except Exception as e:
-            # 오류 처리
-            print(f"이미지 생성 중 예외 발생: {e}")
-            return None
+    completion = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=messages
+    )
+    assistant_response = completion['choices'][0]['message']['content']
+
+    messages.append({"role": "assistant", "content": assistant_response})
+
+    prompt = assistant_response[0:999] # 프롬프트가 1000자가 최대이므로
+
+    response = openai.Image.create(prompt=prompt, n=1, size="1024*1024") # gpt에게 받은 프롬프팅을 전달하여 그림생성
+    image_url = response["data"][0]["url"]
+
+    return image_url  # 임시로 이미지 url을 리턴하도록 설정
 
 class ChatRoomCreateView(APIView):
 
