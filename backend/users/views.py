@@ -97,3 +97,5 @@ class DeleteUserView(generics.DestroyAPIView):
 def hello(request):
     data = {'message': 'hello world'}
     return JsonResponse(data)
+
+
