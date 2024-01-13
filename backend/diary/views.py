@@ -7,28 +7,33 @@ from rest_framework.response import Response
 from .models import Diary
 from django.http import Http404
 
+
 class DiaryCreateView(APIView):
     @swagger_auto_schema(operation_id='일기 생성')
-    @method_decorator(login_required)
     def post(self, request, format=None):
-        user = request.user
-        content = request.data.get('content')
-        summary = request.data.get('summary')  # gpt가 요약해준 내용
-        img_url = request.data.get('img_url')  # dall-e가 생성해 준 이미지
+        if request.user.is_authenticated:
+            content = request.data.get("content")
+            summary = request.data.get("summary")  # GPT에 의해 생성된 요약
+            img_url = request.data.get("img_url")  # DALL-E에 의해 생성된 이미지 URL
 
-        diary = Diary.objects.create(
-            user=user,
-            content=content,
-            summary=summary,
-            img_url=img_url
-        )
-        return Response(
-            {
-                "status": status.HTTP_201_CREATED,
+            # 일기 생성
+            diary = Diary.objects.create(
+                user=request.user,
+                content=content,
+                summary=summary,
+                img_url=img_url
+            )
+            return Response({
+                "status": "200",
                 "message": "일기 생성 성공",
                 "diaryId": diary.id
-            }, status=status.HTTP_201_CREATED
-        )
+            }, status=status.HTTP_201_CREATED)
+        else:
+            return Response({
+                "status": "401",
+                "message": "인증되지 않은 사용자"
+            }, status=status.HTTP_401_UNAUTHORIZED)
+
 
 class DiaryView(APIView):
     def get_object(self, diary_id):
