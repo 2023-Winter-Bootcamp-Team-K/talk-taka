@@ -6,9 +6,17 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 
 # User 관리하는 Manager
 class CustomUserManager(BaseUserManager):
-    def create_user(self, username, password=None, **extra_fields):
+    def create_user(self, id, username, password=None, **extra_fields):
+        if not id:
+            raise ValueError('Users must have an id')
         if not username:
             raise ValueError('Users must have a username')
+
+        user = self.model(
+            id=id,
+            username=username,
+            **extra_fields
+        )
 
         user = self.model(
             username=username,
@@ -19,11 +27,19 @@ class CustomUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, password=None, **extra_fields):
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
+    def create_superuser(self, id, username, password=None,**extra_fields):
+        user = self.create_user(
+            id=id,
+            username=username,
+            password=password,
+            **extra_fields
+        )
 
-        return self.create_user(username, password, **extra_fields)
+        user.is_admin = True
+        user.is_staff = True
+        user.is_superuser = True
+        user.save(using=self._db)
+        return user
 
 
 # 삭제 기능 추가
@@ -53,8 +69,8 @@ class User(AbstractBaseUser, PermissionsMixin, SoftDeleteModel):
         (FEMALE, 'Female'),
         (OTHER, 'Other'),
     ]
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    username = models.CharField(max_length=30, unique=True)
+    id = models.CharField(max_length=255, primary_key=True, unique=True)
+    username = models.CharField(max_length=30)
     profile_picture = models.CharField(max_length=200, null=True)
     age = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True, blank=True)
@@ -67,8 +83,11 @@ class User(AbstractBaseUser, PermissionsMixin, SoftDeleteModel):
     # Custom manager
     objects = CustomUserManager()
 
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
+    groups = models.ManyToManyField('auth.Group', related_name='user_groups', blank=True)
+    user_permissions = models.ManyToManyField('auth.Permission', related_name='user_permissions', blank=True)
+
+    USERNAME_FIELD = 'id'
+    REQUIRED_FIELDS = ['username', ]
 
     def __str__(self):
-        return self.username
+        return self.id

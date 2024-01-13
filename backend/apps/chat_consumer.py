@@ -121,23 +121,24 @@ class ChatConsumer(WebsocketConsumer):
 
 
     def disconnect(self, closed_code):
-        """
-        # ChatRoom 모델에서 현재 사용자의 ID에 해당하는 데이터를 가져옴
-        try:
-            chatroom = ChatRoom.objects.get(chatroom_id=closed_code)
-        except ChatRoom.DoesNotExist:
-            # 해당 ChatRoom이 존재하지 않는 경우, 함수를 종료합니다.
-            return
+        self.chatroom.delete_at = timezone.now()
+        self.chatroom.save()
 
-        # 연결된 ChatRoom과 관련된 GPTQuestion과 UserAnswer를 모두 삭제
-        GPTQuestion.objects.filter(chatroom=chatroom).delete()
-        UserAnswer.objects.filter(question__chatroom=chatroom).delete()
+    def create_chatroom(self):
+        user_id = self.get_user_id()
+        mood = self.get_user_mood()
+        # 새 채팅방 생성 로직
+        # 적절한 user_id 및 mood 값을 설정
+        chatroom = ChatRoom.objects.create(user_id=user_id, mood=mood)
+        return chatroom
 
-        # 마지막으로 ChatRoom 자체를 삭제합니다.
-        chatroom.delete()
-        """
-    # 질문과 대화 저장
-    def add_question(self, question):
+    def save_gpt_question(self, content):
+        # GPT 질문 저장
+        GPTQuestion.objects.create(chatroom_id=self.chatroom, content=content)
+
+    def save_user_answer(self, question, answer):
+        # 사용자 답변 저장
+        UserAnswer.objects.create(question_id=question, content=answer)
 
         self.conversation.append(
             {
