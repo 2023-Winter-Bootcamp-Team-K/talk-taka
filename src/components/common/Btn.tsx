@@ -14,7 +14,7 @@ type ButtonProps = {
   fontsp?: string;
   borderr?: string;
   disabled?: boolean;
-  onClick: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  onClick?: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
 };
 
 export default function Button({
