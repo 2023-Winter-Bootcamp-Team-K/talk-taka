@@ -4,7 +4,7 @@ import random
 import time
 import base64
 from django.core.files.base import ContentFile
-import openai
+from openai import OpenAI
 from channels.generic.websocket import WebsocketConsumer
 from dotenv import load_dotenv
 import asyncio
@@ -27,7 +27,7 @@ class ChatConsumer(WebsocketConsumer):
         self.endTime = 10
         # 대화 기록을 저장할 리스트
         self.conversation = []
-        self.client = openai.OpenAI()
+        self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     # 클라이언트와 연결
     def connect(self, text_data=None):
@@ -87,7 +87,6 @@ class ChatConsumer(WebsocketConsumer):
                 print(self.conversation)
             # 음성 대답
             elif event == "user_answer":
-                """
                 # base64 디코딩
                 audio_blob = data["audioBlob"]
                 audio_data = base64.b64decode(audio_blob)
@@ -97,9 +96,9 @@ class ChatConsumer(WebsocketConsumer):
 
                 # 오디오 파일 STT로 텍스트 변환
                 answer = speach_to_text(audio_file)
-                """
+
                 # 임시 코드
-                answer = "재밌게 놀았어"
+                # answer = "재밌게 놀았어"
 
                 # answer을 conversation 저장
                 self.add_answer(answer=answer)
@@ -139,11 +138,12 @@ class ChatConsumer(WebsocketConsumer):
 
     def save_gpt_question(self, content):
         # GPT 질문 저장
-        GPTQuestion.objects.create(chatroom_id=self.chatroom, content=content)
-
-    def save_user_answer(self, question, answer):
+        question = GPTQuestion.objects.create(chatroom_id=self.chatroom, content=content)
+        question.save()
+    def save_user_answer(self, question, content):
         # 사용자 답변 저장
-        UserAnswer.objects.create(question_id=question, content=answer)
+        answer = UserAnswer.objects.create(question_id=question, content=content)
+        answer.save()
 
 
     def add_question(self, question):
@@ -170,25 +170,25 @@ class ChatConsumer(WebsocketConsumer):
             )
     def continue_conversation(self, chatroom):
         messages = ""
-        for chunk in openai.chat.completions.create(
+
+        for chunk in self.client.chat.completions.create(
                 model="gpt-3.5-turbo",
                 messages=self.conversation,
                 temperature=0.9,
                 stream=True,
         ):
             finish_reason = chunk.choices[0].finish_reason
-            if chunk.choices[0].finish_reason == "stop":
-                self.send(json.dumps({"event":"conversation","message": "chat stop", "finish_reason": finish_reason}))
+
+            if finish_reason == "stop":
                 break
 
-            message = chunk.choices[0].delta["content"]
+            response_message = chunk.choices[0].delta.content
+            # 메시지 조각를 클라이언트로 바로 전송
+            self.send(json.dumps({"message": response_message, "finish_reason": finish_reason}))
+            # 메시지 조각 합침
+            messages += response_message
 
-            messages += message
-            # 메시지를 클라이언트로 바로 전송
-            self.send(json.dumps({"message": message, "finish_reason": finish_reason}))
-        # print(self.conversation)
-        question = GPTQuestion.objects.create(content=messages, chatroom_id=chatroom)
-        question.save()
+        self.save_gpt_question(content=messages)
         return messages
 
     def default_conversation(self, chatroom, question_content):
