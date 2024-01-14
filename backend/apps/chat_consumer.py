@@ -95,6 +95,7 @@ class ChatConsumer(WebsocketConsumer):
                 # 오디오 파일로 변환
                 audio_file = ContentFile(audio_data)
 
+                # 오디오 파일 S3에 저장
                 audio_file_url = get_file_url("audio", audio_file)
                 self.default_audio_file_urls.append(audio_file_url)
 
@@ -112,12 +113,9 @@ class ChatConsumer(WebsocketConsumer):
 
                 # conversation 질문, 답변 저장
                 self.add_question(question=question)
-
-                # 오디오 파일 S3에 저장
-
-
+                print(audio_file_url)
                 # UserAnswer DB 저장 (택스트, 오디오 파일 URL)
-                self.save_user_answer(question=self.present_question, content= question, url=url)
+                self.save_user_answer(question=self.present_question, content=question, url=audio_file_url)
             # 3. 대화 종료
             elif event == "conversation_end":
                 self.send(json.dumps({"message": "", "finish_reason": ""}))
@@ -136,7 +134,7 @@ class ChatConsumer(WebsocketConsumer):
 
     def save_user_answer(self, question, content, url):
         # 사용자 답변 저장
-        answer = UserAnswer.objects.create(question_id=question, content=content, url=url)
+        answer = UserAnswer.objects.create(question_id=question, content=content, audio_url=url)
         answer.save()
 
     def add_question(self, question):
