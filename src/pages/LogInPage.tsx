@@ -4,6 +4,7 @@ import { styled } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { useInput } from '../hooks/useInput';
 import { baseInstance } from '../api/config';
+import { setCookie } from '../utils/cookie';
 
 export default function LoginPage() {
   const [id, idHandleChange] = useInput('');
@@ -17,13 +18,21 @@ export default function LoginPage() {
   const isButtonDisabled = !id || !pw;
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     const data = { id: id, password: pw };
 
     try {
       const response = await baseInstance.post('/auth/login/', data);
-      console.log(response);
+      if (response.data.status === 200) {
+        navigate('/main');
+        setCookie('token', response.data.access, {
+          path: '/',
+          secure: true,
+          maxAge: 3000,
+        });
+      }
     } catch (error) {
-      // alert('다시 작성해주세요');
+      alert('아이디 정보가 올바르지 않습니다.');
       console.error(error);
     }
   };
@@ -32,34 +41,34 @@ export default function LoginPage() {
     <BackGround>
       <LoginLayout>
         <Login>로그인</Login>
-        {/* <form onSubmit={onSubmit}> */}
-        <LoginInput
-          value={id}
-          onChange={idHandleChange}
-          marginbottom="2.74rem"
-          marginbottomp="2.71rem"
-          type="아이디"
-          placeholder="영문 + 숫자"
-        ></LoginInput>
+        <form onSubmit={onSubmit}>
+          <LoginInput
+            value={id}
+            onChange={idHandleChange}
+            marginbottom="2.74rem"
+            marginbottomp="2.71rem"
+            type="아이디"
+            placeholder="영문 + 숫자"
+          ></LoginInput>
 
-        <LoginInput
-          value={pw}
-          onChange={pwHandleChange}
-          marginbottom="4.12rem"
-          marginbottomp="2.84rem"
-          type="비밀번호"
-          typeI="password"
-          placeholder="6자리 이상"
-        ></LoginInput>
-        <Button
-          onClick={onSubmit}
-          disabled={isButtonDisabled}
-          title="로그인"
-        ></Button>
-        <SignUp type="submit" onClick={goToMain}>
-          회원가입 하러가기
-        </SignUp>
-        {/* </form> */}
+          <LoginInput
+            value={pw}
+            onChange={pwHandleChange}
+            marginbottom="4.12rem"
+            marginbottomp="2.84rem"
+            type="비밀번호"
+            typeI="password"
+            placeholder="6자리 이상"
+          ></LoginInput>
+          <Button
+            // onClick={onSubmit}
+            disabled={isButtonDisabled}
+            title="로그인"
+          ></Button>
+          <SignUp type="submit" onClick={goToMain}>
+            회원가입 하러가기
+          </SignUp>
+        </form>
       </LoginLayout>
       <Character />
     </BackGround>
@@ -98,6 +107,7 @@ const LoginLayout = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 
   @media all and (min-width: 391px) {
     width: 34.75rem;
@@ -106,6 +116,13 @@ const LoginLayout = styled.div`
   @media (max-width: 390px) {
     width: 21.4375rem;
     height: 32.625rem;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 `;
 
