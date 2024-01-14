@@ -115,7 +115,7 @@ class ChatConsumer(WebsocketConsumer):
                 self.add_question(question=question)
                 print(audio_file_url)
                 # UserAnswer DB 저장 (택스트, 오디오 파일 URL)
-                self.save_user_answer(question=self.present_question, content=question, url=audio_file_url)
+                self.save_user_answer(question=self.present_question, content=answer, url=audio_file_url)
             # 3. 대화 종료
             elif event == "conversation_end":
                 self.send(json.dumps({"message": "", "finish_reason": ""}))
