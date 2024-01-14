@@ -3,9 +3,8 @@ import boto3
 from dotenv import load_dotenv
 import uuid
 
-
+load_dotenv()
 def get_file_url(file_type, file):
-    load_dotenv() #.env 파일에서 환경 변수를 로드
     # AWS SDK 클라이언트 생성:
     s3_client = boto3.client(
         's3',
@@ -21,6 +20,7 @@ def get_file_url(file_type, file):
     else:
         file_key = "profile_image/" + str(uuid.uuid4()) + ".jpg"
 
+    print(os.environ.get("AWS_STORAGE_BUCKET_NAME"))
     # 파일을 S3 버킷에 업로드
     s3_client.put_object(Body=file, Bucket=os.environ.get("AWS_STORAGE_BUCKET_NAME"), Key=file_key)
     # 업로드된 파일의 URL을 구성 = FILE_URL + 앞서 생성된 파일 키를 결합하여 만들어짐

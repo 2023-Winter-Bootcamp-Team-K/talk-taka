@@ -22,7 +22,7 @@ class ChatConsumer(WebsocketConsumer):
         super().__init__(*args, **kwargs)
         self.chat_room_id = None
         self.chatroom = None
-        self.present_question_id = None
+        self.present_question = None
         self.user = None
         self.endTime = 10
         # 대화 기록을 저장할 리스트
@@ -64,7 +64,7 @@ class ChatConsumer(WebsocketConsumer):
             event = res.get("event")
             data = res.get("data")
             logger.info(res)
-            # 첫 대화 시작
+            # 1. 첫 대화 시작
             if event == "conversation_start":
                 # 기분 room에 추가
                 mood = data.get("mood")
@@ -85,8 +85,8 @@ class ChatConsumer(WebsocketConsumer):
                 self.default_conversation(self.chatroom, question_content)
                 self.add_answer(answer=None)
                 self.add_question(question=question_content)
-                print(self.conversation)
-            # 음성 대답
+                #print(self.conversation)
+            # 2. 음성 대답
             elif event == "user_answer":
                 # base64 디코딩
                 audio_blob = data["audioBlob"]
@@ -95,6 +95,7 @@ class ChatConsumer(WebsocketConsumer):
                 # 오디오 파일로 변환
                 audio_file = ContentFile(audio_data)
 
+                # 오디오 파일 S3에 저장
                 audio_file_url = get_file_url("audio", audio_file)
                 self.default_audio_file_urls.append(audio_file_url)
 
@@ -112,43 +113,30 @@ class ChatConsumer(WebsocketConsumer):
 
                 # conversation 질문, 답변 저장
                 self.add_question(question=question)
-
-                # GPT 질문 전송 (음성 파일로 줘야됨?)
-                self.continue_conversation(self.chatroom)
-
-                # 오디오 파일 S3에 저장
-
-
+                print(audio_file_url)
                 # UserAnswer DB 저장 (택스트, 오디오 파일 URL)
-                answer = UserAnswer.objects.create(question_id=self.present_question_id, content=answer, audio_url=url)
-                answer.save()
-
-            # 대화 종료
+                self.save_user_answer(question=self.present_question, content=answer, url=audio_file_url)
+            # 3. 대화 종료
             elif event == "conversation_end":
                 self.send(json.dumps({"message": "", "finish_reason": ""}))
+                self.close()
 
 
     def disconnect(self, closed_code):
         self.chatroom.delete_at = timezone.now()
         self.chatroom.save()
 
-    def create_chatroom(self):
-        user_id = self.get_user_id()
-        mood = self.get_user_mood()
-        # 새 채팅방 생성 로직
-        # 적절한 user_id 및 mood 값을 설정
-        chatroom = ChatRoom.objects.create(user_id=user_id, mood=mood)
-        return chatroom
-
     def save_gpt_question(self, content):
         # GPT 질문 저장
         question = GPTQuestion.objects.create(chatroom_id=self.chatroom, content=content)
         question.save()
-    def save_user_answer(self, question, content):
-        # 사용자 답변 저장
-        answer = UserAnswer.objects.create(question_id=question, content=content)
-        answer.save()
+        # 현재 질문 설정
+        self.present_question = question
 
+    def save_user_answer(self, question, content, url):
+        # 사용자 답변 저장
+        answer = UserAnswer.objects.create(question_id=question, content=content, audio_url=url)
+        answer.save()
 
     def add_question(self, question):
         self.conversation.append(
