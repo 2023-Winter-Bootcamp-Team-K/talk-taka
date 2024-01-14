@@ -119,6 +119,7 @@ class ChatConsumer(WebsocketConsumer):
             # 3. 대화 종료
             elif event == "conversation_end":
                 self.send(json.dumps({"message": "", "finish_reason": ""}))
+                self.close()
 
 
     def disconnect(self, closed_code):
