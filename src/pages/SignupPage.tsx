@@ -23,6 +23,11 @@ export default function SignupPage() {
   const [isAge, setIsAge] = useState<boolean>(false);
   const [isName, setIsName] = useState<boolean>(false);
 
+  //색상 변수
+  const [ChangeColorId, setChangeColorId] = useState('#c42c21');
+  const [ChangeColorPw, setChangeColorPw] = useState('#c42c21');
+  const [ChangeColorPwCk, setChangeColorPwCk] = useState('#c42c21');
+
   // 오류메시지 상태저장
   const [idMessage, setIdMessage] = useState<string>(
     '✖ 영문+숫자 조합으로 입력해주세요!'
@@ -57,10 +62,8 @@ export default function SignupPage() {
   };
 
   const goToLoginConfirm = () => {
-    console.log(isName, isAge, isgoToLoginDisabled);
-
     if (isgoToLoginDisabled == true) {
-      navigate('/login');
+      onSubmit();
     } else {
       alert('형식에 맞지 않음!');
     }
@@ -79,10 +82,12 @@ export default function SignupPage() {
     setId(IdCurrent);
 
     if (!IdRegex.test(IdCurrent)) {
-      setIdMessage('✖ 영문+숫자 조합으로 입력해주세요!');
+      setIdMessage('✖ 영문+숫자 조합으로 입력해주세요.');
+      setChangeColorId('#c42c21');
       setIsId(false);
     } else {
-      setIdMessage('✔정확해!');
+      setIdMessage('✔ 사용가능한 아이디입니다.');
+      setChangeColorId('#1b8845');
       setIsId(true);
     }
   }, []);
@@ -93,10 +98,12 @@ export default function SignupPage() {
     setPw(PwCurrent);
 
     if (!PwRegex.test(PwCurrent)) {
-      setPasswordMessage('✖ 영문+숫자 조합으로 입력해주세요!');
+      setPasswordMessage('✖ 영문+숫자 조합으로 입력해주세요.');
+      setChangeColorPw('#c42c21');
       setIsPassword(false);
     } else {
-      setPasswordMessage('✔ 잘했어!');
+      setPasswordMessage('✔ 사용가능한 비밀번호입니다.');
+      setChangeColorPw('#1b8845');
       setIsPassword(true);
     }
   }, []);
@@ -107,10 +114,12 @@ export default function SignupPage() {
       setPwCk(PwCkCurrent);
 
       if (pw !== PwCkCurrent) {
-        setPasswordConfirmMessage('✖ 비밀번호가 일치하지 않음!');
+        setPasswordConfirmMessage('✖ 비밀번호가 일치하지 않습니다.');
+        setChangeColorPwCk('#c42c21');
         setIsPasswordConfirm(false);
       } else {
-        setPasswordConfirmMessage('✔잘했어!');
+        setPasswordConfirmMessage('✔ 비밀번호가 일치합니다.');
+        setChangeColorPwCk('#1b8845');
         setIsPasswordConfirm(true);
       }
     },
@@ -119,7 +128,11 @@ export default function SignupPage() {
   ///탄생일
   const onChangeAge = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const ageRegex = /[0-9]{4}-[0-9]{2}-[0-9]{2}/i;
-    const ageCurrent = e.target.value;
+    const ageCurrent = e.target.value
+      .replace(/[^0-9]/g, '')
+      .replace(/^(\d{0,4})(\d{0,2})(\d{0,2})$/g, '$1-$2-$3')
+      .replace(/(\-{1,2})$/g, '');
+
     setAge(ageCurrent);
 
     if (!ageRegex.test(ageCurrent)) {
@@ -142,7 +155,7 @@ export default function SignupPage() {
   }, []);
 
   // 회원가입
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async () => {
     const data = {
       username: username,
       id: id,
@@ -153,9 +166,11 @@ export default function SignupPage() {
 
     try {
       const response = await baseInstance.post('/members', data);
-      console.log(response);
+      if (response.data.status === '201') {
+        navigate('/login');
+      }
     } catch (error) {
-      // alert('다시 작성해주세요');
+      alert('형식이 맞지 않습니다. 다시 작성해주세요');
       console.error(error);
     }
   };
@@ -194,7 +209,7 @@ export default function SignupPage() {
             </DirectionRow>
             <Left>
               <IdCheck>
-                <CheckMark>{idMessage}</CheckMark>
+                <CheckMark color={ChangeColorId}>{idMessage}</CheckMark>
               </IdCheck>
             </Left>
             <LoginInput
@@ -202,14 +217,14 @@ export default function SignupPage() {
               onChange={onChangePw}
               type="비밀번호"
               typeI="password"
-              placeholder="6자리 이상"
+              placeholder="영문 + 숫자  6자리 이상"
               marginbottom="0.47rem"
               marginbottomp="2.09rem"
               marginbottomptt="0.06rem"
             ></LoginInput>
             <Left>
               <IdCheck>
-                <CheckMark>{passwordMessage}</CheckMark>
+                <CheckMark color={ChangeColorPw}>{passwordMessage}</CheckMark>
               </IdCheck>
             </Left>
             <LoginInput
@@ -217,13 +232,15 @@ export default function SignupPage() {
               onChange={onChangePwCk}
               type="비밀번호 확인"
               typeI="password"
-              placeholder="6자리 이상"
+              placeholder="한번 더 입력해주세요"
               marginbottom="0.47rem"
               marginbottomptt="0.06rem"
             ></LoginInput>
             <Left>
               <IdCheck>
-                <CheckMark>{passwordConfirmMessage}</CheckMark>
+                <CheckMark color={ChangeColorPwCk}>
+                  {passwordConfirmMessage}
+                </CheckMark>
               </IdCheck>
             </Left>
             <Button
@@ -263,13 +280,13 @@ export default function SignupPage() {
             <GenderButtonLayout>
               <GenderButton
                 onClick={() => toggleGender('male')}
-                isSelected={selectedGender === 'male'}
+                isselected={selectedGender === 'male' ? 1 : 0}
               >
                 <MaleSvg />
               </GenderButton>
               <GenderButton
                 onClick={() => toggleGender('female')}
-                isSelected={selectedGender === 'female'}
+                isselected={selectedGender === 'female' ? 1 : 0}
               >
                 <FemaleSvg />
               </GenderButton>
@@ -392,12 +409,12 @@ const IdCheck = styled.div`
   }
 `;
 
-const CheckMark = styled.div`
+const CheckMark = styled.div<{ color: string }>`
   /* text */
   display: flex;
   flex-direction: row;
   justify-content: left;
-  color: #78aa77;
+  color: ${(props) => props.color};
 
   font-style: normal;
   font-weight: 400;
@@ -453,7 +470,7 @@ const GenderButtonLayout = styled.div`
   justify-content: space-around;
 `;
 
-const GenderButton = styled.button<{ isSelected: boolean }>`
+const GenderButton = styled.button<{ isselected: number }>`
   all: unset;
 
   border-radius: 3.6875rem;
@@ -468,8 +485,8 @@ const GenderButton = styled.button<{ isSelected: boolean }>`
     height: 5.5rem;
   }
 
-  ${({ isSelected }) =>
-    isSelected &&
+  ${(props) =>
+    props.isselected &&
     `
         box-shadow: 0px 0px 15px 9px rgba(0, 0, 0, 0.07);
     `}
