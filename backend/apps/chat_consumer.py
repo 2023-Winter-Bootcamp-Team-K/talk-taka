@@ -22,7 +22,7 @@ class ChatConsumer(WebsocketConsumer):
         super().__init__(*args, **kwargs)
         self.chat_room_id = None
         self.chatroom = None
-        self.present_question_id = None
+        self.present_question = None
         self.user = None
         self.endTime = 10
         # 대화 기록을 저장할 리스트
@@ -63,7 +63,7 @@ class ChatConsumer(WebsocketConsumer):
             event = res.get("event")
             data = res.get("data")
             logger.info(res)
-            # 첫 대화 시작
+            # 1. 첫 대화 시작
             if event == "conversation_start":
                 # 기분 room에 추가
                 mood = data.get("mood")
@@ -85,7 +85,7 @@ class ChatConsumer(WebsocketConsumer):
                 self.add_answer(answer=None)
                 self.add_question(question=question_content)
                 print(self.conversation)
-            # 음성 대답
+            # 2. 음성 대답
             elif event == "user_answer":
                 # base64 디코딩
                 audio_blob = data["audioBlob"]
@@ -108,18 +108,14 @@ class ChatConsumer(WebsocketConsumer):
 
                 # conversation 질문, 답변 저장
                 self.add_question(question=question)
-                """
-                # GPT 질문 전송 (음성 파일로 줘야됨?)
-                self.continue_conversation(self, self.chatroom)
 
                 # 오디오 파일 S3에 저장
                 url = get_file_url('audio', audio_file)
 
                 # UserAnswer DB 저장 (택스트, 오디오 파일 URL)
-                answer = UserAnswer.objects.create(question_id=self.present_question_id, content=answer, audio_url=url)
-                answer.save()
-                """
-            # 대화 종료
+                self.save_user_answer(question=self.present_question, content= question, url=url)
+
+            # 3. 대화 종료
             elif event == "conversation_end":
                 self.send(json.dumps({"message": "", "finish_reason": ""}))
 
@@ -140,10 +136,14 @@ class ChatConsumer(WebsocketConsumer):
         # GPT 질문 저장
         question = GPTQuestion.objects.create(chatroom_id=self.chatroom, content=content)
         question.save()
-    def save_user_answer(self, question, content):
+        # 현재 질문 설정
+        self.present_question = question
+
+    def save_user_answer(self, question, content, url):
         # 사용자 답변 저장
-        answer = UserAnswer.objects.create(question_id=question, content=content)
+        answer = UserAnswer.objects.create(question_id=question, content=content, url=url)
         answer.save()
+
 
 
     def add_question(self, question):
