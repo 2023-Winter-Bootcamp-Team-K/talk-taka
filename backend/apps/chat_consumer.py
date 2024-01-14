@@ -84,7 +84,7 @@ class ChatConsumer(WebsocketConsumer):
                 self.default_conversation(self.chatroom, question_content)
                 self.add_answer(answer=None)
                 self.add_question(question=question_content)
-                print(self.conversation)
+                #print(self.conversation)
             # 2. 음성 대답
             elif event == "user_answer":
                 # base64 디코딩
@@ -114,7 +114,6 @@ class ChatConsumer(WebsocketConsumer):
 
                 # UserAnswer DB 저장 (택스트, 오디오 파일 URL)
                 self.save_user_answer(question=self.present_question, content= question, url=url)
-
             # 3. 대화 종료
             elif event == "conversation_end":
                 self.send(json.dumps({"message": "", "finish_reason": ""}))
@@ -123,14 +122,6 @@ class ChatConsumer(WebsocketConsumer):
     def disconnect(self, closed_code):
         self.chatroom.delete_at = timezone.now()
         self.chatroom.save()
-
-    def create_chatroom(self):
-        user_id = self.get_user_id()
-        mood = self.get_user_mood()
-        # 새 채팅방 생성 로직
-        # 적절한 user_id 및 mood 값을 설정
-        chatroom = ChatRoom.objects.create(user_id=user_id, mood=mood)
-        return chatroom
 
     def save_gpt_question(self, content):
         # GPT 질문 저장
@@ -143,8 +134,6 @@ class ChatConsumer(WebsocketConsumer):
         # 사용자 답변 저장
         answer = UserAnswer.objects.create(question_id=question, content=content, url=url)
         answer.save()
-
-
 
     def add_question(self, question):
         self.conversation.append(

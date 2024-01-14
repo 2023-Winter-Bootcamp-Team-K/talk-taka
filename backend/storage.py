@@ -3,14 +3,13 @@ import boto3
 from dotenv import load_dotenv
 import uuid
 
-
+load_dotenv()
 def get_file_url(file_type, file):
-    load_dotenv()
     # AWS SDK 클라이언트 생성:
     s3_client = boto3.client(
         's3',
-        aws_access_key_id=os.environ.get("MY_AWS_ACCESS_KEY"),
-        aws_secret_access_key=os.environ.get("MY_AWS_SECRET_ACCESS_KEY"),
+        aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
     )
 
     # 음성 녹음 파일(audio)인 경우
@@ -20,6 +19,7 @@ def get_file_url(file_type, file):
     else:
         file_key = "profile_image/" + str(uuid.uuid4()) + ".jpg"
 
+    print(os.environ.get("AWS_STORAGE_BUCKET_NAME"))
     # 파일을 S3 버킷에 업로드
     s3_client.put_object(Body=file, Bucket=os.environ.get("AWS_STORAGE_BUCKET_NAME"), Key=file_key)
     # 업로드된 파일의 URL을 구성
