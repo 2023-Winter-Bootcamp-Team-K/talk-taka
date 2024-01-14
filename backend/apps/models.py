@@ -1,7 +1,7 @@
 from django.db import models
 
 from users.models import User
-
+from time import timezone
 
 class ChatRoom(models.Model):
     JOY = 'joy'
@@ -20,20 +20,30 @@ class ChatRoom(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True)
     delete_at = models.DateTimeField(null=True)
 
+    def add_mood(self, mood):
+        if mood == 'Joy':
+            self.mood = self.JOY
+        elif mood == 'Sad':
+            self.mood = self.SAD
+        elif mood == 'Angry':
+            self.mood = self.ANGRY
+        self.save()
+
 
 class GPTQuestion(models.Model):
     id = models.AutoField(primary_key=True)
     chatroom_id = models.ForeignKey(ChatRoom, on_delete=models.CASCADE)
     content = models.TextField()
-    created_at = models.DateTimeField()
-    updated_at = models.DateTimeField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
     delete_at = models.DateTimeField(null=True)
+
 
 class UserAnswer(models.Model):
     id = models.AutoField(primary_key=True)
     question_id = models.ForeignKey(GPTQuestion, on_delete=models.CASCADE)
     content = models.TextField()
     audio_url = models.CharField(max_length=500, null=True)
-    created_at = models.DateTimeField()
-    delete_at = models.DateTimeField(null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    delete_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)

@@ -25,7 +25,6 @@ COPY requirements.txt /backend/
 RUN pip install --upgrade pip && pip install -r requirements.txt
 RUN pip install mysqlclient
 RUN pip install channels
-# Dockerize 설치
 
 # Copy the project files into the container
 COPY . .
