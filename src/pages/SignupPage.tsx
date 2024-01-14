@@ -5,15 +5,14 @@ import Button from '../components/common/Btn';
 import { useCallback, useState } from 'react';
 import { MaleSvg, FemaleSvg } from '../assets/SVG';
 import { baseInstance } from '../api/config';
-import { useInput } from '../hooks/useInput';
 
 export default function SignupPage() {
   //회원가입 변수
   const [id, setId] = useState('');
   const [pw, setPw] = useState('');
   const [pwCk, setPwCk] = useState('');
-  const [username, usernameHandleChange] = useInput('');
-  const [birth, birthHandleChange] = useInput('');
+  const [username, setUsername] = useState('');
+  const [birth, setAge] = useState('');
   const [selectedGender, setSelectedGender] = useState<null | string>(null);
   const gender = selectedGender;
 
@@ -21,21 +20,26 @@ export default function SignupPage() {
   const [isId, setIsId] = useState<boolean>(false);
   const [isPassword, setIsPassword] = useState<boolean>(false);
   const [isPasswordConfirm, setIsPasswordConfirm] = useState<boolean>(false);
+  const [isAge, setIsAge] = useState<boolean>(false);
+  const [isName, setIsName] = useState<boolean>(false);
 
   // 오류메시지 상태저장
-  const [idMessage, setIdMessage] =
-    useState<string>('영문+숫자 조합으로 입력해주세요!');
-  const [passwordMessage, setPasswordMessage] =
-    useState<string>('영문+숫자 조합으로 입력해주세요!');
+  const [idMessage, setIdMessage] = useState<string>(
+    '✖ 영문+숫자 조합으로 입력해주세요!'
+  );
+  const [passwordMessage, setPasswordMessage] = useState<string>(
+    '✖ 영문+숫자 조합으로 입력해주세요!'
+  );
   const [passwordConfirmMessage, setPasswordConfirmMessage] =
-    useState<string>('비밀번호가 일치하지 않음!');
+    useState<string>('✖ 비밀번호가 일치하지 않음!');
 
   // 페이지 내 이동 변수
   const [page, setPage] = useState(1);
   const navigate = useNavigate();
 
   // 버튼 활성화
-  const isButtonDisabled = !id || !isPasswordConfirm;
+  const isButtonDisabled = !isId || !isPasswordConfirm;
+  const isgoToLoginDisabled = isAge && isName;
 
   const genderDisabled = () => {
     if (gender == null) {
@@ -52,6 +56,16 @@ export default function SignupPage() {
     navigate('/login');
   };
 
+  const goToLoginConfirm = () => {
+    console.log(isName, isAge, isgoToLoginDisabled);
+
+    if (isgoToLoginDisabled == true) {
+      navigate('/login');
+    } else {
+      alert('형식에 맞지 않음!');
+    }
+  };
+
   // 성별 선택 토글
   const toggleGender = (gender: string) => {
     setSelectedGender(selectedGender === gender ? null : gender);
@@ -65,24 +79,24 @@ export default function SignupPage() {
     setId(IdCurrent);
 
     if (!IdRegex.test(IdCurrent)) {
-      setIdMessage('영문+숫자 조합으로 입력해주세요!');
+      setIdMessage('✖ 영문+숫자 조합으로 입력해주세요!');
       setIsId(false);
     } else {
-      setIdMessage('정확해!');
+      setIdMessage('✔정확해!');
       setIsId(true);
     }
   }, []);
   ///비밀번호
   const onChangePw = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const PwRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{0,25}$/; // 조건 넣으면 됨
+    const PwRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{6,25}$/; // 조건 넣으면 됨
     const PwCurrent = e.target.value;
     setPw(PwCurrent);
 
     if (!PwRegex.test(PwCurrent)) {
-      setPasswordMessage('영문+숫자 조합으로 입력해주세요!');
+      setPasswordMessage('✖ 영문+숫자 조합으로 입력해주세요!');
       setIsPassword(false);
     } else {
-      setPasswordMessage('잘했어!');
+      setPasswordMessage('✔ 잘했어!');
       setIsPassword(true);
     }
   }, []);
@@ -93,15 +107,39 @@ export default function SignupPage() {
       setPwCk(PwCkCurrent);
 
       if (pw !== PwCkCurrent) {
-        setPasswordConfirmMessage('비밀번호가 일치하지 않음!');
+        setPasswordConfirmMessage('✖ 비밀번호가 일치하지 않음!');
         setIsPasswordConfirm(false);
       } else {
-        setPasswordConfirmMessage('잘했어!');
+        setPasswordConfirmMessage('✔잘했어!');
         setIsPasswordConfirm(true);
       }
     },
-    [pw] //???? 이거 왜 써야함? 외부에서 인자 받아와야해서 그런가?
+    [pw]
   );
+  ///탄생일
+  const onChangeAge = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const ageRegex = /[0-9]{4}-[0-9]{2}-[0-9]{2}/i;
+    const ageCurrent = e.target.value;
+    setAge(ageCurrent);
+
+    if (!ageRegex.test(ageCurrent)) {
+      setIsAge(false);
+    } else {
+      setIsAge(true);
+    }
+  }, []);
+  /// 이름
+  const onChangeName = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const nameRegex = /^[ㄱ-ㅎ|가-힣]+$/;
+    const nameCurrent = e.target.value;
+    setUsername(nameCurrent);
+
+    if (!nameRegex.test(nameCurrent)) {
+      setIsName(false);
+    } else {
+      setIsName(true);
+    }
+  }, []);
 
   // 회원가입
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -109,7 +147,7 @@ export default function SignupPage() {
       username: username,
       id: id,
       password: pw,
-      birth: birth,
+      age: birth,
       gender: gender,
     };
 
@@ -156,7 +194,7 @@ export default function SignupPage() {
             </DirectionRow>
             <Left>
               <IdCheck>
-                <CheckMark>✔{idMessage}</CheckMark>
+                <CheckMark>{idMessage}</CheckMark>
               </IdCheck>
             </Left>
             <LoginInput
@@ -171,7 +209,7 @@ export default function SignupPage() {
             ></LoginInput>
             <Left>
               <IdCheck>
-                <CheckMark>✔{passwordMessage}</CheckMark>
+                <CheckMark>{passwordMessage}</CheckMark>
               </IdCheck>
             </Left>
             <LoginInput
@@ -185,7 +223,7 @@ export default function SignupPage() {
             ></LoginInput>
             <Left>
               <IdCheck>
-                <CheckMark>✔{passwordConfirmMessage}</CheckMark>
+                <CheckMark>{passwordConfirmMessage}</CheckMark>
               </IdCheck>
             </Left>
             <Button
@@ -203,7 +241,7 @@ export default function SignupPage() {
             <Login>회원가입</Login>
             <LoginInput
               value={username}
-              onChange={usernameHandleChange}
+              onChange={onChangeName}
               type="이름"
               placeholder="자녀분의 이름을 입력해주세요."
               marginbottom="2.25rem"
@@ -212,7 +250,7 @@ export default function SignupPage() {
             ></LoginInput>
             <LoginInput
               value={birth}
-              onChange={birthHandleChange}
+              onChange={onChangeAge}
               type="생년월일"
               placeholder="EX.) 2017-01-01"
               marginbottom="2.25rem"
@@ -242,7 +280,7 @@ export default function SignupPage() {
               width="14.24731rem"
               margint="1.5rem"
               margintp="0.6rem"
-              onClick={goToLogin}
+              onClick={goToLoginConfirm}
             ></Button>
             <SignUp onClick={goToLogin}>로그인 하러가기</SignUp>
           </>
