@@ -19,6 +19,7 @@ from users.models import User
 from .models import ChatRoom
 import json
 
+load_dotenv()
 from .models import GPTQuestion, UserAnswer
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 

@@ -9,8 +9,8 @@ def get_file_url(file_type, file):
     # AWS SDK 클라이언트 생성:
     s3_client = boto3.client(
         's3',
-        aws_access_key_id=os.environ.get("MY_AWS_ACCESS_KEY"),
-        aws_secret_access_key=os.environ.get("MY_AWS_SECRET_ACCESS_KEY"),
+        aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
     )
     #  boto3는 AWS 서비스와 상호작용하는 데 사용되는 파이썬 라이브러리. 클라이언트는 AWS의 s3 서비스에 연결시켜줌
 
