@@ -27,6 +27,7 @@ class ChatConsumer(WebsocketConsumer):
         self.endTime = 10
         # 대화 기록을 저장할 리스트
         self.conversation = []
+        self.default_audio_file_urls = []
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     # 클라이언트와 연결
@@ -94,6 +95,9 @@ class ChatConsumer(WebsocketConsumer):
                 # 오디오 파일로 변환
                 audio_file = ContentFile(audio_data)
 
+                audio_file_url = get_file_url("audio", audio_file)
+                self.default_audio_file_urls.append(audio_file_url)
+
                 # 오디오 파일 STT로 텍스트 변환
                 answer = speach_to_text(audio_file)
 
@@ -110,7 +114,7 @@ class ChatConsumer(WebsocketConsumer):
                 self.add_question(question=question)
 
                 # 오디오 파일 S3에 저장
-                url = get_file_url('audio', audio_file)
+
 
                 # UserAnswer DB 저장 (택스트, 오디오 파일 URL)
                 self.save_user_answer(question=self.present_question, content= question, url=url)

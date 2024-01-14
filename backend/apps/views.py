@@ -19,6 +19,7 @@ from users.models import User
 from .models import ChatRoom
 import json
 
+load_dotenv()
 from .models import GPTQuestion, UserAnswer
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
@@ -98,7 +99,9 @@ def generate_image(content): # openai 이용하여 이미지 생성하는 함수
 class ChatRoomCreateView(APIView):
 
     @swagger_auto_schema(
-        operation_id="채팅방",
+        request_body=ChatRoomSerializer,
+        operation_id="회원 가입",
+        responses={201: ChatRoomSerializer(many=False)}
     )
     def post(self, request, format=None):
         serializer = ChatRoomSerializer(data=request.data)
