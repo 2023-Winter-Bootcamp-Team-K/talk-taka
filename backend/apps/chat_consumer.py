@@ -81,9 +81,13 @@ class ChatConsumer(WebsocketConsumer):
                 # 기분 저장
                 self.chatroom.add_mood(mood)
                 self.situation_tuning(self.user, mood=mood)
-                # 첫 질문 전송
+                # 첫 질문 선택
                 question_content = self.pick_random_question()
+                # 질문 text 전송
                 self.default_conversation(self.chatroom, question_content)
+                # 질문 음성 파일 전송(mp3)
+                self.audio_send(question_content)
+
                 self.add_answer(answer=None)
                 self.add_question(question=question_content)
                 #print(self.conversation)
@@ -109,8 +113,8 @@ class ChatConsumer(WebsocketConsumer):
                 # GPT 질문 생성 및 Text로 전송
                 question = self.continue_conversation(self.chatroom)
 
-                self.audio_send()
-
+                # GPT 질문 음성 파일 전송(mp3)
+                self.audio_send(question)
 
                 # conversation 질문, 답변 저장
                 self.add_question(question=question)
