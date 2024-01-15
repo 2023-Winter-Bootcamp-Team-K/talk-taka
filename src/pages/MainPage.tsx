@@ -1,6 +1,5 @@
 import { styled } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import Button from '../components/common/Btn';
 import { LogoutIconSvg } from '../assets/SVG';
 import Calender from '../components/calender/Calender';
 
@@ -8,6 +7,9 @@ export default function MainPage() {
   const navigate = useNavigate();
   const goToIntro = () => {
     navigate('/');
+  };
+  const goToChat = () => {
+    navigate('/chat');
   };
 
   return (
@@ -18,7 +20,7 @@ export default function MainPage() {
       </LogoutBtn>
       <MainLayout>
         <Calender />
-        <StyledButton>대화하러 가기</StyledButton>
+        <StyledButton onClick={goToChat}>대화하러 가기</StyledButton>
       </MainLayout>
       <GreetingLayout>
         다시 돌아오지 않는 <TodayDate /> <br />

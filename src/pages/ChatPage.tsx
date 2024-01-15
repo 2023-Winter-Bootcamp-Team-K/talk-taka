@@ -1,5 +1,4 @@
 import { styled } from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Modal from '../components/modal/Modal';
 import CharComponent from '../components/common/CharComponent';
@@ -7,21 +6,17 @@ import CameraBox from '../components/common/Camera';
 import ChatBox from '../components/common/Chatting';
 import ChatInfo from '../components/common/ChatInfo';
 import { toggleStore } from '../stores/toggle';
+import CameraModal from '../components/modal/CameraModal';
 
 export default function ChatPage() {
   const { toggle } = toggleStore();
 
-  // const [toggle, setToggle] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
   );
   const [showChar, setShowChar] = useState(false); // 이거 원래 true 임
-  const navigate = useNavigate();
-
-  const goToMain = () => {
-    navigate('/main');
-  };
+  const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
 
   const handleModalConfirm = () => {
     setIsModalOpen(false);
@@ -29,6 +24,9 @@ export default function ChatPage() {
   const handleShowChar = () => {
     setShowChar(true);
   };
+  const handleQuitChat = () => {
+    setIsCameraModalOpen(true);
+  }
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 390px)');
@@ -70,7 +68,8 @@ export default function ChatPage() {
           </ComponentsWrapper>
         )}
       </Layout>
-      <QuitChatBtn onClick={goToMain}>
+      {isCameraModalOpen && <CameraModal />}
+      <QuitChatBtn onClick={handleQuitChat}>
         대화 끝내기
         <ButtonImage src="src/assets/img/QuitIcon.png" />
       </QuitChatBtn>
