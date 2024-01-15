@@ -51,7 +51,7 @@ class LoginView(generics.GenericAPIView):
         return Response({
             'id': user.id,
             'refresh': str(refresh),
-            'access': str(refresh.access_token),
+            'access': f"Bearer {str(refresh.access_token)}",
             'status': status.HTTP_200_OK,
             'message': '로그인 성공'
         }, status=status.HTTP_200_OK)
