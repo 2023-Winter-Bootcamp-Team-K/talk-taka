@@ -14,7 +14,7 @@ type ButtonProps = {
   fontsp?: string;
   borderr?: string;
   disabled?: boolean;
-  onClick: any;
+  onClick?: any;
 };
 
 export default function Button({

@@ -219,7 +219,7 @@ export default function SignupPage() {
               typeI="password"
               placeholder="영문 + 숫자  6자리 이상"
               marginbottom="0.47rem"
-              marginbottomp="2.09rem"
+              marginbottomp="0.09rem"
               marginbottomptt="0.06rem"
             ></LoginInput>
             <Left>
