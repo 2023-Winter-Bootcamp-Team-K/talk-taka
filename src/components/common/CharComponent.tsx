@@ -19,7 +19,12 @@ export default function CharComponent({ isListening }: CharComponentProps) {
 
 const SpeakingQuakka = styled.img`
   width: 30rem;
-  margin-top: 6.25rem;
+  margin-top: 6.57rem;
+  
+  @media all and (max-width: 390px) {
+    width: 18.60675rem;
+    margin-top: 5.41rem;
+  }
 `;
 
 const MicIcon = styled.img`
@@ -36,7 +41,13 @@ const Layout = styled.div`
   background: #f3f3f3;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   flex-direction: column;
   box-shadow: 0px 14px 24px rgba(0, 0, 0, 0.13);
+
+  @media all and (max-width: 390px) {
+    width: 21.4375rem;
+    height: 32.625rem;
+    box-shadow: none;
+  }
 `;
