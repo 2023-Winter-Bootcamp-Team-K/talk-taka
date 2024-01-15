@@ -127,8 +127,7 @@ class ChatConsumer(WebsocketConsumer):
                 self.close()
 
     def disconnect(self, closed_code):
-        self.chatroom.delete_at = timezone.now()
-        self.chatroom.save()
+        pass
 
     def save_gpt_question(self, content):
         # GPT 질문 저장
@@ -253,17 +252,14 @@ class ChatConsumer(WebsocketConsumer):
     def audio_send(self, text):
         # TTS blob 객체 생성
         tts_audio_data = text_to_speach(text)
-        tts_audio_blob = base64.b64decode(tts_audio_data)
-        #tts_audio_string = tts_audio_blob.decode('utf-8')
-        tts_audio_string = base64.b64encode(tts_audio_blob).decode('utf-8')
+        tts_audio_string = base64.b64encode(tts_audio_data).decode('utf-8')
         # TTS blob 전송
         self.send(json.dumps({
             "event": "question_tts",
             "data": {
                 "audioBlob": tts_audio_string
             }
-        }
-        ))
+        }))
     def text_send(self, message,finish_reason):
         if finish_reason is None:
             finish_reason = "incomplete"
