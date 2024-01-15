@@ -10,10 +10,6 @@ import CameraModal from '../components/modal/CameraModal';
 import { baseInstance } from '../api/config';
 import { getCookie } from '../utils/cookie';
 
-type TokenProps = {
-  token: string;
-};
-
 export default function ChatPage() {
   const { toggle } = toggleStore();
 
