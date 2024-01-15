@@ -10,22 +10,14 @@ class DiaryCreateView(APIView):
 
     @swagger_auto_schema(
         operation_id="일기 생성",
-        manual_parameters=[
-            openapi.Parameter(
-                name='mood',
-                in_=openapi.IN_QUERY,
-                type=openapi.TYPE_STRING,
-                description='Mood filter (joy, sad, angry)',
-            ),
-        ],
-        responses={201: openapi.Schema(
+        request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'status': openapi.Schema(type=openapi.TYPE_STRING),
-                'message': openapi.Schema(type=openapi.TYPE_STRING),
-                'diaryId': openapi.Schema(type=openapi.TYPE_STRING),
-            }
-        )}
+                'mood': openapi.Schema(type=openapi.TYPE_STRING)
+            },
+            required=['mood']
+        ),
+        responses={201: openapi.Response(description="일기 생성 성공")}
     )
     def post(self, request, format=None):
         if not request.user.is_authenticated:
@@ -38,7 +30,7 @@ class DiaryCreateView(APIView):
 
         #제공된 mood가 유효한지 확인
         if mood not in valid_moods:
-            return Response({"status":"401","message":"유효하지 않은 mood 값입니다"},status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"status": "400", "message": "유효하지 않은 mood 값입니다"}, status=status.HTTP_400_BAD_REQUEST)
         # 일기 생성
         diary = Diary.objects.create(
             user=request.user,
