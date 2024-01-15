@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 import asyncio
 from storage import get_file_url
 from stt import speach_to_text
+from tts import text_to_speach
 from .models import *
 import logging
 
@@ -25,11 +26,12 @@ class ChatConsumer(WebsocketConsumer):
         super().__init__(*args, **kwargs)
         self.chat_room_id = None
         self.chatroom = None
-        self.present_question_id = None
+        self.present_question = None
         self.user = None
         self.endTime = 10
         # 대화 기록을 저장할 리스트
         self.conversation = []
+        self.default_audio_file_urls = []
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     # 클라이언트와 연결
@@ -66,7 +68,7 @@ class ChatConsumer(WebsocketConsumer):
             event = res.get("event")
             data = res.get("data")
             logger.info(res)
-            # 첫 대화 시작
+            # 1. 첫 대화 시작
             if event == "conversation_start":
                 # 기분 room에 추가
                 mood = data.get("mood")
@@ -82,13 +84,17 @@ class ChatConsumer(WebsocketConsumer):
                 # 기분 저장
                 self.chatroom.add_mood(mood)
                 self.situation_tuning(self.user, mood=mood)
-                # 첫 질문 전송
+                # 첫 질문 선택
                 question_content = self.pick_random_question()
+                # 질문 text 전송
                 self.default_conversation(self.chatroom, question_content)
+                # 질문 음성 파일 전송(mp3)
+                self.audio_send(question_content)
+
                 self.add_answer(answer=None)
                 self.add_question(question=question_content)
-                print(self.conversation)
-            # 음성 대답
+                #print(self.conversation)
+            # 2. 음성 대답
             elif event == "user_answer":
                 # base64 디코딩
                 audio_blob = data["audioBlob"]
@@ -97,57 +103,47 @@ class ChatConsumer(WebsocketConsumer):
                 # 오디오 파일로 변환
                 audio_file = ContentFile(audio_data)
 
+                # 오디오 파일 S3에 저장
+                audio_file_url = get_file_url("audio", audio_file)
+                self.default_audio_file_urls.append(audio_file_url)
+
                 # 오디오 파일 STT로 텍스트 변환
                 answer = speach_to_text(audio_file)
-
-                # 임시 코드
-                # answer = "재밌게 놀았어"
 
                 # answer을 conversation 저장
                 self.add_answer(answer=answer)
 
-                # 텍스트 GPT에게 전송
+                # GPT 질문 생성 및 Text로 전송
                 question = self.continue_conversation(self.chatroom)
+
+                # GPT 질문 음성 파일 전송(mp3)
+                self.audio_send(question)
 
                 # conversation 질문, 답변 저장
                 self.add_question(question=question)
-                """
-                # GPT 질문 전송 (음성 파일로 줘야됨?)
-                self.continue_conversation(self, self.chatroom)
-
-                # 오디오 파일 S3에 저장
-                url = get_file_url('audio', audio_file)
 
                 # UserAnswer DB 저장 (택스트, 오디오 파일 URL)
-                answer = UserAnswer.objects.create(question_id=self.present_question_id, content=answer, audio_url=url)
-                answer.save()
-                """
-            # 대화 종료
+                self.save_user_answer(question=self.present_question, content=answer, url=audio_file_url)
+            # 3. 대화 종료
             elif event == "conversation_end":
                 self.send(json.dumps({"message": "", "finish_reason": ""}))
-
+                self.close()
 
     def disconnect(self, closed_code):
         self.chatroom.delete_at = timezone.now()
         self.chatroom.save()
 
-    def create_chatroom(self):
-        user_id = self.get_user_id()
-        mood = self.get_user_mood()
-        # 새 채팅방 생성 로직
-        # 적절한 user_id 및 mood 값을 설정
-        chatroom = ChatRoom.objects.create(user_id=user_id, mood=mood)
-        return chatroom
-
     def save_gpt_question(self, content):
         # GPT 질문 저장
         question = GPTQuestion.objects.create(chatroom_id=self.chatroom, content=content)
         question.save()
-    def save_user_answer(self, question, content):
-        # 사용자 답변 저장
-        answer = UserAnswer.objects.create(question_id=question, content=content)
-        answer.save()
+        # 현재 질문 설정
+        self.present_question = question
 
+    def save_user_answer(self, question, content, url):
+        # 사용자 답변 저장
+        answer = UserAnswer.objects.create(question_id=question, content=content, audio_url=url)
+        answer.save()
 
     def add_question(self, question):
         self.conversation.append(
@@ -156,6 +152,7 @@ class ChatConsumer(WebsocketConsumer):
                 "content": question
             }
         )
+
     def add_answer(self, answer=None):
         if answer is not None:
             self.conversation.append(
@@ -171,6 +168,7 @@ class ChatConsumer(WebsocketConsumer):
                     "content": "Another question, give me only one."
                 }
             )
+
     def continue_conversation(self, chatroom):
         messages = ""
 
@@ -181,13 +179,14 @@ class ChatConsumer(WebsocketConsumer):
                 stream=True,
         ):
             finish_reason = chunk.choices[0].finish_reason
-
+            response_message = chunk.choices[0].delta.content
+            # 메시지 조각를 클라이언트로 바로 전송
+            #self.send(json.dumps({"event": "conversation",
+            #                      "data": {"message": response_message, "finish_reason": finish_reason}}))
+            self.text_send(response_message, finish_reason)
             if finish_reason == "stop":
                 break
 
-            response_message = chunk.choices[0].delta.content
-            # 메시지 조각를 클라이언트로 바로 전송
-            self.send(json.dumps({"message": response_message, "finish_reason": finish_reason}))
             # 메시지 조각 합침
             messages += response_message
 
@@ -204,8 +203,7 @@ class ChatConsumer(WebsocketConsumer):
                 is_last_char = "stop"
 
             # 메시지를 클라이언트로 바로 전송
-            self.send(json.dumps({"event": "conversation", "message": chunk, "finish_reason": is_last_char}))
-
+            self.text_send(chunk, is_last_char)
             # 마지막 글자에 도달하면 루프 종료
             if is_last_char == "stop":
                 break
@@ -254,26 +252,25 @@ class ChatConsumer(WebsocketConsumer):
             },
         ]
 
-    async def send_end_message(self):
-        content = "채팅을 종료 해야할 것 같아"
-        await asyncio.sleep(self.endTime)
-        messages = ""
-        # question_content의 index와 원소를 순차적으로 반환하여 스트리밍 형식으로 출력
-        for index, chunk in enumerate(content):
-            is_last_char = "incomplete"
-            # 현재 글자가 마지막 글자인지 확인
-            if index == len(content) - 1:
-                is_last_char = "stop"
-
-            # 메시지를 클라이언트로 바로 전송
-            self.send(json.dumps({"event": "chat_end","message": chunk, "finish_reason": is_last_char}))
-
-            # 마지막 글자에 도달하면 루프 종료
-            if is_last_char == "stop":
-                break
-
-            messages += chunk
-            time.sleep(0.05)
+    def audio_send(self, text):
+        # TTS blob 객체 생성
+        tts_audio_data = text_to_speach(text)
+        tts_audio_blob = base64.b64decode(tts_audio_data)
+        #tts_audio_string = tts_audio_blob.decode('utf-8')
+        tts_audio_string = base64.b64encode(tts_audio_blob).decode('utf-8')
+        # TTS blob 전송
+        self.send(json.dumps({
+            "event": "question_tts",
+            "data": {
+                "audioBlob": tts_audio_string
+            }
+        }
+        ))
+    def text_send(self, message,finish_reason):
+        if finish_reason is None:
+            finish_reason = "incomplete"
+        self.send(json.dumps({"event": "conversation",
+                              "data": {"message": message, "finish_reason": finish_reason}}))
 
     # 채팅방 종료 시 요약 및 이미지 생성
     def end_conversation(self):

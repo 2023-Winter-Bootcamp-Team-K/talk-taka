@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 
 def speach_to_text(data):
     load_dotenv()
-    client_id = os.getenv("CLOVA_ID")
-    client_secret = os.getenv("CLOVA_SECRET")
+    client_id = os.getenv("CLOVA_STT_ID")
+    client_secret = os.getenv("CLOVA_STT_SECRET")
     lang = "Kor"  # 언어 코드 ( Kor, Jpn, Eng, Chn )
     url = "https://naveropenapi.apigw.ntruss.com/recog/v1/stt?lang=" + lang
     headers = {
