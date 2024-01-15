@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 import asyncio
 from storage import get_file_url
 from stt import speach_to_text
+from tts import text_to_speach
 from .models import *
 import logging
 
@@ -80,9 +81,13 @@ class ChatConsumer(WebsocketConsumer):
                 # 기분 저장
                 self.chatroom.add_mood(mood)
                 self.situation_tuning(self.user, mood=mood)
-                # 첫 질문 전송
+                # 첫 질문 선택
                 question_content = self.pick_random_question()
+                # 질문 text 전송
                 self.default_conversation(self.chatroom, question_content)
+                # 질문 음성 파일 전송(mp3)
+                self.audio_send(question_content)
+
                 self.add_answer(answer=None)
                 self.add_question(question=question_content)
                 #print(self.conversation)
@@ -102,25 +107,24 @@ class ChatConsumer(WebsocketConsumer):
                 # 오디오 파일 STT로 텍스트 변환
                 answer = speach_to_text(audio_file)
 
-                # 임시 코드
-                # answer = "재밌게 놀았어"
-
                 # answer을 conversation 저장
                 self.add_answer(answer=answer)
 
-                # 텍스트 GPT에게 전송
+                # GPT 질문 생성 및 Text로 전송
                 question = self.continue_conversation(self.chatroom)
+
+                # GPT 질문 음성 파일 전송(mp3)
+                self.audio_send(question)
 
                 # conversation 질문, 답변 저장
                 self.add_question(question=question)
-                print(audio_file_url)
+
                 # UserAnswer DB 저장 (택스트, 오디오 파일 URL)
                 self.save_user_answer(question=self.present_question, content=answer, url=audio_file_url)
             # 3. 대화 종료
             elif event == "conversation_end":
                 self.send(json.dumps({"message": "", "finish_reason": ""}))
                 self.close()
-
 
     def disconnect(self, closed_code):
         self.chatroom.delete_at = timezone.now()
@@ -145,6 +149,7 @@ class ChatConsumer(WebsocketConsumer):
                 "content": question
             }
         )
+
     def add_answer(self, answer=None):
         if answer is not None:
             self.conversation.append(
@@ -160,6 +165,7 @@ class ChatConsumer(WebsocketConsumer):
                     "content": "Another question, give me only one."
                 }
             )
+
     def continue_conversation(self, chatroom):
         messages = ""
 
@@ -244,23 +250,17 @@ class ChatConsumer(WebsocketConsumer):
             },
         ]
 
-    async def send_end_message(self):
-        content = "채팅을 종료 해야할 것 같아"
-        await asyncio.sleep(self.endTime)
-        messages = ""
-        # question_content의 index와 원소를 순차적으로 반환하여 스트리밍 형식으로 출력
-        for index, chunk in enumerate(content):
-            is_last_char = "incomplete"
-            # 현재 글자가 마지막 글자인지 확인
-            if index == len(content) - 1:
-                is_last_char = "stop"
-
-            # 메시지를 클라이언트로 바로 전송
-            self.send(json.dumps({"event": "chat_end","message": chunk, "finish_reason": is_last_char}))
-
-            # 마지막 글자에 도달하면 루프 종료
-            if is_last_char == "stop":
-                break
-
-            messages += chunk
-            time.sleep(0.05)
+    def audio_send(self, text):
+        # TTS blob 객체 생성
+        tts_audio_data = text_to_speach(text)
+        tts_audio_blob = base64.b64decode(tts_audio_data)
+        #tts_audio_string = tts_audio_blob.decode('utf-8')
+        tts_audio_string = base64.b64encode(tts_audio_blob).decode('utf-8')
+        # TTS blob 전송
+        self.send(json.dumps({
+            "event": "question_tts",
+            "data": {
+                "audioBlob": tts_audio_string
+            }
+        }
+        ))
