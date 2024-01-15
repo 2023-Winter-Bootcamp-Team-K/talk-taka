@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import Webcam from 'react-webcam';
-import MicGIF from '../gif/Mic';
 
 type CameraBoxProps = {
   isShowChar: () => void;
@@ -12,12 +11,6 @@ export default function CameraBox({ isShowChar: isShowChar }: CameraBoxProps) {
       <CameraBoxLayout>
         <Webcam style={{ borderRadius: '1.75rem' }} mirrored={true} />
       </CameraBoxLayout>
-      <TextBox>말을 다하면 나를 눌러줘</TextBox>
-      <MicButtonLayout onClick={isShowChar}>
-        {/* <Mic src="/src/assets/img/BlackMic.png" /> */}
-
-        <MicGIF />
-      </MicButtonLayout>
     </CameraLayout>
   );
 }
