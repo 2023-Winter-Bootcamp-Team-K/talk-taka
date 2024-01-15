@@ -6,40 +6,50 @@ from rest_framework.response import Response
 from .models import Diary
 from django.http import Http404
 
-
 class DiaryCreateView(APIView):
+
     @swagger_auto_schema(
-        operation_id='일기 생성',
-        request_body=openapi.Schema(
+        operation_id="일기 생성",
+        manual_parameters=[
+            openapi.Parameter(
+                name='mood',
+                in_=openapi.IN_QUERY,
+                type=openapi.TYPE_STRING,
+                description='Mood filter (joy, sad, angry)',
+            ),
+        ],
+        responses={201: openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'content': openapi.Schema(type=openapi.TYPE_STRING, description='일기 내용'),
-                'img_url': openapi.Schema(type=openapi.TYPE_STRING, description='이미지 URL'),
+                'status': openapi.Schema(type=openapi.TYPE_STRING),
+                'message': openapi.Schema(type=openapi.TYPE_STRING),
+                'diaryId': openapi.Schema(type=openapi.TYPE_STRING),
             }
-        )
+        )}
     )
     def post(self, request, format=None):
         if not request.user.is_authenticated:
             return Response({"status": "401", "message": "인증되지 않은 사용자"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        content = request.data.get("content")
-        img_url = request.data.get("img_url")
+        # Access mood parameter from request.query_params
+        mood = request.query_params.get('mood')
 
-        # content가 비어있는지 검사
-        if not content:
-            return Response({"status": "400", "message": "Content is required"}, status=status.HTTP_400_BAD_REQUEST)
+        #유효한 mood 값 정의
+        valid_moods=['joy','sad','angry']
 
+        #제공된 mood가 유효한지 확인
+        if mood not in valid_moods:
+            return Response({"status":"401","message":"유효하지 않은 mood 값입니다"},status=status.HTTP_401_UNAUTHORIZED)
         # 일기 생성
         diary = Diary.objects.create(
             user=request.user,
-            content=content,
-            img_url=img_url
+            mood=mood
         )
 
         return Response({
-            "status": "200",
+            "status": "201",
             "message": "일기 생성 성공",
-            "diaryId": diary.id
+            "diaryId": str(diary.id)
         }, status=status.HTTP_201_CREATED)
 
 
@@ -70,16 +80,17 @@ class DiaryView(APIView):
 
 class DiaryListView(APIView):
     @swagger_auto_schema(
-        operation_id="일기 전체 조회"
+        operation_id="일기 일정 조회"
     )
+
     def get(self, request, format=None):
         diary_list = Diary.objects.all()
         data = [
             {
                 "diaryId": str(diary.id),
-                "content": diary.content,
                 "imageURL": diary.img_url,
-                "created_at": diary.created_at.strftime("%Y-%m-%d")
+                "created_at": diary.created_at.strftime("%Y-%m-%d"),
+                "mood":diary.mood
             }
             for diary in diary_list
         ]

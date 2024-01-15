@@ -97,7 +97,6 @@ ASGI_APPLICATION = 'config.asgi.application'
 # Database
 DATABASES = DATABASES
 
-
 # Password validation
 
 AUTH_PASSWORD_VALIDATORS = [
