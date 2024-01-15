@@ -1,12 +1,8 @@
 from datetime import timezone
-
-from django.http import JsonResponse
-from django.shortcuts import render
 import os
 import openai
 from django.shortcuts import get_object_or_404
-
-from dotenv import load_dotenv
+from django.utils import timezone
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
@@ -14,10 +10,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import JSONParser
-from .serializers import ChatRoomSerializer
+
+from .chat_consumer import ChatConsumer
 from users.models import User
 from .models import ChatRoom
-import json
 
 from .models import GPTQuestion, UserAnswer
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -40,7 +36,7 @@ class GPTAnswerView(APIView):
         },
     )
     def post(self, request, *args, **kwargs):
-        # 클라이언트 요청에서 'question_id'를 안전하게 추출
+        # 클라이언트 요청에서 'question_id' 추출
         question_id = request.data.get('question_id')
         if not question_id:
             return Response({"error": "question_id is required"}, status=status.HTTP_400_BAD_REQUEST)
@@ -72,38 +68,70 @@ class GPTAnswerView(APIView):
 
         return gpt_answer_content
 
-def generate_image(content): # openai 이용하여 이미지 생성하는 함수
-
-    messages = []
-    promptmessages = "요약 내용을 바탕으로 이미지를 생성해줘."
-
-    story_content = promptmessages+content
-    messages.append({"role": "user", "content": story_content})
-
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=messages
-    )
-    assistant_response = completion['choices'][0]['message']['content']
-
-    messages.append({"role": "assistant", "content": assistant_response})
-
-    prompt = assistant_response[0:999] # 프롬프트가 1000자가 최대이므로
-
-    response = openai.Image.create(prompt=prompt, n=1, size="1024*1024") # gpt에게 받은 프롬프팅을 전달하여 그림생성
-    image_url = response["data"][0]["url"]
-
-    return image_url  # 임시로 이미지 url을 리턴하도록 설정
-
 class ChatRoomCreateView(APIView):
-
     @swagger_auto_schema(
-        operation_id="채팅방",
+        operation_id="채팅방 생성",
+        responses={
+            201: openapi.Response(description="채팅방 생성 완료"),
+            400: "Bad request",
+        }
     )
     def post(self, request, format=None):
-        serializer = ChatRoomSerializer(data=request.data)
-        if serializer.is_valid():
-            chat_room = serializer.save()
-            # 여기에서 chat_room에 다른 필요한 값들을 설정할 수 있습니다.
-            return Response(ChatRoomSerializer(chat_room).data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if not request.user.is_authenticated:
+            return Response({"error": "User not authenticated"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # 채팅방 생성
+        chat_room = ChatRoom.objects.create(user_id=request.user)
+
+        # 생성된 채팅방 정보 반환
+        return Response({
+            "status": "200",
+            "message": "채팅방 생성",
+            "room_id": chat_room.id
+        }, status=status.HTTP_201_CREATED)
+
+
+class ChatRoomCloseView(APIView):
+    @swagger_auto_schema(
+        operation_id="채팅방 종료",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'room_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='채팅방 ID'),
+            },
+            required=['room_id']
+        ),
+        responses={
+            200: openapi.Response(description="채팅방 종료 및 결과 반환"),
+            400: "Bad request",
+        }
+    )
+    def post(self, request, *args, **kwargs):
+        room_id = request.data.get('room_id')
+        if not room_id:
+            return Response({"error": "채팅방이 생성되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+        chat_room = get_object_or_404(ChatRoom, pk=room_id)
+
+        # 대화 내용 가져오기
+        conversation = self.get_conversation(chat_room)
+
+        # 요약 및 이미지 생성 로직 (동기 처리)
+        consumer = ChatConsumer()
+        summary = consumer.generate_summary(conversation)
+        image_url = consumer.generate_image(conversation)
+
+        chat_room.delete_at = timezone.now()
+        chat_room.save()
+
+        return Response({
+            "status": "200",
+            "message": "대화방 종료",
+            "summary": summary,
+            "image_url": image_url
+        }, status=status.HTTP_200_OK)
+
+    def get_conversation(self, chat_room):
+        questions = GPTQuestion.objects.filter(chatroom_id=chat_room)
+        conversation = [question.content for question in questions]
+        return conversation

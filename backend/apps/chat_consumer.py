@@ -3,6 +3,8 @@ import os
 import random
 import time
 import base64
+
+import openai
 from django.core.files.base import ContentFile
 from openai import OpenAI
 from channels.generic.websocket import WebsocketConsumer
@@ -15,6 +17,7 @@ import logging
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=OPENAI_API_KEY)
 logger = logging.getLogger(__name__)
 
 class ChatConsumer(WebsocketConsumer):
@@ -213,7 +216,7 @@ class ChatConsumer(WebsocketConsumer):
         question = GPTQuestion.objects.create(content=messages, chatroom_id=chatroom)
         question.save()
 
-    def pick_random_question(self):
+    def pick_random_question(self,username):
         pick_question = []
         while True:
             basic_questions_list = [
@@ -222,10 +225,9 @@ class ChatConsumer(WebsocketConsumer):
                 "오늘 가장 재미있었던 일은 뭐야?",
                 "오늘 하루 잘 지냈어?",
                 "안녕, 반가워 또 보네?",
-                "본인의 직업관은 무엇인가요?",
-                "안녕 , {username}아 오늘 날씨 어땠어?",
-                "안녕 {username}아 뭐하다가 이제왔어? 기다렸잖아!!",
-                "안녕, 00아 보고싶었어. 너는 어땠어?",
+                f"안녕 , {username}아 오늘 날씨 어땠어?",
+                f"안녕 {username}아 뭐하다가 이제왔어? 기다렸잖아!!",
+                f"안녕, {username}아 보고싶었어. 너는 어땠어?",
                 "안녕, 오늘도 재밌게 놀 준비됐어? 목소리 크게!!!!",
                 "오늘 힘든 일은 없었어?",
                 "오늘 뭐하고 놀았어?",
@@ -272,3 +274,57 @@ class ChatConsumer(WebsocketConsumer):
 
             messages += chunk
             time.sleep(0.05)
+
+    # 채팅방 종료 시 요약 및 이미지 생성
+    def end_conversation(self):
+        # 대화 요약 생성
+        summary = self.generate_summary(self.conversation)
+
+        # DALL-E 이미지 생성
+        image_url = self.generate_image(summary)
+
+        # 클라이언트에 결과 전송
+        self.send(json.dumps({
+            "event": "chat_end",
+            "summary": summary,
+            "image_url": image_url
+        }))
+
+    # gpt한테 요약 요청
+    def generate_summary(self, conversation):
+        summary_request = "\n".join([msg["content"] for msg in conversation])
+
+        summary_request = 'You have to write a picture diary based on the conversation. It\'s going to be in your child\'s picture diary. Please write 180 characters or less.'
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            max_tokens=150,
+            messages=[
+                {
+                    "role": "system",
+                    "content": summary_request
+                },
+            ],
+        )
+        summary_request = response.choices[0].text["content"]
+        return summary_request
+
+    # 달리 이미지 생성 로직보
+    def generate_image(self, summary):
+
+        response = client.images.generate(
+            model="dall-e-3",
+            prompt=summary,
+            size="1024x1024",
+            quality="standard",
+            n=1,
+            style="natural",
+        )
+        image_url = response["data"][0]["url"]
+        return image_url
+
+    # 요약 튜닝 함수
+    # def summary_tuning(self):
+    #     self.conversation = {
+    #         "role": "system",
+    #         "content": 'You have to write a picture diary based on the conversation. It\'s going to be in your child\'s picture diary. Please write 180 characters or less.'
+    #     }
