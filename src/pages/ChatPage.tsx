@@ -41,25 +41,24 @@ export default function ChatPage() {
   return (
     <BackGround>
       {isModalOpen && <Modal modalConfirm={handleModalConfirm} />}
-
-      {isMobile ? (
-        showChar ? (
-          <ComponentsWrapper>
-            <CharComponent />
-          </ComponentsWrapper>
+      <Layout>
+        <ChatInfo />
+        {isMobile ? (
+          showChar && toggle ? (
+            <ComponentsWrapper>
+              {/* <CharComponent /> */}
+            </ComponentsWrapper>
+          ) : (
+            <ComponentsWrapper>
+              {toggle ? (
+                <CameraBox isShowChar={handleShowChar} />
+              ) : (
+                <ChatBox isShowChar={handleShowChar} />
+              )}
+            </ComponentsWrapper>
+          )
         ) : (
           <ComponentsWrapper>
-            {toggle ? (
-              <CameraBox isShowChar={handleShowChar} />
-            ) : (
-              <ChatBox isShowChar={handleShowChar} />
-            )}
-          </ComponentsWrapper>
-        )
-      ) : (
-        <Layout>
-          <ChatInfo />
-          <ComponentsWrapper>
             <CharComponent />
             {toggle ? (
               <CameraBox isShowChar={handleShowChar} />
@@ -67,9 +66,8 @@ export default function ChatPage() {
               <ChatBox isShowChar={handleShowChar} />
             )}
           </ComponentsWrapper>
-        </Layout>
-      )}
-
+        )}
+      </Layout>
       <QuitChatBtn onClick={goToMain}>
         대화 끝내기
         <ButtonImage src="src/assets/img/QuitIcon.png" />
@@ -79,23 +77,23 @@ export default function ChatPage() {
 }
 
 const Layout = styled.div`
-  margin-top: 6rem;
   display: flex;
   flex-direction: column;
+
+  @media all and (min-width: 391px) {
+    margin-top: 6rem;
+  }
+  @media all and (max-width: 390px) {
+    margin-top: 3.3rem;
+  }
 `;
 
 const BackGround = styled.div`
   position: relative;
-  margin: auto;
   background-repeat: no-repeat;
-  background-position-x: 50%;
-  background-position-y: 75%;
   width: 100vw;
   height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
 
   @media all and (min-width: 391px) {
     background-image: url('src/assets/img/Chat_bg.png');
@@ -103,12 +101,19 @@ const BackGround = styled.div`
     background-position-y: 75%;
     width: 100vw;
     height: 100vh;
+    margin: auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
   }
   @media all and (max-width: 390px) {
     background-color: #ffe79a;
     background-position: center;
     width: 100vw;
     height: 100vh;
+
+    align-items: center;
+    justify-content: center;
   }
 `;
 
@@ -119,12 +124,17 @@ const ComponentsWrapper = styled.div`
   align-items: center;
   gap: 5.3rem;
   /* margin-top: 10.5rem; */
-  margin-left: 11.06rem;
-  margin-right: 8.62rem;
 
   @media all and (min-width: 391px) {
+    margin-left: 11.06rem;
+    margin-right: 8.62rem;
   }
   @media all and (max-width: 390px) {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 4.75rem;
+    margin-bottom: 10.06rem;
+    height: 30rem;
   }
 `;
 

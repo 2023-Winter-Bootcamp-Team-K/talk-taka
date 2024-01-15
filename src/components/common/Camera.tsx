@@ -38,6 +38,7 @@ const CameraLayout = styled.div`
   @media all and (max-width: 390px) {
     width: 21.4375rem;
     height: 32.625rem;
+    box-shadow: none;
   }
 `;
 
