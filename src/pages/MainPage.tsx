@@ -37,7 +37,7 @@ const BackGround = styled.div`
   width: 100vw;
   height: 100vh;
   background-repeat: no-repeat;
-  background-position-x: 100%;
+  background-position-x: 50%;
   background-position-y: 75%;
   display: flex;
   text-align: center;
@@ -120,7 +120,9 @@ const LogoutBtn = styled.button`
 
 const GreetingLayout = styled.div`
   display: flex;
-  width: 28rem;
+  /* width: 28rem; */
+  width: 35rem;
+  line-height: 170%;
   height: 1.4375rem;
   flex-direction: column;
   justify-content: center;
