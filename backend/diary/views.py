@@ -32,8 +32,7 @@ class DiaryCreateView(APIView):
             return Response({"status": "401", "message": "인증되지 않은 사용자"}, status=status.HTTP_401_UNAUTHORIZED)
 
         # Access mood parameter from request.query_params
-        mood = request.query_params.get('mood')
-
+        mood = request.data.get('mood')
         #유효한 mood 값 정의
         valid_moods=['joy','sad','angry']
 
