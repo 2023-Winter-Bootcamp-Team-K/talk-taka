@@ -28,7 +28,6 @@ export default function ChatBox({ isShowChar: isShowChar }: ChatBoxProps) {
 }
 
 const ChatLayout = styled.div`
-  width: 31.25rem;
   border-radius: 1.75rem;
   background: rgba(255, 255, 255, 1);
   box-shadow: 0px 14px 24px rgba(0, 0, 0, 0.13);
@@ -36,8 +35,9 @@ const ChatLayout = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  
+
   @media all and (min-width: 391px) {
+    width: 31.25rem;
     height: 43.75rem;
   }
   @media all and (max-width: 390px) {
@@ -50,7 +50,7 @@ const ChatLayout = styled.div`
 
 const ChatBoxLayout = styled.div`
   flex-grow: 1;
-  overflow-y: auto; 
+  overflow-y: auto;
   display: flex;
   background: rgba(255, 255, 255, 0.82);
   flex-direction: column;

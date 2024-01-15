@@ -16,7 +16,7 @@ export default function ChatPage() {
   const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
   );
-  const [showChar, setShowChar] = useState(true);
+  const [showChar, setShowChar] = useState(false); // 이거 원래 true 임
   const navigate = useNavigate();
 
   const goToMain = () => {
@@ -46,9 +46,10 @@ export default function ChatPage() {
         {isMobile ? (
           showChar && toggle ? (
             <ComponentsWrapper>
-              {/* <CharComponent /> */}
+              <CharComponent />
             </ComponentsWrapper>
           ) : (
+            // 핸드폰 모드
             <ComponentsWrapper>
               {toggle ? (
                 <CameraBox isShowChar={handleShowChar} />
@@ -58,6 +59,7 @@ export default function ChatPage() {
             </ComponentsWrapper>
           )
         ) : (
+          // 컴퓨터 모드
           <ComponentsWrapper>
             <CharComponent />
             {toggle ? (
