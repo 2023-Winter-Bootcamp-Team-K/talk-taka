@@ -7,6 +7,12 @@ import ChatBox from '../components/common/Chatting';
 import ChatInfo from '../components/common/ChatInfo';
 import { toggleStore } from '../stores/toggle';
 import CameraModal from '../components/modal/CameraModal';
+import { baseInstance } from '../api/config';
+import { getCookie } from '../utils/cookie';
+
+type TokenProps = {
+  token: string;
+};
 
 export default function ChatPage() {
   const { toggle } = toggleStore();
@@ -24,9 +30,36 @@ export default function ChatPage() {
   const handleShowChar = () => {
     setShowChar(true);
   };
+
   const handleQuitChat = () => {
+    onSubmit();
+
     setIsCameraModalOpen(true);
-  }
+  };
+
+  //getItem from local storage
+  const Mood = window.localStorage.getItem('mood');
+
+  const onSubmit = async () => {
+    const token = getCookie('token');
+    console.log(token);
+
+    try {
+      const response = await baseInstance.post(
+        `/diary/`,
+        { mood: Mood },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.data.this.status === 201) {
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 390px)');

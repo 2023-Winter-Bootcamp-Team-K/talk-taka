@@ -22,7 +22,7 @@ export default function LoginInput({
   marginbottomp = '0px',
   marginbottomptt = '0.92rem',
   width = '29.55rem',
-  widthp = '29.55rem',
+  widthp = '17.75rem',
   value,
   onChange,
 }: AllProps) {
@@ -79,7 +79,7 @@ const InputType = styled.div<{ marginbottomptt: string }>`
     font-size: 1.25rem;
     margin-bottom: 0.76rem;
   }
-  @media (min-width: 390px) and (max-width: 390px) {
+  @media all and (min-width: 390px) and (max-width: 390px) {
     width: 9rem;
     height: 1.58481rem;
     font-size: 1rem;
@@ -102,7 +102,7 @@ const InputLayout = styled.div<{
     height: 3.8rem;
     border-radius: 0.875rem;
   }
-  @media (max-width: 390px) {
+  @media all and (max-width: 390px) {
     width: ${(props) =>
       props.widthp === 'normal' ? '16.37706rem' : props.widthp};
     height: 2.35031rem;
@@ -126,7 +126,7 @@ const InputLayout = styled.div<{
       font-size: 1.25rem;
       margin-left: 0.94rem;
     }
-    @media (max-width: 390px) {
+    @media all and (max-width: 390px) {
       width: 100%;
       height: 1.1425rem;
       font-size: 1rem;
