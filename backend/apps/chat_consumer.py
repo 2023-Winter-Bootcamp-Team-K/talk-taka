@@ -176,13 +176,14 @@ class ChatConsumer(WebsocketConsumer):
                 stream=True,
         ):
             finish_reason = chunk.choices[0].finish_reason
-
+            response_message = chunk.choices[0].delta.content
+            # 메시지 조각를 클라이언트로 바로 전송
+            #self.send(json.dumps({"event": "conversation",
+            #                      "data": {"message": response_message, "finish_reason": finish_reason}}))
+            self.text_send(response_message, finish_reason)
             if finish_reason == "stop":
                 break
 
-            response_message = chunk.choices[0].delta.content
-            # 메시지 조각를 클라이언트로 바로 전송
-            self.send(json.dumps({"message": response_message, "finish_reason": finish_reason}))
             # 메시지 조각 합침
             messages += response_message
 
@@ -199,8 +200,7 @@ class ChatConsumer(WebsocketConsumer):
                 is_last_char = "stop"
 
             # 메시지를 클라이언트로 바로 전송
-            self.send(json.dumps({"event": "conversation", "message": chunk, "finish_reason": is_last_char}))
-
+            self.text_send(chunk, is_last_char)
             # 마지막 글자에 도달하면 루프 종료
             if is_last_char == "stop":
                 break
@@ -264,3 +264,8 @@ class ChatConsumer(WebsocketConsumer):
             }
         }
         ))
+    def text_send(self, message,finish_reason):
+        if finish_reason is None:
+            finish_reason = "incomplete"
+        self.send(json.dumps({"event": "conversation",
+                              "data": {"message": message, "finish_reason": finish_reason}}))
