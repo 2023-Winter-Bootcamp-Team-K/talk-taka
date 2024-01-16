@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   CalendarContainer,
   HeaderContainer,
@@ -13,16 +13,57 @@ import {
   DayName,
 } from './CalenderStyle';
 
-// 실험용 기분 이미지 데이터
-const sampleFeelings: { [key: string]: string } = {
-  '2024-01-01': 'https://ifh.cc/g/13Ktbk.png',
-  '2024-01-02': 'https://ifh.cc/g/13Ktbk.png',
-  '2024-01-03': 'https://ifh.cc/g/pscoAZ.png',
-  // 추가 날짜와 이미지 URL
+const moodToImageUrl = {
+  joy: 'https://ifh.cc/g/13Ktbk.png',
+  sad: 'https://ifh.cc/g/pscoAZ.png',
+  angry: 'https://ifh.cc/g/alvMNR.png',
 };
 
-const Calender: React.FC = () => {
+type calenderType = {
+  data: any;
+  created_at: string;
+  diaryId: number;
+  imageURL?: string;
+  mood?: string;
+};
+
+const Calender = ({ data }: calenderType) => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [sampleFeelings, setSampleFeelings] = useState({});
+
+  console.log(data);
+
+  type FeelingsType = {
+    [key: string]: FeelingsEntry[];
+  };
+  type FeelingsEntry = {
+    diaryId: number;
+    mood: string;
+    imageUrl?: string; // imageUrl 프로퍼티 추가 (선택적)
+  };
+  useEffect(() => {
+    const exdata = [
+      { created_at: '2024-01-15', diaryId: '1', mood: 'joy' },
+      { created_at: '2024-01-16', diaryId: '2', mood: 'angry' },
+    ];
+    const feelings = data?.reduce((acc: FeelingsType, item) => {
+      // 해당 날짜에 이미 데이터가 있는 경우, 배열에 객체를 추가합니다.
+      if (!acc[item.created_at]) {
+        acc[item.created_at] = [];
+      }
+      const imageUrl = moodToImageUrl[item.mood];
+      acc[item.created_at].push({
+        diaryId: item.diaryId,
+        mood: moodToImageUrl[item.mood],
+      });
+      console.log(acc);
+
+      return acc;
+    }, {});
+    console.log(feelings, '되냐');
+
+    setSampleFeelings(feelings);
+  }, [data]);
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const daysInMonth = new Date(
@@ -87,7 +128,7 @@ const Calender: React.FC = () => {
         >
           {sampleFeelings[dateKey] && (
             <img
-              src={sampleFeelings[dateKey]}
+              src={sampleFeelings[dateKey][0].mood}
               alt="Mood"
               style={{
                 width: '130%', // 이미지 크기 조절

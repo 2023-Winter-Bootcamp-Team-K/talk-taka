@@ -3,12 +3,21 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../components/common/Btn';
 import { LogoutIconSvg } from '../assets/SVG';
 import Calender from '../components/calender/Calender';
+import { useQuery } from 'react-query';
+import { getDiaries } from '../api/calender/calender';
+import { getCookie } from '../utils/cookie';
 
 export default function MainPage() {
   const navigate = useNavigate();
   const goToIntro = () => {
     navigate('/');
   };
+  const token = getCookie('token');
+
+  const { data: DiariesData } = useQuery('sales', () => getDiaries(token));
+  const diaries = DiariesData?.data;
+  console.log(diaries,'왜이래');
+  
 
   return (
     <BackGround>
@@ -18,7 +27,7 @@ export default function MainPage() {
       </LogoutBtn>
       <div style={{ display: 'flex' }}>
         <MainLayout>
-          <Calender />
+          <Calender data={diaries} />
           <StyledButton>대화하러 가기</StyledButton>
         </MainLayout>
         <GreetingLayout>
