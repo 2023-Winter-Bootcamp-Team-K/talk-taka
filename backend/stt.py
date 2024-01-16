@@ -16,9 +16,11 @@ def speach_to_text(data):
         "Content-Type": "application/octet-stream"
     }
     response = requests.post(url, data=data, headers=headers)
+    response_json = response.json()
     rescode = response.status_code
     if (rescode == 200):
-        return response.text
+        text = response_json.get('text')
+        return text
     else:
         print("Error : " + response.text)
 

@@ -142,8 +142,9 @@ class ChatConsumer(WebsocketConsumer):
                 self.close()
 
     def disconnect(self, closed_code):
-        self.chatroom.delete_at = timezone.now()
-        self.chatroom.save()
+        # self.chatroom.delete_at = timezone.now()
+        # self.chatroom.save()
+        pass
 
     def save_gpt_question(self, content):
         # GPT 질문 저장

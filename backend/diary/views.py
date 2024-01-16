@@ -10,36 +10,27 @@ class DiaryCreateView(APIView):
 
     @swagger_auto_schema(
         operation_id="일기 생성",
-        manual_parameters=[
-            openapi.Parameter(
-                name='mood',
-                in_=openapi.IN_QUERY,
-                type=openapi.TYPE_STRING,
-                description='Mood filter (joy, sad, angry)',
-            ),
-        ],
-        responses={201: openapi.Schema(
+        request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'status': openapi.Schema(type=openapi.TYPE_STRING),
-                'message': openapi.Schema(type=openapi.TYPE_STRING),
-                'diaryId': openapi.Schema(type=openapi.TYPE_STRING),
-            }
-        )}
+                'mood': openapi.Schema(type=openapi.TYPE_STRING)
+            },
+            required=['mood']
+        ),
+        responses={201: openapi.Response(description="일기 생성 성공")}
     )
     def post(self, request, format=None):
         if not request.user.is_authenticated:
             return Response({"status": "401", "message": "인증되지 않은 사용자"}, status=status.HTTP_401_UNAUTHORIZED)
 
         # Access mood parameter from request.query_params
-        mood = request.query_params.get('mood')
-
+        mood = request.data.get('mood')
         #유효한 mood 값 정의
         valid_moods=['joy','sad','angry']
 
         #제공된 mood가 유효한지 확인
         if mood not in valid_moods:
-            return Response({"status":"401","message":"유효하지 않은 mood 값입니다"},status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"status": "400", "message": "유효하지 않은 mood 값입니다"}, status=status.HTTP_400_BAD_REQUEST)
         # 일기 생성
         diary = Diary.objects.create(
             user=request.user,
@@ -73,7 +64,8 @@ class DiaryView(APIView):
             "message": "일기 조회 성공",
             "diaryContent": diary.content,
             "created_at": diary.created_at.strftime("%Y-%m-%d"),
-            "imageURL": diary.img_url
+            "imageURL": diary.img_url,
+            "mood": diary.mood
         }
         return Response(diary_data)
 
