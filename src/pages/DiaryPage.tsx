@@ -21,8 +21,8 @@ export default function DiaryPage() {
             <Diary />
           </Right>
         </Book>
-        <QuitLayout>
-          <QuitChatBtn onClick={GoToMain}>
+        <QuitLayout onClick={GoToMain}>
+          <QuitChatBtn>
             <ButtonImage src="src/assets/img/QuitIcon.png" />
             뒤로가기
           </QuitChatBtn>
@@ -42,7 +42,7 @@ const QuitLayout = styled.button`
   height: 3rem;
 `;
 
-const QuitChatBtn = styled.button`
+const QuitChatBtn = styled.div`
   all: unset;
   position: absolute;
   display: flex;

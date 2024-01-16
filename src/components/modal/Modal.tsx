@@ -29,7 +29,7 @@ export default function Modal({ modalConfirm }: ModalProps) {
           <FeelingLayout>
             <Feeling
               onClick={() => toggleFeel('angry')}
-              isSelected={selectedFeel === 'angry'}
+              $isselected={selectedFeel === 'angry' ? '1' : '0'}
             >
               <img src="https://ifh.cc/g/a8JKwo.png" alt="" />
               <p>분노</p>
@@ -37,7 +37,7 @@ export default function Modal({ modalConfirm }: ModalProps) {
 
             <Feeling
               onClick={() => toggleFeel('joy')}
-              isSelected={selectedFeel === 'joy'}
+              $isselected={selectedFeel === 'joy' ? '1' : '0'}
             >
               <img src="https://ifh.cc/g/13Ktbk.png" alt="" />
               <p>기쁨</p>
@@ -45,7 +45,7 @@ export default function Modal({ modalConfirm }: ModalProps) {
 
             <Feeling
               onClick={() => toggleFeel('sad')}
-              isSelected={selectedFeel === 'sad'}
+              $isselected={selectedFeel === 'sad' ? '1' : '0'}
             >
               <img src="https://ifh.cc/g/pscoAZ.png" alt="" />
               <p>슬픔</p>
@@ -112,13 +112,13 @@ const FeelingLayout = styled.div`
   display: flex;
 `;
 
-const Feeling = styled.div<{ isSelected: boolean }>`
+const Feeling = styled.div<{ $isselected: string }>`
   display: flex;
   flex-direction: column;
   cursor: pointer;
 
-  ${({ isSelected }) =>
-    isSelected
+  ${(props) =>
+    props.$isselected === '1'
       ? `
         img {
           transform: scale(1.2);

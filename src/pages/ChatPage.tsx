@@ -1,5 +1,5 @@
 import { styled } from 'styled-components';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Modal from '../components/modal/Modal';
 import CharComponent from '../components/common/CharComponent';
 import CameraBox from '../components/common/Camera';
@@ -11,6 +11,26 @@ import { baseInstance } from '../api/config';
 import { getCookie } from '../utils/cookie';
 
 export default function ChatPage() {
+  // 웹소켓?
+  const [socketConnected, setSocketConnected] = useState(false);
+
+  const connectWebSocket = () => {
+    const roomId = '1';
+    const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomId}/`);
+
+    ws.onopen = () => {
+      console.log('connected to room' + roomId);
+      setSocketConnected(true);
+    };
+    ws.onclose = () => {
+      console.log('disconnect from room :' + roomId);
+      setSocketConnected(false);
+    };
+    ws.onerror = () => {
+      console.log('connection error to' + roomId);
+    };
+  };
+
   const { toggle } = toggleStore();
 
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -38,7 +58,6 @@ export default function ChatPage() {
 
   const onSubmit = async () => {
     const token = getCookie('token');
-    console.log(token);
 
     try {
       const response = await baseInstance.post(
@@ -46,11 +65,11 @@ export default function ChatPage() {
         { mood: Mood },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: token,
           },
         }
       );
-      if (response.data.this.status === 201) {
+      if (response.data.status === '201') {
       }
     } catch (error) {
       console.error(error);
@@ -58,6 +77,7 @@ export default function ChatPage() {
   };
 
   useEffect(() => {
+    connectWebSocket();
     const mediaQuery = window.matchMedia('(max-width: 390px)');
     const handleResize = () => setIsMobile(mediaQuery.matches);
     mediaQuery.addEventListener('change', handleResize);
@@ -65,20 +85,20 @@ export default function ChatPage() {
     return () => mediaQuery.removeEventListener('change', handleResize);
   }, []);
 
-  return (
+  return socketConnected ? (
     <BackGround>
       {isModalOpen && <Modal modalConfirm={handleModalConfirm} />}
       <Layout>
         <ChatInfo />
         {isMobile ? (
-          showChar && toggle ? (
+          showChar && toggle === '1' ? (
             <ComponentsWrapper>
               <CharComponent />
             </ComponentsWrapper>
           ) : (
             // 핸드폰 모드
             <ComponentsWrapper>
-              {toggle ? (
+              {toggle === '1' ? (
                 <CameraBox isShowChar={handleShowChar} />
               ) : (
                 <ChatBox isShowChar={handleShowChar} />
@@ -89,7 +109,7 @@ export default function ChatPage() {
           // 컴퓨터 모드
           <ComponentsWrapper>
             <CharComponent />
-            {toggle ? (
+            {toggle === '1' ? (
               <CameraBox isShowChar={handleShowChar} />
             ) : (
               <ChatBox isShowChar={handleShowChar} />
@@ -103,6 +123,8 @@ export default function ChatPage() {
         <ButtonImage src="src/assets/img/QuitIcon.png" />
       </QuitChatBtn>
     </BackGround>
+  ) : (
+    <div>다시 시도 하시옹</div>
   );
 }
 
