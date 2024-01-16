@@ -19,7 +19,6 @@ def after_login_page(request):
 
 class UploadProfilePictureView(APIView):
     parser_classes = [MultiPartParser]
-
     def post(self, request):
         try:
             # 사용자로부터 프로필 사진을 입력 받음
