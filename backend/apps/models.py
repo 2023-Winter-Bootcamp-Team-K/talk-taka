@@ -19,6 +19,7 @@ class ChatRoom(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     delete_at = models.DateTimeField(null=True)
+    summary = models.CharField(max_length=300, null=True)
 
     def add_mood(self, mood):
         if mood == 'Joy':
