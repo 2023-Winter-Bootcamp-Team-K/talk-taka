@@ -43,7 +43,7 @@ const ChatLayout = styled.div`
   @media all and (max-width: 390px) {
     width: 22rem;
     height: 34rem;
-    /* background: transparent; */
+    background: transparent;
     box-shadow: none;
   }
 `;
