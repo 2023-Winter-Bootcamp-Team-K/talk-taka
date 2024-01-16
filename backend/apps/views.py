@@ -99,14 +99,26 @@ def generate_image(content): # openai 이용하여 이미지 생성하는 함수
 class ChatRoomCreateView(APIView):
 
     @swagger_auto_schema(
-        request_body=ChatRoomSerializer,
-        operation_id="회원 가입",
+        operation_id="채팅방 생성",
         responses={201: ChatRoomSerializer(many=False)}
     )
     def post(self, request, format=None):
-        serializer = ChatRoomSerializer(data=request.data)
-        if serializer.is_valid():
-            chat_room = serializer.save()
-            # 여기에서 chat_room에 다른 필요한 값들을 설정할 수 있습니다.
-            return Response(ChatRoomSerializer(chat_room).data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # 사용자 인증 확인
+        if not request.user.is_authenticated:
+            return Response({"status": "401", "message": "인증되지 않은 사용자"}, status=status.HTTP_401_UNAUTHORIZED)
+
+        # 채팅방 생성
+        chat_room = ChatRoom.objects.create(user_id=request.user)
+
+        # 필요한 경우, 여기에서 chat_room에 다른 값들을 설정할 수 있습니다.
+        # 예: chat_room.owner = request.user
+
+        # 채팅방 저장
+        chat_room.save()
+
+        # 응답 데이터에 채팅방 ID 포함
+        response_data = {
+            "chat_room_id": chat_room.id,
+            # 필요한 경우, 다른 정보도 포함할 수 있습니다.
+        }
+        return Response(response_data, status=status.HTTP_201_CREATED)

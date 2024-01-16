@@ -7,7 +7,7 @@ from .models import GPTQuestion, UserAnswer
 class ChatRoomSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatRoom
-        fields = ['user_id']
+        fields = []
 
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
