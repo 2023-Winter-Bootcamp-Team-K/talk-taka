@@ -12,48 +12,9 @@ import { getCookie } from '../utils/cookie';
 
 export default function ChatPage() {
   // 웹소켓?
+  const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
 
-  const connectWebSocket = () => {
-    const roomId = '1';
-    const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomId}/`);
-
-    ws.onopen = () => {
-      console.log('connected to room' + roomId);
-      setSocketConnected(true);
-    };
-    ws.onclose = () => {
-      console.log('disconnect from room :' + roomId);
-      setSocketConnected(false);
-    };
-    ws.onerror = () => {
-      console.log('connection error to' + roomId);
-    };
-  };
-
-  const { toggle } = toggleStore();
-
-  const [isModalOpen, setIsModalOpen] = useState(true);
-  const [isMobile, setIsMobile] = useState(
-    window.matchMedia('(max-width: 390px)').matches
-  );
-  const [showChar, setShowChar] = useState(false); // 이거 원래 true 임
-  const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
-
-  const handleModalConfirm = () => {
-    setIsModalOpen(false);
-  };
-  const handleShowChar = () => {
-    setShowChar(true);
-  };
-
-  const handleQuitChat = () => {
-    onSubmit();
-
-    setIsCameraModalOpen(true);
-  };
-
-  //getItem from local storage
   const Mood = window.localStorage.getItem('mood');
 
   const onSubmit = async () => {
@@ -75,6 +36,70 @@ export default function ChatPage() {
       console.error(error);
     }
   };
+
+  const connectWebSocket = () => {
+    const roomId = '1';
+    const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomId}/`);
+
+    ws.onopen = () => {
+      // 웹소켓 시작 설정
+      setSocketConnected(true);
+
+      setSocket(ws);
+    };
+    console.log('connected to room' + roomId);
+
+    ws.onclose = () => {
+      console.log('disconnect from room :' + roomId);
+      setSocketConnected(false);
+    };
+    ws.onerror = () => {
+      console.log('connection error to' + roomId);
+      setSocketConnected(false);
+    };
+
+    ws.onmessage = (event) => {
+      console.log(event.data);
+    };
+  };
+  // 웹소켓 시작
+  const startWebSocket = () => {
+    const ws = socket;
+    if (socketConnected === true && ws) {
+      const data = {
+        event: 'conversation_start',
+        data: {
+          mood: Mood,
+        },
+      };
+      ws.send(JSON.stringify(data));
+    }
+  };
+
+  const { toggle } = toggleStore();
+
+  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(
+    window.matchMedia('(max-width: 390px)').matches
+  );
+  const [showChar, setShowChar] = useState(false); // 이거 원래 true 임
+  const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
+
+  const handleModalConfirm = () => {
+    setIsModalOpen(false);
+    startWebSocket();
+  };
+  const handleShowChar = () => {
+    setShowChar(true);
+  };
+
+  const handleQuitChat = () => {
+    onSubmit();
+
+    setIsCameraModalOpen(true);
+  };
+
+  //getItem from local storage
 
   useEffect(() => {
     connectWebSocket();
