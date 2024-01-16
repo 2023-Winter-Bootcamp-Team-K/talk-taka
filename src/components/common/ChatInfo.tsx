@@ -27,14 +27,16 @@ const InfoWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: right;
   gap: 1.7rem;
-
+  
   @media all and (min-width: 391px) {
+    justify-content: right;
     margin-right: 14.5rem;
     margin-bottom: 1rem;
   }
   @media all and (max-width: 390px) {
+    justify-content: right;
+    margin-right: 3.25rem;
   }
 `;
 

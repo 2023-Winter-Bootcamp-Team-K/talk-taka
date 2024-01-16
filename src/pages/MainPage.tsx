@@ -1,6 +1,5 @@
 import { styled } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import Button from '../components/common/Btn';
 import { LogoutIconSvg } from '../assets/SVG';
 import Calender from '../components/calender/Calender';
 
@@ -9,6 +8,9 @@ export default function MainPage() {
   const goToIntro = () => {
     navigate('/');
   };
+  const goToChat = () => {
+    navigate('/chat');
+  };
 
   return (
     <BackGround>
@@ -16,16 +18,14 @@ export default function MainPage() {
         <LogoutIconSvg />
         로그아웃
       </LogoutBtn>
-      <div style={{ display: 'flex' }}>
-        <MainLayout>
-          <Calender />
-          <StyledButton>대화하러 가기</StyledButton>
-        </MainLayout>
-        <GreetingLayout>
-          다시 돌아오지 않는 <TodayDate /> <br />
-          길동이의 하루를 기록으로 남겨보세요
-        </GreetingLayout>
-      </div>
+      <MainLayout>
+        <Calender />
+        <StyledButton onClick={goToChat}>대화하러 가기</StyledButton>
+      </MainLayout>
+      <GreetingLayout>
+        다시 돌아오지 않는 <TodayDate /> <br />
+        길동이의 하루를 기록으로 남겨보세요
+      </GreetingLayout>
     </BackGround>
   );
 }

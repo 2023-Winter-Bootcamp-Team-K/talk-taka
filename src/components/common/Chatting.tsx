@@ -28,11 +28,6 @@ export default function ChatBox({ isShowChar: isShowChar }: ChatBoxProps) {
 }
 
 const ChatLayout = styled.div`
-  width: 31.25rem;
-  /* max-height: 43.75rem;
-  min-height: 43.75rem; */
-  max-height: 43.75rem;
-  min-height: 43.75rem;
   border-radius: 1.75rem;
   background: rgba(255, 255, 255, 1);
   box-shadow: 0px 14px 24px rgba(0, 0, 0, 0.13);
@@ -41,27 +36,32 @@ const ChatLayout = styled.div`
   justify-content: center;
   flex-direction: column;
 
+  @media all and (min-width: 391px) {
+    width: 31.25rem;
+    height: 43.75rem;
+  }
   @media all and (max-width: 390px) {
-    width: 31.4375rem;
-    height: 42.625rem;
-    background: transparent;
+    width: 22rem;
+    height: 34rem;
+    /* background: transparent; */
     box-shadow: none;
   }
 `;
 
 const ChatBoxLayout = styled.div`
-  width: 31.25rem;
-  margin-top: 2.19rem;
   flex-grow: 1;
   overflow-y: auto;
-  border-radius: 1.75rem;
-  background: rgba(255, 255, 255, 0.82);
   display: flex;
+  background: rgba(255, 255, 255, 0.82);
   flex-direction: column;
 
+  @media all and (min-width: 391px) {
+    width: 31.25rem;
+    margin-top: 2.19rem;
+    border-radius: 1.75rem;
+  }
   @media all and (max-width: 390px) {
-    width: 31.4375rem;
-    height: 42.625rem;
+    width: 22rem;
     background: transparent;
   }
 `;

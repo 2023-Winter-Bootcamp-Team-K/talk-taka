@@ -5,6 +5,23 @@ type SizeProps = {
   size?: string;
 };
 
+export const BackIconSvg = React.memo(function BackSvg() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+    >
+      <path
+        d="M19 7V13C19 14.103 18.104 15 17 15H3V12H16V8H5V10L1 6.5L5 3V5H17C17.5304 5 18.0391 5.21071 18.4142 5.58579C18.7893 5.96086 19 6.46957 19 7Z"
+        fill="black"
+      />
+    </svg>
+  );
+});
+
 export const CameraIconSvg = React.memo(function CameraSvg() {
   return (
     <svg
@@ -168,3 +185,4 @@ export const Mic = React.memo(function Mic({ size = '60' }: SizeProps) {
     </svg>
   );
 });
+

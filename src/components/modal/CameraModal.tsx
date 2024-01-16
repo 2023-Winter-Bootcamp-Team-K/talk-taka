@@ -46,6 +46,7 @@ export default function CameraModal() {
               />
             ) : (
               <Webcam
+                mirrored={true}
                 ref={webcamRef}
                 width={'100%'}
                 height={'100%'}

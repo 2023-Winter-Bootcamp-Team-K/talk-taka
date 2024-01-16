@@ -12,6 +12,11 @@ export default function Modal({ modalConfirm }: ModalProps) {
     setSelectedFeel(selectedFeel === feel ? null : feel);
   };
 
+  if (selectedFeel === null) {
+  } else {
+    window.localStorage.setItem('mood', selectedFeel);
+  }
+
   return (
     <>
       <Overlay>
@@ -31,8 +36,8 @@ export default function Modal({ modalConfirm }: ModalProps) {
             </Feeling>
 
             <Feeling
-              onClick={() => toggleFeel('happy')}
-              isSelected={selectedFeel === 'happy'}
+              onClick={() => toggleFeel('joy')}
+              isSelected={selectedFeel === 'joy'}
             >
               <img src="https://ifh.cc/g/13Ktbk.png" alt="" />
               <p>기쁨</p>
