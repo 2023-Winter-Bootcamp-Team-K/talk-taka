@@ -64,7 +64,8 @@ class DiaryView(APIView):
             "message": "일기 조회 성공",
             "diaryContent": diary.content,
             "created_at": diary.created_at.strftime("%Y-%m-%d"),
-            "imageURL": diary.img_url
+            "imageURL": diary.img_url,
+            "mood": diary.mood
         }
         return Response(diary_data)
 
