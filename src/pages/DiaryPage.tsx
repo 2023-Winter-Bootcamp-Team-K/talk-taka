@@ -100,7 +100,7 @@ const QuitLayout = styled.button`
   height: 3rem;
 `;
 
-const QuitChatBtn = styled.button`
+const QuitChatBtn = styled.div`
   all: unset;
   position: absolute;
   display: flex;
