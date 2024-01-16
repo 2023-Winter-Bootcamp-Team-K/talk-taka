@@ -49,6 +49,11 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
     'drf_yasg',
+    "django_celery_beat",
+    "django_celery_results",
+
+
+
     'users',
     'main',
     'apps',
@@ -165,6 +170,13 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
+
+
+CELERY_BROKER_URL = "amqp://guest:guest@rabbitmq:5672/"
+CELERY_RESULT_BACKEND = "django-db"  # Celery 작업 결과를 Django DB에 저장할 경우 설정
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
 
 ###AWS#### AWS 액세스 키 설정
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
