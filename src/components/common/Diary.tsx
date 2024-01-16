@@ -1,33 +1,26 @@
 import styled from 'styled-components';
 
 interface DiaryProps {
-  feeling?: string;
-  YY?: string;
-  MM?: string;
-  DD?: string;
-  Text?: string;
-  Image?: string;
-}
+  YY: string;
+  MM: string;
+  DD: string;
+  Text: string;
+  Image: string;
+  mood: string; }
 
 export default function Diary({
-  feeling,
   YY,
   MM,
   DD,
   Text,
   Image,
+  mood,
 }: DiaryProps) {
-  YY = '2024';
-  MM = '12';
-  DD = '30';
-  feeling = 'Sad';
-  //테스트
 
-  //감정 이미지
-  const Feelings: { [key: string]: string } = {
-    Happy: 'https://ifh.cc/g/x7AvPq.png',
-    Sad: 'https://ifh.cc/g/B616mY.png',
-    Angry: 'https://ifh.cc/g/hKwXAP.png',
+  const Moods: { [key: string]: string } = {
+        joy: 'https://ifh.cc/g/x7AvPq.png',
+    sad: 'https://ifh.cc/g/B616mY.png',
+    angry: 'https://ifh.cc/g/hKwXAP.png',
   };
 
   return (
@@ -35,7 +28,7 @@ export default function Diary({
       <DayLayout>
         <Day>
           {YY}년 {MM}월 {DD}일
-          <Feeling src={Feelings[feeling]} />
+          <Feeling src={Moods[mood]} />
         </Day>
       </DayLayout>
       <PictureLayout>
@@ -43,17 +36,14 @@ export default function Diary({
       </PictureLayout>
       <DiaryTextLayout>
         <DiaryText>
-          <TextL>
-            {Text}1978년에 브라이언 커니핸과 데니스 리치가 쓴 "The C Programming
-            Language" 교재의 첫 번째 예제가 화면에 "Hello, world!"를 출력하는
-            것이었고, 이것이 유명해지면서 모든 프로그래밍 언어의 첫번째 예제로
-            굳어지게 되었다.[3][4]
-          </TextL>
+          <TextL>{Text}</TextL>
         </DiaryText>
       </DiaryTextLayout>
     </DiaryLayout>
   );
 }
+
+
 
 const DiaryLayout = styled.div`
   border-radius: 5px;
@@ -107,7 +97,7 @@ const Day = styled.div`
 `;
 
 const Feeling = styled.img`
-  width: 9%;
+  width: 7%;
   height: auto;
 
   @media all and (min-width: 391px) {

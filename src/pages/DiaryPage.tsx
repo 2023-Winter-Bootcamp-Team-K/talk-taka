@@ -1,8 +1,20 @@
 import styled from 'styled-components';
 import Calender from '../components/calender/Calender';
 import Diary from '../components/common/Diary';
+import { useQuery } from 'react-query';
+import { getDiary } from '../api/diary';
 
 export default function DiaryPage() {
+  const diaryId = '1'; 
+
+  const { data: diaryData } = useQuery([diaryId], () => getDiary(diaryId));
+
+  const diaryContent = diaryData?.diaryContent;
+  const imageURL = diaryData?.imageURL;
+  const [YY, MM, DD] = diaryData?.created_at ? diaryData.created_at.split('-') : ['-', '-', '-'];
+  const mood = diaryData?.mood; 
+
+
   return (
     <>
       <BackGround>
@@ -11,7 +23,14 @@ export default function DiaryPage() {
             <Calender />
           </Left>
           <Right>
-            <Diary />
+            <Diary
+              YY={YY}
+              MM={MM}
+              DD={DD}
+              Text={diaryContent}
+              Image={imageURL}
+              mood={mood}
+            />
           </Right>
         </Book>
       </BackGround>
@@ -19,8 +38,9 @@ export default function DiaryPage() {
   );
 }
 
+
 const BackGround = styled.div`
-  background-image: url('src/assets/img/Chat_bg.png');
+  background-image: url('./assets/img/Chat_bg.png'); // 이미지 경로 수정
   margin: auto;
   width: 100vw;
   height: 100vh;
@@ -35,7 +55,7 @@ const BackGround = styled.div`
 `;
 
 const Book = styled.div`
-  background-image: url('src/assets/img/book.png');
+  background-image: url('./assets/img/book.png'); // 이미지 경로 수정
   width: 73.75rem;
   height: 53.125rem;
   display: flex;

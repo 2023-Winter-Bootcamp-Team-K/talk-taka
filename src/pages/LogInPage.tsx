@@ -61,7 +61,7 @@ export default function LoginPage() {
             placeholder="6자리 이상"
           ></LoginInput>
           <Button
-            // onClick={onSubmit}
+            onClick={onSubmit}
             disabled={isButtonDisabled}
             title="로그인"
           ></Button>
