@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { create } from 'zustand';
 import {
   CalendarContainer,
   HeaderContainer,
@@ -13,56 +14,53 @@ import {
   DayName,
 } from './CalenderStyle';
 
-const moodToImageUrl = {
+type MoodType = 'joy' | 'sad' | 'angry';
+type MoodToImageUrlType = { [key in string]: string };
+
+const moodToImageUrl: MoodToImageUrlType = {
   joy: 'https://ifh.cc/g/13Ktbk.png',
   sad: 'https://ifh.cc/g/pscoAZ.png',
   angry: 'https://ifh.cc/g/alvMNR.png',
 };
-
 type calenderType = {
-  data: any;
   created_at: string;
   diaryId: number;
   imageURL?: string;
-  mood?: string;
+  mood: MoodType;
 };
-
-const Calender = ({ data }: calenderType) => {
+type CalenderProps = {
+  data: calenderType[];
+};
+const Calender = ({ data }: CalenderProps) => {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [sampleFeelings, setSampleFeelings] = useState({});
+  const [sampleFeelings, setSampleFeelings] = useState<{
+    [key: string]: FeelingType[];
+  }>({});
 
-  console.log(data);
-
-  type FeelingsType = {
-    [key: string]: FeelingsEntry[];
-  };
-  type FeelingsEntry = {
+  type FeelingType = {
     diaryId: number;
     mood: string;
-    imageUrl?: string; // imageUrl 프로퍼티 추가 (선택적)
+    imageUrl?: string;
+    created_at?: string | undefined;
   };
   useEffect(() => {
-    const exdata = [
-      { created_at: '2024-01-15', diaryId: '1', mood: 'joy' },
-      { created_at: '2024-01-16', diaryId: '2', mood: 'angry' },
-    ];
-    const feelings = data?.reduce((acc: FeelingsType, item) => {
-      // 해당 날짜에 이미 데이터가 있는 경우, 배열에 객체를 추가합니다.
-      if (!acc[item.created_at]) {
-        acc[item.created_at] = [];
+    // const exdata = [
+    //   { created_at: '2024-01-15', diaryId: '1', mood: 'joy' },
+    //   { created_at: '2024-01-16', diaryId: '2', mood: 'angry' },
+    // ];
+    data?.reduce<{ [key: string]: FeelingType[] }>((acc, item) => {
+      if (item.created_at) {
+        if (!acc[item.created_at]) {
+          acc[item.created_at] = [];
+        }
       }
-      const imageUrl = moodToImageUrl[item.mood];
-      acc[item.created_at].push({
+      acc[item.created_at!].push({
         diaryId: item.diaryId,
         mood: moodToImageUrl[item.mood],
       });
-      console.log(acc);
-
+      setSampleFeelings(acc);
       return acc;
     }, {});
-    console.log(feelings, '되냐');
-
-    setSampleFeelings(feelings);
   }, [data]);
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];

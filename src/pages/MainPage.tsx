@@ -16,7 +16,6 @@ export default function MainPage() {
 
   const { data: DiariesData } = useQuery('sales', () => getDiaries(token));
   const diaries = DiariesData?.data;
-  console.log(diaries,'왜이래');
   
 
   return (
