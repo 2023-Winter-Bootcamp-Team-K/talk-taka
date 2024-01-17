@@ -183,6 +183,23 @@ class ChatConsumer(WebsocketConsumer):
         self.save_gpt_question(content=messages)
         return messages
 
+    def child_conversation(self, content):
+        messages = ""
+        for index, chunk in enumerate(content):
+            is_last_char = "incomplete"
+            # 현재 글자가 마지막 글자인지 확인
+            if index == len(content) - 1:
+                is_last_char = "stop"
+
+            # 메시지를 클라이언트로 바로 전송
+            self.user_text_send(chunk, is_last_char)
+            # 마지막 글자에 도달하면 루프 종료
+            if is_last_char == "stop":
+                break
+
+            messages += chunk
+            time.sleep(0.05)
+
     def default_conversation(self, chatroom, question_content):
         messages = ""
         # question_content의 index와 원소를 순차적으로 반환하여 스트리밍 형식으로 출력
@@ -257,13 +274,14 @@ class ChatConsumer(WebsocketConsumer):
             }
         }
         ))
-    def text_send(self, message,finish_reason):
+
+    def text_send(self, message, finish_reason):
         if finish_reason is None:
             finish_reason = "incomplete"
         self.send(json.dumps({"event": "conversation",
                               "data": {"message": message, "finish_reason": finish_reason}}))
 
-    def on_task_completion(self,result,audio_file_url):
+    def on_task_completion(self, result, audio_file_url):
         print("222")
         text_result = result.get(timeout=10)  # 결과를 기다림
         self.child_conversation(text_result)
