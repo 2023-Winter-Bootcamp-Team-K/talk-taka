@@ -1,8 +1,8 @@
-import React, { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import Webcam from 'react-webcam';
 import { useNavigate } from 'react-router-dom';
-import axios, { Axios } from 'axios';
+import axios from 'axios';
 import { getCookie } from '../../utils/cookie';
 import { baseInstance } from '../../api/config';
 
@@ -13,7 +13,6 @@ export default function CameraModal() {
   const webcamRef = useRef<Webcam | null>(null);
   const [url, setUrl] = useState<string | undefined>(undefined);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [formData, setFormData] = useState<FormData>(new FormData());
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current?.getScreenshot();
@@ -21,7 +20,7 @@ export default function CameraModal() {
     if (imageSrc) {
       axios.get(imageSrc, { responseType: 'blob' })
         .then(response => {
-          const file = new File([response.data], 'userCapture.jpg', { type: 'image/jpeg' });
+          const file = new File([response.data], 'userCapture.jpeg', { type: 'image/jpeg' });
           setImageFile(file); 
           setUrl(imageSrc);
         })
@@ -37,29 +36,20 @@ export default function CameraModal() {
   const confirmImage = async () => {
     if (imageFile) {
       const formData = new FormData();
-      formData.append('image', imageFile);
-      setFormData(formData)
+      formData.append('picture', imageFile);
       try {
         const response = await baseInstance.post('/main/image/', formData, {
           headers: {
             'Authorization': token, 
           },
         });
-        const { message, url } = response.data; 
-        if (response.status === 200) {
-          console.log("Image upload successful:", message, url);
+        if (response.status === 201) {
           navigate('/diary');
-        } else {
-          console.error("Image upload failed:", message, url);
-        }
+        } 
       } catch (error) {
         console.error("Error during image upload:", error);
       }
     }
-  };
-
-  const confirm = () => {
-    navigate('/diary');
   };
 
   return (
