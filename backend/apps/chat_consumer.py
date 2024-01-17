@@ -181,7 +181,7 @@ class ChatConsumer(WebsocketConsumer):
             # 메시지 조각를 클라이언트로 바로 전송
             #self.send(json.dumps({"event": "conversation",
             #                      "data": {"message": response_message, "finish_reason": finish_reason}}))
-            self.text_send(response_message, finish_reason)
+            self.gpt_text_send(response_message, finish_reason)
             if finish_reason == "stop":
                 break
 
@@ -201,7 +201,7 @@ class ChatConsumer(WebsocketConsumer):
                 is_last_char = "stop"
 
             # 메시지를 클라이언트로 바로 전송
-            self.text_send(chunk, is_last_char)
+            self.gpt_text_send(chunk, is_last_char)
             # 마지막 글자에 도달하면 루프 종료
             if is_last_char == "stop":
                 break
@@ -211,6 +211,23 @@ class ChatConsumer(WebsocketConsumer):
         # GPTQuestion 객체를 생성하고 데이터베이스에 저장
         question = GPTQuestion.objects.create(content=messages, chatroom_id=chatroom)
         question.save()
+
+    def child_conversation(self, content):
+        messages = ""
+        for index, chunk in enumerate(content):
+            is_last_char = "incomplete"
+            # 현재 글자가 마지막 글자인지 확인
+            if index == len(content) - 1:
+                is_last_char = "stop"
+
+            # 메시지를 클라이언트로 바로 전송
+            self.user_text_send(chunk, is_last_char)
+            # 마지막 글자에 도달하면 루프 종료
+            if is_last_char == "stop":
+                break
+
+            messages += chunk
+            time.sleep(0.05)
 
     def pick_random_question(self):
         pick_question = []
@@ -265,8 +282,14 @@ class ChatConsumer(WebsocketConsumer):
             }
         }
         ))
-    def text_send(self, message,finish_reason):
+    def gpt_text_send(self, message,finish_reason):
         if finish_reason is None:
             finish_reason = "incomplete"
         self.send(json.dumps({"event": "conversation",
-                              "data": {"message": message, "finish_reason": finish_reason}}))
+                              "data": { "character": "quokka", "message": message, "finish_reason": finish_reason}}))
+
+    def user_text_send(self, message,finish_reason):
+        if finish_reason is None:
+            finish_reason = "incomplete"
+        self.send(json.dumps({"event": "conversation",
+                              "data": { "character": "child", "message": message, "finish_reason": finish_reason}}))
