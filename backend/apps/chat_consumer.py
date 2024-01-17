@@ -106,18 +106,12 @@ class ChatConsumer(WebsocketConsumer):
                 ## 여기까진 잘됨.
                 # 오디오 파일 STT로 텍스트 변환
                 # 비동기 작업 완료 후 실행될 콜백 함수
-                def on_task_completion(result):
-                    text_result = result.get(timeout=10)  # 결과를 기다림
-                    self.add_answer(text_result)
 
-                    # STT 결과를 기반으로 후속 처리 진행
-                    question = self.continue_conversation(self.chatroom)
-                    self.audio_send(question)
-                    self.add_question(question=question)
-                    self.save_user_answer(question=self.present_question, content=text_result, url=audio_file_url)
                 # 비동기 작업 실행
                 task = speech_to_text_task.delay(audio_data)
-                task.then(on_task_completion)  # 작업 완료 후 콜백 함수 연결
+                print("test")
+                task.then(self.on_task_completion(task,audio_file_url))
+                print("test2222")# 작업 완료 후 콜백 함수 연결
 
             # 3. 대화 종료
             elif event == "conversation_end":
@@ -268,3 +262,15 @@ class ChatConsumer(WebsocketConsumer):
             finish_reason = "incomplete"
         self.send(json.dumps({"event": "conversation",
                               "data": {"message": message, "finish_reason": finish_reason}}))
+
+    def on_task_completion(self,result,audio_file_url):
+        print("222")
+        text_result = result.get(timeout=10)  # 결과를 기다림
+        self.child_conversation(text_result)
+        self.add_answer(text_result)
+
+        # STT 결과를 기반으로 후속 처리 진행
+        question = self.continue_conversation(self.chatroom)
+        self.audio_send(question)
+        self.add_question(question=question)
+        self.save_user_answer(question=self.present_question, content=text_result, url=audio_file_url)
