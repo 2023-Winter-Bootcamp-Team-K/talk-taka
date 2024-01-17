@@ -17,6 +17,11 @@ export default function ChatPage() {
 
   const Mood = window.localStorage.getItem('mood');
 
+  //대화 배열
+  // const chatArray: any = [];
+  //대화 객체
+  const chatArrayFinal = new Array();
+
   const onSubmit = async () => {
     const token = getCookie('token');
 
@@ -37,15 +42,17 @@ export default function ChatPage() {
     }
   };
 
+  const [close, setclose] = useState(false);
   const connectWebSocket = () => {
     const roomId = '1';
     const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomId}/`);
+    let chatArray = new Array();
 
     ws.onopen = () => {
       // 웹소켓 시작 설정
       setSocketConnected(true);
-
       setSocket(ws);
+      setclose(true);
     };
     console.log('connected to room' + roomId);
 
@@ -59,9 +66,41 @@ export default function ChatPage() {
     };
 
     ws.onmessage = (event) => {
-      console.log(event.data);
+      const messageReceived = JSON.parse(event.data);
+      const messageEvent = messageReceived.event;
+      const checkFinish = messageReceived.data.finish_reason;
+
+      if (messageEvent === 'conversation') {
+        chatArray.push(messageReceived.data.message);
+        const chat = chatArray.join('');
+        if (checkFinish === 'stop') {
+          chatArray = [];
+
+          //쿼카 메세지
+          if (messageReceived.data.character === 'quokka') {
+            const data = {
+              character: 'quokka',
+              message: chat,
+            };
+            chatArrayFinal.push(data);
+          }
+          //아이 메세지
+          if (messageReceived.data.character === 'child') {
+            const data = {
+              character: 'chile',
+              message: chat,
+            };
+            chatArrayFinal.push(data);
+          }
+        }
+      } else if (messageEvent === 'question_tts') {
+        const audioBlob = messageReceived.data.audioBlob;
+        let snd = new Audio(`data:audio/x-wav;base64, ${audioBlob}`);
+        snd.play();
+      }
     };
   };
+
   // 웹소켓 시작
   const startWebSocket = () => {
     const ws = socket;
@@ -73,6 +112,17 @@ export default function ChatPage() {
         },
       };
       ws.send(JSON.stringify(data));
+    }
+  };
+
+  //웹소켓 종료
+  const endWebSocket = () => {
+    const ws = socket;
+    if (close === true && ws) {
+      ws.close(1000, '해결');
+      ws.onclose = () => {
+        console.log('disconnect from room ');
+      };
     }
   };
 
@@ -95,9 +145,13 @@ export default function ChatPage() {
 
   const handleQuitChat = () => {
     onSubmit();
+    setclose(true);
+    endWebSocket();
 
     setIsCameraModalOpen(true);
   };
+
+  //마이크 테스트
 
   //getItem from local storage
 
@@ -107,7 +161,9 @@ export default function ChatPage() {
     const handleResize = () => setIsMobile(mediaQuery.matches);
     mediaQuery.addEventListener('change', handleResize);
     handleResize();
-    return () => mediaQuery.removeEventListener('change', handleResize);
+    return () => {
+      mediaQuery.removeEventListener('change', handleResize);
+    };
   }, []);
 
   return socketConnected ? (
