@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { create } from 'zustand';
 import {
   CalendarContainer,
   HeaderContainer,
@@ -13,16 +14,54 @@ import {
   DayName,
 } from './CalenderStyle';
 
-// 실험용 기분 이미지 데이터
-const sampleFeelings: { [key: string]: string } = {
-  '2024-01-01': 'https://ifh.cc/g/13Ktbk.png',
-  '2024-01-02': 'https://ifh.cc/g/13Ktbk.png',
-  '2024-01-03': 'https://ifh.cc/g/pscoAZ.png',
-  // 추가 날짜와 이미지 URL
-};
+type MoodType = 'joy' | 'sad' | 'angry';
+type MoodToImageUrlType = { [key in string]: string };
 
-const Calender: React.FC = () => {
+const moodToImageUrl: MoodToImageUrlType = {
+  joy: 'https://ifh.cc/g/13Ktbk.png',
+  sad: 'https://ifh.cc/g/pscoAZ.png',
+  angry: 'https://ifh.cc/g/alvMNR.png',
+};
+type calenderType = {
+  created_at: string;
+  diaryId: number;
+  imageURL?: string;
+  mood: MoodType;
+};
+type CalenderProps = {
+  data: calenderType[];
+};
+const Calender = ({ data }: CalenderProps) => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [sampleFeelings, setSampleFeelings] = useState<{
+    [key: string]: FeelingType[];
+  }>({});
+
+  type FeelingType = {
+    diaryId: number;
+    mood: string;
+    imageUrl?: string;
+    created_at?: string | undefined;
+  };
+  useEffect(() => {
+    // const exdata = [
+    //   { created_at: '2024-01-15', diaryId: '1', mood: 'joy' },
+    //   { created_at: '2024-01-16', diaryId: '2', mood: 'angry' },
+    // ];
+    data?.reduce<{ [key: string]: FeelingType[] }>((acc, item) => {
+      if (item.created_at) {
+        if (!acc[item.created_at]) {
+          acc[item.created_at] = [];
+        }
+      }
+      acc[item.created_at!].push({
+        diaryId: item.diaryId,
+        mood: moodToImageUrl[item.mood],
+      });
+      setSampleFeelings(acc);
+      return acc;
+    }, {});
+  }, [data]);
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const daysInMonth = new Date(
@@ -87,7 +126,7 @@ const Calender: React.FC = () => {
         >
           {sampleFeelings[dateKey] && (
             <img
-              src={sampleFeelings[dateKey]}
+              src={sampleFeelings[dateKey][0].mood}
               alt="Mood"
               style={{
                 width: '130%', // 이미지 크기 조절

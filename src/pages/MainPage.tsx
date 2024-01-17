@@ -2,6 +2,8 @@ import { styled } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { LogoutIconSvg } from '../assets/SVG';
 import Calender from '../components/calender/Calender';
+import { useQuery } from 'react-query';
+import { getDiaries } from '../api/calender/calender';
 import { baseInstance } from '../api/config';
 import { getCookie } from '../utils/cookie';
 
@@ -34,6 +36,11 @@ export default function MainPage() {
       console.error(error);
     }
   };
+  const token = getCookie('token');
+
+  const { data: DiariesData } = useQuery('sales', () => getDiaries(token));
+  const diaries = DiariesData?.data;
+  
 
   return (
     <BackGround>
@@ -41,14 +48,14 @@ export default function MainPage() {
         <LogoutIconSvg />
         로그아웃
       </LogoutBtn>
-      <MainLayout>
-        <Calender />
-        <StyledButton onClick={createChatRoom}>대화하러 가기</StyledButton>
-      </MainLayout>
-      <GreetingLayout>
-        다시 돌아오지 않는 <TodayDate /> <br />
-        길동이의 하루를 기록으로 남겨보세요
-      </GreetingLayout>
+        <MainLayout>
+          <Calender data={diaries} />
+          <StyledButton onClick={createChatRoom}>대화하러 가기</StyledButton>
+        </MainLayout>
+        <GreetingLayout>
+          다시 돌아오지 않는 <TodayDate /> <br />
+          길동이의 하루를 기록으로 남겨보세요
+        </GreetingLayout>
     </BackGround>
   );
 }
