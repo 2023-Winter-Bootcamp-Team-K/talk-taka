@@ -1,6 +1,8 @@
 
 from django.urls import path,include
-from .views import RegisterView, LoginView,hello, LogoutView,DeleteUserView
+from .views import RegisterView, LoginView,hello,LogoutView,DeleteUserView,CheckIdAvailability
+
+
 
 urlpatterns = [
 
@@ -8,6 +10,7 @@ urlpatterns = [
     path("auth/login/", LoginView.as_view(), name="login"),
     path('auth/logout/',LogoutView.as_view(), name="logout"),
     path("members/delete/<int:id>/", DeleteUserView.as_view(), name="delete_user"),
+    path('check/id/availability/', CheckIdAvailability.as_view(), name='check-id-availability'),
     path('', hello, name="hello")
 
 ]

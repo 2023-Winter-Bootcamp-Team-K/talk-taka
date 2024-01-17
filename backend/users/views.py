@@ -6,6 +6,7 @@ from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from drf_yasg import openapi
 
 from .serializers import RegisterSerializer, LoginSerializer, RefreshTokenSerializer
 
@@ -26,6 +27,7 @@ class RegisterView(APIView):
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
             user = serializer.save()
+
             if user:
                 # Add a success message when registration is successful
                 return Response({'status': '201',
@@ -33,6 +35,31 @@ class RegisterView(APIView):
 
         # Add a failure message when registration fails
         return Response({'message': '회원 가입에 실패하였습니다', 'errors': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+# 아이디 중복확인
+class CheckIdAvailability(APIView):
+    parser_classes = [JSONParser]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('id', openapi.IN_QUERY, description="ID to check", type=openapi.TYPE_STRING)],
+        operation_id="아이디 중복 확인",
+        responses={200: openapi.Response('Availability status', schema=openapi.Schema(type=openapi.TYPE_OBJECT,
+                                                                                      properties={
+                                                                                          'available': openapi.Schema(
+                                                                                              type=openapi.TYPE_BOOLEAN),
+                                                                                         'message': openapi.Schema(type=openapi.TYPE_STRING)}))}
+    )
+    def get(self,request, *args, **kwargs):
+        id_to_check = request.query_params.get('id',None)
+
+        if not id_to_check:
+            return Response({'error': 'ID parameter is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Id가 이미 사용중 인지 확인
+        if User.objects.filter(id=id_to_check).exists():
+            return Response({'available': False, 'message': '중복된 아이디입니다'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'available': True, 'message': '사용 가능한 아이디입니다'}, status=status.HTTP_200_OK)
 
 # 로그인
 class LoginView(generics.GenericAPIView):
