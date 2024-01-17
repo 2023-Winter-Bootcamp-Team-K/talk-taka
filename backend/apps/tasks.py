@@ -7,7 +7,7 @@ import boto3
 import tempfile
 from urllib.parse import urlparse
 
-from apps.models import GPTQuestion, UserAnswer
+
 
 
 load_dotenv()
