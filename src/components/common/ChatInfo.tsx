@@ -5,7 +5,11 @@ import { toggleStore } from '../../stores/toggle';
 export default function ChatInfo({}) {
   const { toggle, setToggle } = toggleStore();
   const handleToggle = () => {
-    setToggle(!toggle);
+    if (toggle === '1') {
+      setToggle('0');
+    } else {
+      setToggle('1');
+    }
   };
 
   return (
@@ -13,8 +17,8 @@ export default function ChatInfo({}) {
       <DateText>
         <TodayDate />
       </DateText>
-      <ToggleContainer onClick={handleToggle} toggle={toggle}>
-        <Circle toggle={toggle}>
+      <ToggleContainer onClick={handleToggle} $toggle={toggle}>
+        <Circle $toggle={toggle}>
           <CameraIconSvg />
         </Circle>
       </ToggleContainer>
@@ -27,14 +31,16 @@ const InfoWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: right;
   gap: 1.7rem;
 
   @media all and (min-width: 391px) {
+    justify-content: right;
     margin-right: 14.5rem;
     margin-bottom: 1rem;
   }
   @media all and (max-width: 390px) {
+    justify-content: right;
+    margin-right: 3.25rem;
   }
 `;
 
@@ -60,7 +66,7 @@ const DateText = styled.div`
   }
 `;
 
-const Circle = styled.div<{ toggle: boolean }>`
+const Circle = styled.div<{ $toggle: string }>`
   background: white;
   border-radius: 50%;
   transition: transform 0.5s ease-in-out;
@@ -71,17 +77,19 @@ const Circle = styled.div<{ toggle: boolean }>`
   @media all and (min-width: 391px) {
     width: 1.2rem;
     height: 1.2rem;
-    transform: ${(props) => (props.toggle ? 'translateX(2.9rem)' : '0')};
+    transform: ${(props) =>
+      props.$toggle === '1' ? 'translateX(2.9rem)' : '0'};
   }
   @media all and (max-width: 390px) {
     width: 0.97825rem;
     height: 0.97825rem;
-    transform: ${(props) => (props.toggle ? 'translateX(1.78rem)' : '0')};
+    transform: ${(props) =>
+      props.$toggle === '1' ? 'translateX(1.78rem)' : '0'};
   }
 `;
 
-const ToggleContainer = styled.div<{ toggle: boolean }>`
-  background: ${(props) => (props.toggle ? '#FF888C' : '#949494')};
+const ToggleContainer = styled.div<{ $toggle: string }>`
+  background: ${(props) => (props.$toggle === '1' ? '#FF888C' : '#949494')};
   border-radius: 5.96875rem;
   display: flex;
   align-items: center;

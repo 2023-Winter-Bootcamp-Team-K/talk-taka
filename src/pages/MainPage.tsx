@@ -1,16 +1,40 @@
 import { styled } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import Button from '../components/common/Btn';
 import { LogoutIconSvg } from '../assets/SVG';
 import Calender from '../components/calender/Calender';
 import { useQuery } from 'react-query';
 import { getDiaries } from '../api/calender/calender';
+import { baseInstance } from '../api/config';
 import { getCookie } from '../utils/cookie';
 
 export default function MainPage() {
   const navigate = useNavigate();
   const goToIntro = () => {
     navigate('/');
+  };  
+
+  const createChatRoom = async () => {
+    const token = getCookie('token');
+    const config = {
+      headers: {
+        Authorization: `${token}`,
+      },
+    };
+
+    try {
+      const response = await baseInstance.post(
+        '/apps/create_chat_room/',
+        {},
+        config
+      );
+      if (response.status === 201) {
+        console.log(response);
+        window.localStorage.setItem('chat_id', response.data.chat_room_id);
+        navigate(`/chat`);
+      }
+    } catch(error) {
+      console.error(error);
+    }
   };
   const token = getCookie('token');
 
@@ -24,16 +48,14 @@ export default function MainPage() {
         <LogoutIconSvg />
         로그아웃
       </LogoutBtn>
-      <div style={{ display: 'flex' }}>
         <MainLayout>
           <Calender data={diaries} />
-          <StyledButton>대화하러 가기</StyledButton>
+          <StyledButton onClick={createChatRoom}>대화하러 가기</StyledButton>
         </MainLayout>
         <GreetingLayout>
           다시 돌아오지 않는 <TodayDate /> <br />
           길동이의 하루를 기록으로 남겨보세요
         </GreetingLayout>
-      </div>
     </BackGround>
   );
 }

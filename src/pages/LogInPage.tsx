@@ -60,11 +60,7 @@ export default function LoginPage() {
             typeI="password"
             placeholder="6자리 이상"
           ></LoginInput>
-          <Button
-            // onClick={onSubmit}
-            disabled={isButtonDisabled}
-            title="로그인"
-          ></Button>
+          <Button disabled={isButtonDisabled} title="로그인"></Button>
           <SignUp type="submit" onClick={goToMain}>
             회원가입 하러가기
           </SignUp>

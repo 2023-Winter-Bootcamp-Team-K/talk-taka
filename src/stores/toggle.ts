@@ -2,7 +2,7 @@ import { create, StateCreator } from 'zustand';
 import { persist, PersistOptions } from 'zustand/middleware';
 
 type toggleStore = {
-  toggle: boolean;
+  toggle: string;
   setToggle: (toggle: any) => void;
 };
 type UserPersist = (
@@ -13,7 +13,7 @@ type UserPersist = (
 export const toggleStore = create<toggleStore>(
   (persist as UserPersist)(
     (set) => ({
-      toggle: false, //상태
+      toggle: '0', //상태
       setToggle: (toggle) => set({ toggle: toggle }), //상태변경
     }),
     {

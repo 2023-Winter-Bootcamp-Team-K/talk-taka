@@ -1,27 +1,44 @@
 import { styled } from 'styled-components';
-import { useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Modal from '../components/modal/Modal';
 import CharComponent from '../components/common/CharComponent';
 import CameraBox from '../components/common/Camera';
 import ChatBox from '../components/common/Chatting';
 import ChatInfo from '../components/common/ChatInfo';
 import { toggleStore } from '../stores/toggle';
+import CameraModal from '../components/modal/CameraModal';
+import { baseInstance } from '../api/config';
+import { getCookie } from '../utils/cookie';
 
 export default function ChatPage() {
+  // 웹소켓?
+  const [socketConnected, setSocketConnected] = useState(false);
+
+  const connectWebSocket = () => {
+    const roomId = '1';
+    const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomId}/`);
+
+    ws.onopen = () => {
+      console.log('connected to room' + roomId);
+      setSocketConnected(true);
+    };
+    ws.onclose = () => {
+      console.log('disconnect from room :' + roomId);
+      setSocketConnected(false);
+    };
+    ws.onerror = () => {
+      console.log('connection error to' + roomId);
+    };
+  };
+
   const { toggle } = toggleStore();
 
-  // const [toggle, setToggle] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
   );
-  const [showChar, setShowChar] = useState(true);
-  const navigate = useNavigate();
-
-  const goToMain = () => {
-    navigate('/main');
-  };
+  const [showChar, setShowChar] = useState(false); // 이거 원래 true 임
+  const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
 
   const handleModalConfirm = () => {
     setIsModalOpen(false);
@@ -30,7 +47,37 @@ export default function ChatPage() {
     setShowChar(true);
   };
 
+  const handleQuitChat = () => {
+    onSubmit();
+
+    setIsCameraModalOpen(true);
+  };
+
+  //getItem from local storage
+  const Mood = window.localStorage.getItem('mood');
+
+  const onSubmit = async () => {
+    const token = getCookie('token');
+
+    try {
+      const response = await baseInstance.post(
+        `/diary/`,
+        { mood: Mood },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      if (response.data.status === '201') {
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
+    connectWebSocket();
     const mediaQuery = window.matchMedia('(max-width: 390px)');
     const handleResize = () => setIsMobile(mediaQuery.matches);
     mediaQuery.addEventListener('change', handleResize);
@@ -38,64 +85,67 @@ export default function ChatPage() {
     return () => mediaQuery.removeEventListener('change', handleResize);
   }, []);
 
-  return (
+  return socketConnected ? (
     <BackGround>
       {isModalOpen && <Modal modalConfirm={handleModalConfirm} />}
-
-      {isMobile ? (
-        showChar ? (
-          <ComponentsWrapper>
-            <CharComponent />
-          </ComponentsWrapper>
+      <Layout>
+        <ChatInfo />
+        {isMobile ? (
+          showChar && toggle === '1' ? (
+            <ComponentsWrapper>
+              <CharComponent />
+            </ComponentsWrapper>
+          ) : (
+            // 핸드폰 모드
+            <ComponentsWrapper>
+              {toggle === '1' ? (
+                <CameraBox isShowChar={handleShowChar} />
+              ) : (
+                <ChatBox isShowChar={handleShowChar} />
+              )}
+            </ComponentsWrapper>
+          )
         ) : (
-          <ComponentsWrapper>
-            {toggle ? (
-              <CameraBox isShowChar={handleShowChar} />
-            ) : (
-              <ChatBox isShowChar={handleShowChar} />
-            )}
-          </ComponentsWrapper>
-        )
-      ) : (
-        <Layout>
-          <ChatInfo />
+          // 컴퓨터 모드
           <ComponentsWrapper>
             <CharComponent />
-            {toggle ? (
+            {toggle === '1' ? (
               <CameraBox isShowChar={handleShowChar} />
             ) : (
               <ChatBox isShowChar={handleShowChar} />
             )}
           </ComponentsWrapper>
-        </Layout>
-      )}
-
-      <QuitChatBtn onClick={goToMain}>
+        )}
+      </Layout>
+      {isCameraModalOpen && <CameraModal />}
+      <QuitChatBtn onClick={handleQuitChat}>
         대화 끝내기
         <ButtonImage src="src/assets/img/QuitIcon.png" />
       </QuitChatBtn>
     </BackGround>
+  ) : (
+    <div>다시 시도 하시옹</div>
   );
 }
 
 const Layout = styled.div`
-  margin-top: 6rem;
   display: flex;
   flex-direction: column;
+
+  @media all and (min-width: 391px) {
+    margin-top: 6rem;
+  }
+  @media all and (max-width: 390px) {
+    margin-top: 3.3rem;
+  }
 `;
 
 const BackGround = styled.div`
   position: relative;
-  margin: auto;
   background-repeat: no-repeat;
-  background-position-x: 50%;
-  background-position-y: 75%;
   width: 100vw;
   height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
 
   @media all and (min-width: 391px) {
     background-image: url('src/assets/img/Chat_bg.png');
@@ -103,12 +153,19 @@ const BackGround = styled.div`
     background-position-y: 75%;
     width: 100vw;
     height: 100vh;
+    margin: auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
   }
   @media all and (max-width: 390px) {
     background-color: #ffe79a;
     background-position: center;
     width: 100vw;
     height: 100vh;
+
+    align-items: center;
+    justify-content: center;
   }
 `;
 
@@ -119,12 +176,17 @@ const ComponentsWrapper = styled.div`
   align-items: center;
   gap: 5.3rem;
   /* margin-top: 10.5rem; */
-  margin-left: 11.06rem;
-  margin-right: 8.62rem;
 
   @media all and (min-width: 391px) {
+    margin-left: 11.06rem;
+    margin-right: 8.62rem;
   }
   @media all and (max-width: 390px) {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 4.75rem;
+    margin-bottom: 10.06rem;
+    height: 30rem;
   }
 `;
 
