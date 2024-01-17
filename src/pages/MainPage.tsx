@@ -9,9 +9,6 @@ import { getCookie } from '../utils/cookie';
 
 export default function MainPage() {
   const navigate = useNavigate();
-  const goToIntro = () => {
-    navigate('/');
-  };  
 
   const createChatRoom = async () => {
     const token = getCookie('token');
@@ -42,9 +39,26 @@ export default function MainPage() {
   const diaries = DiariesData?.data;
   
 
+  const logout = async () => {
+    const refresh = getCookie('refresh_token');
+
+    try {
+      const response = await baseInstance.post('/auth/logout/', {
+        refresh: refresh
+      });
+      if (response.status === 205) {
+        console.log(response);
+        window.localStorage.clear();
+        navigate('/');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <BackGround>
-      <LogoutBtn onClick={goToIntro}>
+      <LogoutBtn onClick={logout}>
         <LogoutIconSvg />
         로그아웃
       </LogoutBtn>
