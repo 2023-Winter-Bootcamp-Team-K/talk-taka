@@ -9,9 +9,9 @@ from channels.generic.websocket import WebsocketConsumer
 from dotenv import load_dotenv
 import asyncio
 from storage import get_file_url
-from stt import speach_to_text
 from tts import text_to_speach
 from .models import *
+from .tasks import speech_to_text_task
 import logging
 
 load_dotenv()
@@ -103,24 +103,22 @@ class ChatConsumer(WebsocketConsumer):
                 # 오디오 파일 S3에 저장
                 audio_file_url = get_file_url("audio", audio_file)
                 self.default_audio_file_urls.append(audio_file_url)
-
+                ## 여기까진 잘됨.
                 # 오디오 파일 STT로 텍스트 변환
-                answer = speach_to_text(audio_file)
+                # 비동기 작업 완료 후 실행될 콜백 함수
+                def on_task_completion(result):
+                    text_result = result.get(timeout=10)  # 결과를 기다림
+                    self.add_answer(text_result)
 
-                # answer을 conversation 저장
-                self.add_answer(answer=answer)
+                    # STT 결과를 기반으로 후속 처리 진행
+                    question = self.continue_conversation(self.chatroom)
+                    self.audio_send(question)
+                    self.add_question(question=question)
+                    self.save_user_answer(question=self.present_question, content=text_result, url=audio_file_url)
+                # 비동기 작업 실행
+                task = speech_to_text_task.delay(audio_data)
+                task.then(on_task_completion)  # 작업 완료 후 콜백 함수 연결
 
-                # GPT 질문 생성 및 Text로 전송
-                question = self.continue_conversation(self.chatroom)
-
-                # GPT 질문 음성 파일 전송(mp3)
-                self.audio_send(question)
-
-                # conversation 질문, 답변 저장
-                self.add_question(question=question)
-
-                # UserAnswer DB 저장 (택스트, 오디오 파일 URL)
-                self.save_user_answer(question=self.present_question, content=answer, url=audio_file_url)
             # 3. 대화 종료
             elif event == "conversation_end":
                 self.send(json.dumps({"message": "", "finish_reason": ""}))

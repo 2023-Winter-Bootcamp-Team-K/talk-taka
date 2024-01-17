@@ -17,10 +17,10 @@ from rest_framework.parsers import JSONParser
 from .serializers import ChatRoomSerializer
 from users.models import User
 from .models import ChatRoom
-from .tasks import process_stt_data
+from .models import GPTQuestion, UserAnswer
 
 load_dotenv()
-from .models import GPTQuestion, UserAnswer
+
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
 class GPTAnswerView(APIView):

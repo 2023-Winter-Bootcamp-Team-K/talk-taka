@@ -3,9 +3,9 @@ import sys
 import requests
 from dotenv import load_dotenv
 
+load_dotenv()
+def speech_to_text(data):
 
-def speach_to_text(data):
-    load_dotenv()
     client_id = os.getenv("CLOVA_STT_ID")
     client_secret = os.getenv("CLOVA_STT_SECRET")
     lang = "Kor"  # 언어 코드 ( Kor, Jpn, Eng, Chn )

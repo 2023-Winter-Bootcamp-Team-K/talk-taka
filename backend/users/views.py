@@ -74,7 +74,7 @@ class LogoutView(APIView):
 
             # 로그아웃 성공 시 "로그아웃 성공" 메시지를 포함한 응답을 반환
             return Response({
-                'status': '200',
+                'status': '205',
                 'message': '로그아웃 성공'
             }, status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
