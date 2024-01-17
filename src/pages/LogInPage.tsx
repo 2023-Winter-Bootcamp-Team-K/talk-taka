@@ -30,6 +30,11 @@ export default function LoginPage() {
           secure: true,
           maxAge: 3000,
         });
+        setCookie('refresh_token', response.data.refresh, {
+          path: '/',
+          secure: true,
+          maxAge: 3000,
+        });
       }
     } catch (error) {
       alert('아이디 정보가 올바르지 않습니다.');
