@@ -106,7 +106,10 @@ class ChatConsumer(WebsocketConsumer):
 
                 # 오디오 파일 STT로 텍스트 변환
                 answer = speach_to_text(audio_file)
-
+                
+                # child 텍스트 전송
+                self.child_conversation(answer)
+                
                 # answer을 conversation 저장
                 self.add_answer(answer=answer)
 
