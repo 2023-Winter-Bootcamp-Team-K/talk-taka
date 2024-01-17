@@ -105,7 +105,7 @@ class ChatConsumer(WebsocketConsumer):
                 self.default_audio_file_urls.append(audio_file_url)
                 ## 여기까진 잘됨.
                 # 오디오 파일 STT로 텍스트 변환
-<<<<<<< HEAD
+
                 # 비동기 작업 완료 후 실행될 콜백 함수
 
                 # 비동기 작업 실행
@@ -113,17 +113,8 @@ class ChatConsumer(WebsocketConsumer):
                 print("test")
                 task.then(self.on_task_completion(task,audio_file_url))
                 print("test2222")# 작업 완료 후 콜백 함수 연결
-=======
-                answer = speach_to_text(audio_file)
-                
-                # child 텍스트 전송
-                self.child_conversation(answer)
-                
-                # answer을 conversation 저장
-                self.add_answer(answer=answer)
->>>>>>> develop
 
-            # 3. 대화 종료
+
             elif event == "conversation_end":
                 self.send(json.dumps({"message": "", "finish_reason": ""}))
                 self.close()
@@ -231,22 +222,6 @@ class ChatConsumer(WebsocketConsumer):
         question = GPTQuestion.objects.create(content=messages, chatroom_id=chatroom)
         question.save()
 
-    def child_conversation(self, content):
-        messages = ""
-        for index, chunk in enumerate(content):
-            is_last_char = "incomplete"
-            # 현재 글자가 마지막 글자인지 확인
-            if index == len(content) - 1:
-                is_last_char = "stop"
-
-            # 메시지를 클라이언트로 바로 전송
-            self.user_text_send(chunk, is_last_char)
-            # 마지막 글자에 도달하면 루프 종료
-            if is_last_char == "stop":
-                break
-
-            messages += chunk
-            time.sleep(0.05)
 
     def pick_random_question(self):
         pick_question = []
@@ -301,13 +276,19 @@ class ChatConsumer(WebsocketConsumer):
             }
         }
         ))
-<<<<<<< HEAD
+
 
     def text_send(self, message, finish_reason):
         if finish_reason is None:
             finish_reason = "incomplete"
         self.send(json.dumps({"event": "conversation",
                               "data": {"message": message, "finish_reason": finish_reason}}))
+
+    def user_text_send(self, message,finish_reason):
+        if finish_reason is None:
+            finish_reason = "incomplete"
+        self.send(json.dumps({"event": "conversation",
+                              "data": { "character": "child", "message": message, "finish_reason": finish_reason}}))
 
     def on_task_completion(self, result, audio_file_url):
         print("222")
@@ -320,16 +301,7 @@ class ChatConsumer(WebsocketConsumer):
         self.audio_send(question)
         self.add_question(question=question)
         self.save_user_answer(question=self.present_question, content=text_result, url=audio_file_url)
-=======
-    def gpt_text_send(self, message,finish_reason):
-        if finish_reason is None:
-            finish_reason = "incomplete"
-        self.send(json.dumps({"event": "conversation",
-                              "data": { "character": "quokka", "message": message, "finish_reason": finish_reason}}))
 
-    def user_text_send(self, message,finish_reason):
-        if finish_reason is None:
-            finish_reason = "incomplete"
-        self.send(json.dumps({"event": "conversation",
-                              "data": { "character": "child", "message": message, "finish_reason": finish_reason}}))
->>>>>>> develop
+
+
+
