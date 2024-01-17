@@ -1,27 +1,61 @@
-import { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import Webcam from 'react-webcam';
 import { useNavigate } from 'react-router-dom';
+import axios, { Axios } from 'axios';
+import { getCookie } from '../../utils/cookie';
+import { baseInstance } from '../../api/config';
 
+const token = getCookie('token')
 export default function CameraModal() {
   const navigate = useNavigate();
-
   const [isCaptureEnable, setCaptureEnable] = useState<boolean>(false);
-
-  const webcamRef = useRef<Webcam>(null);
-
+  const webcamRef = useRef<Webcam | null>(null);
   const [url, setUrl] = useState<string | undefined>(undefined);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [formData, setFormData] = useState<FormData>(new FormData());
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current?.getScreenshot();
     setCaptureEnable(true);
     if (imageSrc) {
-      setUrl(imageSrc);
+      axios.get(imageSrc, { responseType: 'blob' })
+        .then(response => {
+          const file = new File([response.data], 'userCapture.jpg', { type: 'image/jpeg' });
+          setImageFile(file); 
+          setUrl(imageSrc);
+        })
+        .catch(error => console.error("Error in fetching image:", error));
     }
   }, [webcamRef]);
 
   const recapture = () => {
     setCaptureEnable(false);
+    setImageFile(null);
+  };
+
+  const confirmImage = async () => {
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append('image', imageFile);
+      setFormData(formData)
+      try {
+        const response = await baseInstance.post('/main/image/', formData, {
+          headers: {
+            'Authorization': token, 
+          },
+        });
+        const { message, url } = response.data; 
+        if (response.status === 200) {
+          console.log("Image upload successful:", message, url);
+          navigate('/diary');
+        } else {
+          console.error("Image upload failed:", message, url);
+        }
+      } catch (error) {
+        console.error("Error during image upload:", error);
+      }
+    }
   };
 
   const confirm = () => {
@@ -58,7 +92,7 @@ export default function CameraModal() {
           {isCaptureEnable ? (
             <Row>
               <ReCapture onClick={recapture}>다시 찍기</ReCapture>
-              <Confirm onClick={confirm}>확인</Confirm>
+              <Confirm onClick={confirmImage}>확인</Confirm>
             </Row>
           ) : (
             <Capture onClick={capture}>찰칵!</Capture>

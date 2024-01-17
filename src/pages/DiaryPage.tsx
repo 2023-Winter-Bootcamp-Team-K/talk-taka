@@ -3,12 +3,13 @@ import Calender from '../components/calender/Calender';
 import Diary from '../components/common/Diary';
 import { useQuery } from 'react-query';
 import { getDiary } from '../api/diary';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom'; 
 import { useEffect, useState } from 'react';
 import { BackIconSvg } from '../assets/SVG';
 
 export default function DiaryPage() {
-  const { data: diaryData } = useQuery([diaryId], () => getDiary(diaryId));
+  const { diaryId } = useParams(); 
+  const { data: diaryData } = useQuery(['diary', diaryId], () => getDiary(diaryId || '')); 
   const diaryContent = diaryData?.diaryContent;
   const imageURL = diaryData?.imageURL;
   const [YY, MM, DD] = diaryData?.created_at ? diaryData.created_at.split('-') : ['-', '-', '-'];
@@ -32,7 +33,6 @@ export default function DiaryPage() {
     handleResize();
     return () => mediaQuery.removeEventListener('change', handleResize);
   }, []);
-
   return (
     <>
       <BackGround>
