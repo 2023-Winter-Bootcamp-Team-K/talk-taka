@@ -38,6 +38,7 @@ ALLOWED_HOSTS = [
 
 INSTALLED_APPS = [
     'corsheaders',
+    'celery',
     'daphne',
     'channels',
     'django.contrib.admin',

@@ -19,10 +19,11 @@ def get_file_url(file_type, file):
     # 프로필 이미지 파일(image)인 경우(s3 디렉토리 추가 후 수정해야 함)
     else:
         file_key = "profile_image/" + str(uuid.uuid4()) + ".jpg"
+        content_type = "image/jpeg"
 
     print(os.environ.get("AWS_STORAGE_BUCKET_NAME"))
     # 파일을 S3 버킷에 업로드
-    s3_client.put_object(Body=file, Bucket=os.environ.get("AWS_STORAGE_BUCKET_NAME"), Key=file_key)
+    s3_client.put_object(Body=file, Bucket=os.environ.get("AWS_STORAGE_BUCKET_NAME"), Key=file_key) #ContentType=content_type
     # 업로드된 파일의 URL을 구성 = FILE_URL + 앞서 생성된 파일 키를 결합하여 만들어짐
     url = os.getenv("FILE_URL") + "/" + file_key
 

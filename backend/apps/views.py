@@ -17,7 +17,7 @@ from rest_framework.parsers import JSONParser
 from .serializers import ChatRoomSerializer
 from users.models import User
 from .models import ChatRoom
-import json
+from .tasks import process_stt_data
 
 load_dotenv()
 from .models import GPTQuestion, UserAnswer
@@ -122,3 +122,16 @@ class ChatRoomCreateView(APIView):
             # 필요한 경우, 다른 정보도 포함할 수 있습니다.
         }
         return Response(response_data, status=status.HTTP_201_CREATED)
+
+
+class SpeechRecognitionView(APIView):
+    def post(self, request, *args, **kwargs):
+        audio_file_url = request.data.get("audio_file_url")
+        if not audio_file_url:
+            return JsonResponse({"error": "No audio file URL provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Celery 태스크 비동기 실행
+        task = process_stt_data.delay(audio_file_url)
+
+        # 응답 반환
+        return JsonResponse({"message": "음성 인식 처리가 시작되었습니다.", "task_id": task.id}, status=status.HTTP_202_ACCEPTED)
