@@ -11,8 +11,8 @@ from urllib.parse import urlparse
 
 
 load_dotenv()
-NAVER_CLIENT_ID = os.environ.get("CLOVA_TTS_ID")
-NAVER_CLIENT_SECRET = os.environ.get("CLOVA_TTS_SECRET")
+NAVER_CLIENT_ID = os.environ.get("CLOVA_ID")
+NAVER_CLIENT_SECRET = os.environ.get("CLOVA_SECRET")
 @shared_task
 def process_stt_data(audio_file_url):
     # S3에서 file_key를 가져오기
