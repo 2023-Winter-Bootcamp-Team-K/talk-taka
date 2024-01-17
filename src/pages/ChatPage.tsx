@@ -12,49 +12,15 @@ import { getCookie } from '../utils/cookie';
 
 export default function ChatPage() {
   // 웹소켓?
+  const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
 
-  const connectWebSocket = () => {
-    const roomId = '1';
-    const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomId}/`);
-
-    ws.onopen = () => {
-      console.log('connected to room' + roomId);
-      setSocketConnected(true);
-    };
-    ws.onclose = () => {
-      console.log('disconnect from room :' + roomId);
-      setSocketConnected(false);
-    };
-    ws.onerror = () => {
-      console.log('connection error to' + roomId);
-    };
-  };
-
-  const { toggle } = toggleStore();
-
-  const [isModalOpen, setIsModalOpen] = useState(true);
-  const [isMobile, setIsMobile] = useState(
-    window.matchMedia('(max-width: 390px)').matches
-  );
-  const [showChar, setShowChar] = useState(false); // 이거 원래 true 임
-  const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
-
-  const handleModalConfirm = () => {
-    setIsModalOpen(false);
-  };
-  const handleShowChar = () => {
-    setShowChar(true);
-  };
-
-  const handleQuitChat = () => {
-    onSubmit();
-
-    setIsCameraModalOpen(true);
-  };
-
-  //getItem from local storage
   const Mood = window.localStorage.getItem('mood');
+
+  //대화 배열
+  // const chatArray: any = [];
+  //대화 객체
+  const chatArrayFinal = new Array();
 
   const onSubmit = async () => {
     const token = getCookie('token');
@@ -76,13 +42,128 @@ export default function ChatPage() {
     }
   };
 
+  const [close, setclose] = useState(false);
+  const connectWebSocket = () => {
+    const roomId = '1';
+    const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomId}/`);
+    let chatArray = new Array();
+
+    ws.onopen = () => {
+      // 웹소켓 시작 설정
+      setSocketConnected(true);
+      setSocket(ws);
+      setclose(true);
+    };
+    console.log('connected to room' + roomId);
+
+    ws.onclose = () => {
+      console.log('disconnect from room :' + roomId);
+      setSocketConnected(false);
+    };
+    ws.onerror = () => {
+      console.log('connection error to' + roomId);
+      setSocketConnected(false);
+    };
+
+    ws.onmessage = (event) => {
+      const messageReceived = JSON.parse(event.data);
+      const messageEvent = messageReceived.event;
+      const checkFinish = messageReceived.data.finish_reason;
+
+      if (messageEvent === 'conversation') {
+        chatArray.push(messageReceived.data.message);
+        const chat = chatArray.join('');
+        if (checkFinish === 'stop') {
+          chatArray = [];
+
+          //쿼카 메세지
+          if (messageReceived.data.character === 'quokka') {
+            const data = {
+              character: 'quokka',
+              message: chat,
+            };
+            chatArrayFinal.push(data);
+          }
+          //아이 메세지
+          if (messageReceived.data.character === 'child') {
+            const data = {
+              character: 'chile',
+              message: chat,
+            };
+            chatArrayFinal.push(data);
+          }
+        }
+      } else if (messageEvent === 'question_tts') {
+        const audioBlob = messageReceived.data.audioBlob;
+        let snd = new Audio(`data:audio/x-wav;base64, ${audioBlob}`);
+        snd.play();
+      }
+    };
+  };
+
+  // 웹소켓 시작
+  const startWebSocket = () => {
+    const ws = socket;
+    if (socketConnected === true && ws) {
+      const data = {
+        event: 'conversation_start',
+        data: {
+          mood: Mood,
+        },
+      };
+      ws.send(JSON.stringify(data));
+    }
+  };
+
+  //웹소켓 종료
+  const endWebSocket = () => {
+    const ws = socket;
+    if (close === true && ws) {
+      ws.close(1000, '해결');
+      ws.onclose = () => {
+        console.log('disconnect from room ');
+      };
+    }
+  };
+
+  const { toggle } = toggleStore();
+
+  const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(
+    window.matchMedia('(max-width: 390px)').matches
+  );
+  const [showChar, setShowChar] = useState(false); // 이거 원래 true 임
+  const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
+
+  const handleModalConfirm = () => {
+    setIsModalOpen(false);
+    startWebSocket();
+  };
+  const handleShowChar = () => {
+    setShowChar(true);
+  };
+
+  const handleQuitChat = () => {
+    onSubmit();
+    setclose(true);
+    endWebSocket();
+
+    setIsCameraModalOpen(true);
+  };
+
+  //마이크 테스트
+
+  //getItem from local storage
+
   useEffect(() => {
     connectWebSocket();
     const mediaQuery = window.matchMedia('(max-width: 390px)');
     const handleResize = () => setIsMobile(mediaQuery.matches);
     mediaQuery.addEventListener('change', handleResize);
     handleResize();
-    return () => mediaQuery.removeEventListener('change', handleResize);
+    return () => {
+      mediaQuery.removeEventListener('change', handleResize);
+    };
   }, []);
 
   return socketConnected ? (
