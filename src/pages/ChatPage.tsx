@@ -99,6 +99,7 @@ export default function ChatPage() {
         const audioBlob = messageReceived.data.audioBlob;
         let snd = new Audio(`data:audio/x-wav;base64, ${audioBlob}`);
         snd.play();
+        // start record 0.5s
       }
     };
   };
@@ -182,9 +183,17 @@ export default function ChatPage() {
             // 핸드폰 모드
             <ComponentsWrapper>
               {toggle === '1' ? (
-                <CameraBox isShowChar={handleShowChar} />
+                <CameraBox
+                  isShowChar={handleShowChar}
+                  socket={socket}
+                  socketConnected={socketConnected}
+                />
               ) : (
-                <ChatBox isShowChar={handleShowChar} />
+                <ChatBox
+                  isShowChar={handleShowChar}
+                  socket={socket}
+                  socketConnected={socketConnected}
+                />
               )}
             </ComponentsWrapper>
           )
@@ -193,9 +202,17 @@ export default function ChatPage() {
           <ComponentsWrapper>
             <CharComponent />
             {toggle === '1' ? (
-              <CameraBox isShowChar={handleShowChar} />
+              <CameraBox
+                isShowChar={handleShowChar}
+                socket={socket}
+                socketConnected={socketConnected}
+              />
             ) : (
-              <ChatBox isShowChar={handleShowChar} />
+              <ChatBox
+                isShowChar={handleShowChar}
+                socket={socket}
+                socketConnected={socketConnected}
+              />
             )}
           </ComponentsWrapper>
         )}

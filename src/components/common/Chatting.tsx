@@ -2,13 +2,15 @@ import styled from 'styled-components';
 import MyMessage from './MyMessage';
 import OpponentMessage from './OpponentMessage';
 import { useState } from 'react';
-import MicGIF from '../gif/Mic';
+import AudioRecorder from './AudioRecorder';
 
 type ChatBoxProps = {
   isShowChar: () => void;
+  socket: WebSocket | null;
+  socketConnected: boolean;
 };
 
-export default function ChatBox({ isShowChar: isShowChar }: ChatBoxProps) {
+export default function ChatBox({ isShowChar, socket, socketConnected }: ChatBoxProps) {
   const [messages, setmessages] = useState([]);
   const [currentTypingId, setCurrentTypingId] = useState(null);
 
@@ -19,10 +21,7 @@ export default function ChatBox({ isShowChar: isShowChar }: ChatBoxProps) {
         <OpponentMessage chatMessage="안녕" />
       </ChatBoxLayout>
       <TextBox>말을 다하면 나를 눌러줘</TextBox>
-      <MicButtonLayout onClick={isShowChar}>
-        {/* <Mic src="/src/assets/img/BlackMic.png" /> */}
-        <MicGIF />
-      </MicButtonLayout>
+      <AudioRecorder isShowChar={isShowChar} socket={socket} socketConnected={socketConnected} />
     </ChatLayout>
   );
 }
@@ -64,27 +63,6 @@ const ChatBoxLayout = styled.div`
     width: 22rem;
     background: transparent;
   }
-`;
-
-const MicButtonLayout = styled.button`
-  all: unset;
-  margin-bottom: 1.19rem;
-  @media all and (max-width: 390px) {
-    margin-bottom: 1.5rem;
-    margin-top: 1.68rem;
-  }
-  cursor: pointer;
-  &:active {
-    opacity: 0.3;
-  }
-`;
-
-const Mic = styled.img`
-  all: unset;
-  margin-top: 1rem;
-  margin-bottom: 1.5rem;
-  width: 40px;
-  height: 40px;
 `;
 
 const TextBox = styled.div`
