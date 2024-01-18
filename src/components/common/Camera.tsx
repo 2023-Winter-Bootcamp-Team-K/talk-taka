@@ -1,16 +1,21 @@
 import styled from 'styled-components';
 import Webcam from 'react-webcam';
+import AudioRecorder from './AudioRecorder';
 
 type CameraBoxProps = {
   isShowChar: () => void;
-};
 
-export default function CameraBox({ isShowChar: isShowChar }: CameraBoxProps) {
+  socket: WebSocket | null;
+  socketConnected: boolean;
+};
+export default function CameraBox({ isShowChar, socket, socketConnected }: CameraBoxProps) {
   return (
     <CameraLayout>
       <CameraBoxLayout>
         <Webcam style={{ borderRadius: '1.75rem' }} mirrored={true} />
       </CameraBoxLayout>
+      <TextBox>말을 다하면 나를 눌러줘</TextBox>
+      <AudioRecorder isShowChar={isShowChar} socket={socket} socketConnected={socketConnected}/>
     </CameraLayout>
   );
 }
@@ -68,36 +73,5 @@ const TextBox = styled.div`
   @media all and (max-width: 390px) {
     margin-bottom: 0.68rem;
     font-size: 1rem;
-  }
-`;
-
-const MicButtonLayout = styled.button`
-  all: unset;
-  display: flex;
-  justify-content: center;
-  width: 12rem;
-  height: 4rem;
-
-  @media all and (max-width: 390px) {
-    margin-bottom: 1.5rem;
-    margin-top: 0.68rem;
-  }
-  cursor: pointer;
-  &:active {
-    opacity: 0.3;
-  }
-`;
-
-const Mic = styled.img`
-  all: unset;
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
-  width: 2.5rem;
-  height: 2.5rem;
-
-  @media all and (max-width: 390px) {
-    width: 30px;
-    height: 30px;
-    background-size: 100%;
   }
 `;
