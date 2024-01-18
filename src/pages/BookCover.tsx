@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 
@@ -11,6 +11,11 @@ export default function BookCover({ year, name, img }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showRight, setShowRight] = useState(false);
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    openBook();
+  }, []);
+
   const openBook = () => {
     setIsOpen(true);
     setTimeout(() => {

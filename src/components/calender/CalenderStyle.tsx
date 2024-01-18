@@ -119,7 +119,9 @@ export const DaysCol = styled.div`
   position: relative;
 
   &:hover {
-    background-color: #f0f0f0;
+    background-color: #fec0cb;
+    transform: scale(1.2);
+    z-index: 4;
   }
 
   &.not-current {
