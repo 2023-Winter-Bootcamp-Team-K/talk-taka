@@ -3,17 +3,22 @@ import Calender from '../components/calender/Calender';
 import Diary from '../components/common/Diary';
 import { useQuery } from 'react-query';
 import { getDiary } from '../api/diary';
-import { useNavigate, useParams } from 'react-router-dom'; 
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { BackIconSvg } from '../assets/SVG';
 
 export default function DiaryPage() {
-  const { diaryId } = useParams(); 
-  const { data: diaryData } = useQuery(['diary', diaryId], () => getDiary(diaryId || '')); 
+  const diaryId = window.localStorage.getItem('diaryId');
+
+  const { data: diaryData } = useQuery(['diary', diaryId], () =>
+    getDiary(diaryId || '')
+  );
   const diaryContent = diaryData?.diaryContent;
   const imageURL = diaryData?.imageURL;
-  const [YY, MM, DD] = diaryData?.created_at ? diaryData.created_at.split('-') : ['-', '-', '-'];
-  const mood = diaryData?.mood; 
+  const [YY, MM, DD] = diaryData?.created_at
+    ? diaryData.created_at.split('-')
+    : ['-', '-', '-'];
+  const mood = diaryData?.mood;
   const navigate = useNavigate();
 
   const GoToMain = () => {
@@ -43,14 +48,14 @@ export default function DiaryPage() {
               뒤로가기
             </QuitChatBtn>
             <Right>
-              <Diary  
-              YY={YY}
-              MM={MM}
-              DD={DD}
-              Text={diaryContent}
-              Image={imageURL}
-              mood={mood}
-                />
+              <Diary
+                YY={YY}
+                MM={MM}
+                DD={DD}
+                Text={diaryContent}
+                Image={imageURL}
+                mood={mood}
+              />
             </Right>
             <ViewChatBtn onClick={GoToResult}>
               <ButtonImage src="src/assets/img/HeartBubble.png" />
@@ -64,13 +69,14 @@ export default function DiaryPage() {
                 <Calender />
               </Left>
               <Right>
-                <Diary 
-                YY={YY}
-                MM={MM}
-                DD={DD}
-                Text={diaryContent}
-                Image={imageURL}
-                mood={mood}/>
+                <Diary
+                  YY={YY}
+                  MM={MM}
+                  DD={DD}
+                  Text={diaryContent}
+                  Image={imageURL}
+                  mood={mood}
+                />
               </Right>
             </Book>
             <ViewChatBtn onClick={GoToResult}>
@@ -140,7 +146,6 @@ const ButtonImage = styled.img`
 `;
 
 const BackGround = styled.div`
-  background-image: url('./assets/img/Chat_bg.png'); // 이미지 경로 수정
   margin: auto;
   width: 100vw;
   height: 100vh;
@@ -153,6 +158,9 @@ const BackGround = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  @media all and (min-width: 391px) {
+    background-image: url('src/assets/img/Chat_bg.png'); // 이미지 경로 수정
+  }
 
   @media all and (max-width: 390px) {
     background-image: url('src/assets/img/Diary_bg.png');
@@ -160,7 +168,7 @@ const BackGround = styled.div`
 `;
 
 const Book = styled.div`
-  background-image: url('./assets/img/book.png'); // 이미지 경로 수정
+  background-image: url('src/assets/img/book.png'); // 이미지 경로 수정
   width: 73.75rem;
   height: 53.125rem;
   margin-top: 3rem;
