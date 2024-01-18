@@ -229,6 +229,7 @@ class ChatConsumer(WebsocketConsumer):
 
     def pick_random_question(self, username):
         pick_question = []
+        user_name = username[1:]
         while True:
             basic_questions_list = [
                 "오늘 뭐했어?",
@@ -236,16 +237,16 @@ class ChatConsumer(WebsocketConsumer):
                 "오늘 가장 재미있었던 일은 뭐야?",
                 "오늘 하루 잘 지냈어?",
                 "안녕, 반가워 또 보네?",
-                f"안녕 , {username}아 오늘 날씨 어땠어?",
-                f"안녕 {username}아 뭐하다가 이제왔어? 기다렸잖아!!",
-                f"안녕, {username}아 보고싶었어. 너는 어땠어?",
+                f"안녕 , {user_name}아 오늘 날씨 어땠어?",
+                f"안녕 {user_name}아 뭐하다가 이제왔어? 기다렸잖아!!",
+                f"안녕, {user_name}아 보고싶었어. 너는 어땠어?",
                 "안녕, 오늘도 재밌게 놀 준비됐어? 목소리 크게!!!!",
                 "오늘 힘든 일은 없었어?",
                 "오늘 뭐하고 놀았어?",
                 "오늘 친구들이랑 뭐하고 놀았어?",
                 "오늘 하루 어땠어?",
                 "Hi? 영어로 안녕이라는 뜻이야!",
-                "오늘 입은 옷 예쁘네~ 좋은일 있었어?",
+                f"{user_name}이 오늘 입은 옷 예쁘다! 좋은일 있었어?",
             ]
 
             question = random.choice(basic_questions_list)

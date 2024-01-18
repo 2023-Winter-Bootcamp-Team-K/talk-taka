@@ -16,6 +16,9 @@ from .chat_consumer import ChatConsumer
 from users.models import User
 from .models import ChatRoom
 from .serializers import ChatRoomSerializer
+from diary.views import DiaryCreateView
+
+from diary.models import Diary
 
 load_dotenv()
 from .models import GPTQuestion, UserAnswer
@@ -107,7 +110,7 @@ class ChatRoomCloseView(APIView):
             properties={
                 'chat_room_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='채팅방 ID'),
             },
-            required=['room_id']
+            required=['chat_room_id']
         ),
         responses={
             200: openapi.Response(description="채팅방 종료 및 결과 반환"),
@@ -115,28 +118,27 @@ class ChatRoomCloseView(APIView):
         }
     )
     def post(self, request, *args, **kwargs):
-        room_id = request.data.get('room_id')
-        if not room_id:
+        chat_room_id = request.data.get('chat_room_id')
+        if not chat_room_id:
             return Response({"error": "채팅방이 생성되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
 
-        chat_room = get_object_or_404(ChatRoom, pk=room_id)
+        chat_room = get_object_or_404(ChatRoom, pk=chat_room_id)
         conversation = self.get_conversation(chat_room)
 
         consumer = ChatConsumer()
         summary = consumer.generate_summary(conversation)
-
-        # 요약된 내용을 이미지 생성에 사용
         image_url = consumer.generate_image(summary)
 
         chat_room.delete_at = timezone.now()
         chat_room.save()
 
+        # 다이어리 생성 요청
+        diary = Diary.objects.create(user=request.user)
         return Response({
-            "status": "200",
-            "message": "대화방 종료",
-            "summary": summary,
-            "image_url": image_url
-        }, status=status.HTTP_200_OK)
+            "status": "201",
+            "message": "채팅방 종료 및 다이어리 생성 성공",
+            "diaryId": str(diary.id)
+        }, status=status.HTTP_201_CREATED)
 
     def get_conversation(self, chat_room):
         questions = GPTQuestion.objects.filter(chatroom_id=chat_room)
