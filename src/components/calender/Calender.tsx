@@ -34,9 +34,7 @@ type CalenderProps = {
 };
 const Calender = ({ data }: CalenderProps) => {
   const navigate = useNavigate();
-  const goDiary = () => {
-    navigate('/bookcover');
-  };
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const [sampleFeelings, setSampleFeelings] = useState<{
     [key: string]: FeelingType[];
@@ -48,29 +46,40 @@ const Calender = ({ data }: CalenderProps) => {
     imageUrl?: string;
     created_at?: string | undefined;
   };
+
+  const handleDayClick = (dateKey: string) => {
+    const feelings = sampleFeelings[dateKey];
+  
+    if (feelings && feelings.length > 0) {
+      const diaryId = feelings[0].diaryId.toString();
+      localStorage.setItem('selectedDiaryId', diaryId);
+      console.log("Selected Diary ID:", diaryId);
+      navigate('/bookcover');
+    } else {
+      alert('해당 날짜에는 다이어리가 존재하지 않습니다.');
+    }
+  };
+
   useEffect(() => {
-    // const exdata = [
-    //   { created_at: '2024-01-15', diaryId: '1', mood: 'joy' },
-    //   { created_at: '2024-01-16', diaryId: '2', mood: 'angry' },
-    // ];
-    data?.reduce<{ [key: string]: FeelingType[] }>((acc, item) => {
-      if (item.created_at) {
-        if (!acc[item.created_at]) {
-          acc[item.created_at] = [];
+    if (data) {
+      const feelingsData = data.reduce<{ [key: string]: FeelingType[] }>((acc, item) => {
+        const date = item.created_at;
+        if (date) {
+          acc[date] = acc[date] || []; 
+          acc[date].push({
+            diaryId: item.diaryId,
+            mood: moodToImageUrl[item.mood],
+            imageUrl: item.imageURL,
+            created_at: item.created_at,
+          });
         }
-      }
-      acc[item.created_at!].push({
-        diaryId: item.diaryId,
-        mood: moodToImageUrl[item.mood],
-      });
-      setSampleFeelings(acc);
-      console.log(sampleFeelings['2024-01-18'][0].diaryId);
-
-      // console.log(sampleFeelings[dateKey]);
-
-      return acc;
-    }, {});
+        return acc;
+      }, {});
+  
+      setSampleFeelings(feelingsData);
+    }
   }, [data]);
+  
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const daysInMonth = new Date(
@@ -133,7 +142,7 @@ const Calender = ({ data }: CalenderProps) => {
             position: 'relative',
             overflow: 'hidden',
           }}
-          onClick={goDiary}
+          onClick={() => handleDayClick(dateKey)}
         >
           {sampleFeelings[dateKey] && (
             <img
