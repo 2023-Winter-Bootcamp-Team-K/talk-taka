@@ -8,10 +8,10 @@ from openai import OpenAI
 from channels.generic.websocket import WebsocketConsumer
 from dotenv import load_dotenv
 import asyncio
-from storage import get_file_url
+
 from tts import text_to_speach
 from .models import *
-from .tasks import speech_to_text_task
+from .tasks import speech_to_text_task,upload_audio_to_s3_task
 import logging
 
 load_dotenv()
@@ -101,16 +101,19 @@ class ChatConsumer(WebsocketConsumer):
                 # 오디오 파일로 변환
                 audio_file = ContentFile(audio_data)
 
-                # 오디오 파일 S3에 저장
-                audio_file_url = get_file_url("audio", audio_file)
-                self.default_audio_file_urls.append(audio_file_url)
-                ## 여기까진 잘됨.
-                # 오디오 파일 STT로 텍스트 변환
-                # 비동기 작업 완료 후 실행될 콜백 함수
+                # 오디오 파일을 바이너리 데이터로 변환
+                binary_audio_data = audio_file.read()
+                print(binary_audio_data)
+
+                # 비동기 태스크 실행
+                upload_task = upload_audio_to_s3_task.delay(binary_audio_data)
+
+
                 # 비동기 작업 실행
                 task = speech_to_text_task.delay(audio_data)
-                task.then(self.on_task_completion(task,audio_file_url))
                 # 작업 완료 후 콜백 함수 연결
+                task.then(self.on_task_completion(task,upload_task))
+
 
 
             elif event == "conversation_end":

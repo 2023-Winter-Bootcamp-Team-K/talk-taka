@@ -4,7 +4,9 @@ import os
 from celery import shared_task
 import requests
 from dotenv import load_dotenv
-
+from storage import get_file_url
+import boto3
+import uuid
 load_dotenv()
 
 def speech_to_text(data):
@@ -25,6 +27,35 @@ def speech_to_text(data):
     else:
         print("Error : " + response.text)
 
+
+def get_file_url(file_type, file):
+    # AWS SDK 클라이언트 생성:
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id='AKIAT3C554Z7U6CDFWHF',
+        aws_secret_access_key='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',
+    )
+    #  boto3는 AWS 서비스와 상호작용하는 데 사용되는 파이썬 라이브러리. 클라이언트는 AWS의 s3 서비스에 연결시켜줌
+
+    # 음성 녹음 파일(audio)인 경우
+    if file_type == "audio":
+        file_key = "record/" + str(uuid.uuid4()) + ".mp3"
+    # 프로필 이미지 파일(image)인 경우(s3 디렉토리 추가 후 수정해야 함)
+    else:
+        file_key = "profile_image/" + str(uuid.uuid4()) + ".jpg"
+        content_type = "image/jpeg"
+
+
+    # 파일을 S3 버킷에 업로드
+    s3_client.put_object(Body=file, Bucket='teamkbucket', Key=file_key) #ContentType=content_type
+    # 업로드된 파일의 URL을 구성 = FILE_URL + 앞서 생성된 파일 키를 결합하여 만들어짐
+    url = 'https://teamkbucket.s3.ap-northeast-2.amazonaws.com' + "/" + file_key
+
+    # URL 문자열에서 공백을 "_"로 대체
+    url = url.replace(" ", "_")
+
+    return url
+
 # stt.py에서 speach_to_text 함수를 가져옵니다.
 
 @shared_task
@@ -36,3 +67,10 @@ def speech_to_text_task(audio_data):
     except Exception as e:
         # 오류 발생시 처리
         return f"STT 변환 실패: {e}"
+
+
+@shared_task
+def upload_audio_to_s3_task(audio_data):
+    # 'audio_data'는 ContentFile 객체 또는 유사한 파일 객체여야 합니다.
+    file_url = get_file_url("audio", audio_data)
+    return file_url
