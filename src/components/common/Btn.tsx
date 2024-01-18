@@ -37,18 +37,18 @@ export default function Button({
     <ButtonLayout>
       <Btn
         onClick={onClick}
-        width={width}
-        widthp={widthp}
-        height={height}
-        heightp={heightp}
-        marginl={marginl}
-        marginlp={marginlp}
-        margint={margint}
-        margintp={margintp}
-        fonts={fonts}
-        fontsp={fontsp}
-        borderr={borderr}
-        disabled={disabled}
+        $width={width}
+        $widthp={widthp}
+        $height={height}
+        $heightp={heightp}
+        $marginl={marginl}
+        $marginlp={marginlp}
+        $margint={margint}
+        $margintp={margintp}
+        $fonts={fonts}
+        $fontsp={fontsp}
+        $borderr={borderr}
+        $disabled={disabled}
       >
         {title}
       </Btn>
@@ -59,18 +59,18 @@ export default function Button({
 const ButtonLayout = styled.div``;
 
 const Btn = styled.button<{
-  width: string;
-  widthp: string;
-  height: string;
-  heightp: string;
-  marginl: string;
-  marginlp: string;
-  margint: string;
-  margintp: string;
-  fonts: string;
-  fontsp: string;
-  borderr: string;
-  disabled: boolean;
+  $width: string;
+  $widthp: string;
+  $height: string;
+  $heightp: string;
+  $marginl: string;
+  $marginlp: string;
+  $margint: string;
+  $margintp: string;
+  $fonts: string;
+  $fontsp: string;
+  $borderr: string;
+  $disabled: boolean;
   onClick: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
 }>`
   /* text */
@@ -83,7 +83,7 @@ const Btn = styled.button<{
   background: ${(props) => (props.disabled ? ' #aeaeae' : '#2c2c2c')};
 
   border-radius: ${(props) =>
-    props.borderr === 'normal' ? '5rem' : props.borderr};
+    props.$borderr === 'normal' ? '5rem' : props.$borderr};
 
   cursor: pointer;
   &:active {
@@ -91,20 +91,20 @@ const Btn = styled.button<{
   }
 
   @media all and (min-width: 391px) {
-    font-size: ${(props) => props.fonts};
+    font-size: ${(props) => props.$fonts};
     width: ${(props) =>
-      props.width === 'normal' ? '14.24731rem' : props.width};
+      props.$width === 'normal' ? '14.24731rem' : props.$width};
     margin-left: ${(props) =>
-      props.marginl === 'normal' ? '10rem' : props.marginl};
+      props.$marginl === 'normal' ? '10rem' : props.$marginl};
     margin-top: ${(props) =>
-      props.margint === 'normal' ? '10rem' : props.margint};
-    height: ${(props) => (props.height === 'normal' ? '1rem' : props.height)};
+      props.$margint === 'normal' ? '10rem' : props.$margint};
+    height: ${(props) => (props.$height === 'normal' ? '1rem' : props.$height)};
   }
   @media all and (max-width: 390px) {
-    font-size: ${(props) => props.fontsp};
-    width: ${(props) => props.widthp};
-    margin-left: ${(props) => props.marginlp};
-    margin-top: ${(props) => props.margintp};
-    height: ${(props) => props.heightp};
+    font-size: ${(props) => props.$fontsp};
+    width: ${(props) => props.$widthp};
+    margin-left: ${(props) => props.$marginlp};
+    margin-top: ${(props) => props.$margintp};
+    height: ${(props) => props.$heightp};
   }
 `;
