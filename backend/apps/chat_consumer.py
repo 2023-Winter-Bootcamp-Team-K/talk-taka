@@ -332,10 +332,3 @@ class ChatConsumer(WebsocketConsumer):
         )
         image_url = response.data[0].url
         return image_url
-
-    # 요약 튜닝 함수
-    # def summary_tuning(self):
-    #     self.conversation = {
-    #         "role": "system",
-    #         "content": 'You have to write a picture diary based on the conversation. It\'s going to be in your child\'s picture diary. Please write 180 characters or less.'
-    #     }
