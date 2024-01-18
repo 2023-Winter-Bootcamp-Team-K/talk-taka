@@ -295,18 +295,18 @@ class ChatConsumer(WebsocketConsumer):
                               "data": { "character": "child", "message": message, "finish_reason": finish_reason}}))
 
     def on_task_completion(self, result, audio_file_url):
-        print("222")
+
         text_result = result.get(timeout=10)  # 결과를 기다림
         self.child_conversation(text_result)
         self.add_answer(text_result)
-        print("333")#여기까지 실행됨
+        
         # STT 결과를 기반으로 후속 처리 진행
         question = self.continue_conversation(self.chatroom) #실패지점 !
-        print("444")
+
         self.audio_send(question)
         self.add_question(question=question)
         self.save_user_answer(question=self.present_question, content=text_result, url=audio_file_url)
-        print("555")
+
 
 
 
