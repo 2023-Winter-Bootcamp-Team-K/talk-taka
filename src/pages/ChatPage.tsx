@@ -36,6 +36,7 @@ export default function ChatPage() {
         }
       );
       if (response.data.status === '201') {
+        window.localStorage.setItem('diaryId', response.data.diaryId);
       }
     } catch (error) {
       console.error(error);
@@ -44,7 +45,8 @@ export default function ChatPage() {
 
   const [close, setclose] = useState(false);
   const connectWebSocket = () => {
-    const roomId = '1';
+    const roomId = window.localStorage.getItem('chat_id');
+
     const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomId}/`);
     let chatArray = new Array();
 

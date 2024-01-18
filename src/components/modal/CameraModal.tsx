@@ -6,7 +6,7 @@ import axios from 'axios';
 import { getCookie } from '../../utils/cookie';
 import { baseInstance } from '../../api/config';
 
-const token = getCookie('token')
+const token = getCookie('token');
 export default function CameraModal() {
   const navigate = useNavigate();
   const [isCaptureEnable, setCaptureEnable] = useState<boolean>(false);
@@ -18,13 +18,16 @@ export default function CameraModal() {
     const imageSrc = webcamRef.current?.getScreenshot();
     setCaptureEnable(true);
     if (imageSrc) {
-      axios.get(imageSrc, { responseType: 'blob' })
-        .then(response => {
-          const file = new File([response.data], 'userCapture.jpeg', { type: 'image/jpeg' });
-          setImageFile(file); 
+      axios
+        .get(imageSrc, { responseType: 'blob' })
+        .then((response) => {
+          const file = new File([response.data], 'userCapture.jpeg', {
+            type: 'image/jpeg',
+          });
+          setImageFile(file);
           setUrl(imageSrc);
         })
-        .catch(error => console.error("Error in fetching image:", error));
+        .catch((error) => console.error('Error in fetching image:', error));
     }
   }, [webcamRef]);
 
@@ -34,20 +37,28 @@ export default function CameraModal() {
   };
 
   const confirmImage = async () => {
+    const chat_room_id = window.localStorage.getItem('chat_id');
     if (imageFile) {
       const formData = new FormData();
       formData.append('picture', imageFile);
+      if (chat_room_id) {
+        formData.append('chat_room_id', chat_room_id);
+      }
       try {
-        const response = await baseInstance.post('/main/image/', formData, {
-          headers: {
-            'Authorization': token, 
-          },
-        });
+        const response = await baseInstance.post(
+          `/apps/chat_images/${chat_room_id}/`,
+          formData,
+          {
+            headers: {
+              Authorization: token,
+            },
+          }
+        );
         if (response.status === 201) {
           navigate('/diary');
-        } 
+        }
       } catch (error) {
-        console.error("Error during image upload:", error);
+        console.error('Error during image upload:', error);
       }
     }
   };
