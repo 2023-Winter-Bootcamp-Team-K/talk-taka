@@ -13,15 +13,11 @@ from rest_framework.parsers import JSONParser, MultiPartParser
 from storage import get_file_url
 
 from .chat_consumer import ChatConsumer
-from .models import ChatRoom
-<<<<<<< HEAD
-from .models import GPTQuestion, UserAnswer
-=======
+
 from .serializers import ChatRoomSerializer
->>>>>>> develop
 
 load_dotenv()
-
+from .models import GPTQuestion, UserAnswer,ChatRoom
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
 # class GPTAnswerView(APIView):
@@ -101,8 +97,7 @@ class ChatRoomCreateView(APIView):
         }
         return Response(response_data, status=status.HTTP_201_CREATED)
 
-<<<<<<< HEAD
-=======
+
 
 class ChatRoomCloseView(APIView):
     @swagger_auto_schema(
@@ -223,4 +218,4 @@ class ChatRoomImageUploadView(APIView):
             return Response({"error": "채팅방을 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
->>>>>>> develop
+

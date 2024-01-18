@@ -1,11 +1,7 @@
 # chat/urls.py
 from django.urls import path
 
-<<<<<<< HEAD
-from .views import GPTAnswerView, ChatRoomCreateView
-=======
 from .views import ChatRoomCreateView, ChatRoomCloseView, ChatRoomListView, ChatRoomImageUploadView
->>>>>>> develop
 
 urlpatterns = [
 

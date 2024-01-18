@@ -4,7 +4,7 @@ import random
 import time
 import base64
 
-import openai
+
 from django.core.files.base import ContentFile
 from django.http import JsonResponse
 from openai import OpenAI
@@ -22,7 +22,7 @@ from django.utils import timezone
 
 
 load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = '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'
 client = OpenAI(api_key=OPENAI_API_KEY)
 logger = logging.getLogger(__name__)
 
@@ -236,9 +236,7 @@ class ChatConsumer(WebsocketConsumer):
         # GPTQuestion 객체를 생성하고 데이터베이스에 저장
         question = GPTQuestion.objects.create(content=messages, chatroom_id=chatroom)
         question.save()
-<<<<<<< HEAD
 
-=======
         
     def child_conversation(self, content):
         messages = ""
@@ -256,7 +254,7 @@ class ChatConsumer(WebsocketConsumer):
 
             messages += chunk
             time.sleep(0.05)
->>>>>>> develop
+
 
     def pick_random_question(self, username):
         pick_question = []
@@ -329,28 +327,12 @@ class ChatConsumer(WebsocketConsumer):
         if finish_reason is None:
             finish_reason = "incomplete"
         self.send(json.dumps({"event": "conversation",
-<<<<<<< HEAD
+
                               "data": { "character": "child", "message": message, "finish_reason": finish_reason}}))
 
-    def on_task_completion(self, result, audio_file_url):
-
-        text_result = result.get(timeout=10)  # 결과를 기다림
-        self.child_conversation(text_result)
-        self.add_answer(text_result)
-        
-        # STT 결과를 기반으로 후속 처리 진행
-        question = self.continue_conversation(self.chatroom) #실패지점 !
-
-        self.audio_send(question)
-        self.add_question(question=question)
-        self.save_user_answer(question=self.present_question, content=text_result, url=audio_file_url)
 
 
 
-
-
-=======
-                              "data": {"message": message, "finish_reason": finish_reason}}))
 
     # 채팅방 종료 시 요약 및 이미지 생성
     def end_conversation(self):
@@ -398,4 +380,17 @@ class ChatConsumer(WebsocketConsumer):
         )
         image_url = response.data[0].url
         return image_url
->>>>>>> develop
+
+
+    def on_task_completion(self, result, audio_file_url):
+        text_result = result.get(timeout=10)  # 결과를 기다림
+        self.child_conversation(text_result)
+        self.add_answer(text_result)
+
+        # STT 결과를 기반으로 후속 처리 진행
+        question = self.continue_conversation(self.chatroom)  # 실패지점 !
+
+        self.audio_send(question)
+        self.add_question(question=question)
+        self.save_user_answer(question=self.present_question, content=text_result, url=audio_file_url)
+
