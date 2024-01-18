@@ -103,7 +103,6 @@ class ChatConsumer(WebsocketConsumer):
 
                 # 오디오 파일을 바이너리 데이터로 변환
                 binary_audio_data = audio_file.read()
-                print(binary_audio_data)
 
                 # 비동기 태스크 실행
                 upload_task = upload_audio_to_s3_task.delay(binary_audio_data)
