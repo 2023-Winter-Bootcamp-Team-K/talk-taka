@@ -3,7 +3,10 @@ import os
 import random
 import time
 import base64
+
+import openai
 from django.core.files.base import ContentFile
+from django.http import JsonResponse
 from openai import OpenAI
 from channels.generic.websocket import WebsocketConsumer
 from dotenv import load_dotenv
@@ -13,9 +16,14 @@ from stt import speach_to_text
 from tts import text_to_speach
 from .models import *
 import logging
+from users.models import User
+from django.utils import timezone
+
+
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=OPENAI_API_KEY)
 logger = logging.getLogger(__name__)
 
 class ChatConsumer(WebsocketConsumer):
@@ -42,7 +50,9 @@ class ChatConsumer(WebsocketConsumer):
         # chatroom를 찾아서 chatroom 오브젝트 생성
         self.chatroom = ChatRoom.objects.get(id=self.chat_room_id)
         # user 찾기
-        self.user = self.chatroom.user_id
+        self.user = User.objects.get(id=self.chatroom.user_id)
+        self.username = self.user.username
+
         # 연결 완료 전송 (프론트에 기분 화면 활성화)
         self.send(
             text_data=json.dumps(
@@ -56,6 +66,10 @@ class ChatConsumer(WebsocketConsumer):
             )
         )
 
+        # 첫 질문 선택
+        question_content = self.pick_random_question(self.user.username)  # username을 매개변수로 전달합니다.
+
+
         # 종료 메세지 보내기
         # loop = asyncio.get_event_loop()
         # asyncio.create_task(self.send_end_message())
@@ -67,6 +81,7 @@ class ChatConsumer(WebsocketConsumer):
             logger.info(res)
             # 1. 첫 대화 시작
             if event == "conversation_start":
+
                 # 기분 room에 추가
                 mood = data.get("mood")
                 if mood == None:
@@ -82,7 +97,7 @@ class ChatConsumer(WebsocketConsumer):
                 self.chatroom.add_mood(mood)
                 self.situation_tuning(self.user, mood=mood)
                 # 첫 질문 선택
-                question_content = self.pick_random_question()
+                question_content = self.pick_random_question(self.username)
                 # 질문 text 전송
                 self.default_conversation(self.chatroom, question_content)
                 # 질문 음성 파일 전송(mp3)
@@ -214,7 +229,7 @@ class ChatConsumer(WebsocketConsumer):
         # GPTQuestion 객체를 생성하고 데이터베이스에 저장
         question = GPTQuestion.objects.create(content=messages, chatroom_id=chatroom)
         question.save()
-
+        
     def child_conversation(self, content):
         messages = ""
         for index, chunk in enumerate(content):
@@ -232,8 +247,9 @@ class ChatConsumer(WebsocketConsumer):
             messages += chunk
             time.sleep(0.05)
 
-    def pick_random_question(self):
+    def pick_random_question(self, username):
         pick_question = []
+        user_name = username[1:]
         while True:
             basic_questions_list = [
                 "오늘 뭐했어?",
@@ -241,17 +257,16 @@ class ChatConsumer(WebsocketConsumer):
                 "오늘 가장 재미있었던 일은 뭐야?",
                 "오늘 하루 잘 지냈어?",
                 "안녕, 반가워 또 보네?",
-                "본인의 직업관은 무엇인가요?",
-                "안녕 , {username}아 오늘 날씨 어땠어?",
-                "안녕 {username}아 뭐하다가 이제왔어? 기다렸잖아!!",
-                "안녕, 00아 보고싶었어. 너는 어땠어?",
+                f"안녕 , {user_name}아 오늘 날씨 어땠어?",
+                f"안녕 {user_name}아 뭐하다가 이제왔어? 기다렸잖아!!",
+                f"안녕, {user_name}아 보고싶었어. 너는 어땠어?",
                 "안녕, 오늘도 재밌게 놀 준비됐어? 목소리 크게!!!!",
                 "오늘 힘든 일은 없었어?",
                 "오늘 뭐하고 놀았어?",
                 "오늘 친구들이랑 뭐하고 놀았어?",
                 "오늘 하루 어땠어?",
                 "Hi? 영어로 안녕이라는 뜻이야!",
-                "오늘 입은 옷 예쁘네~ 좋은일 있었어?",
+                f"{user_name}이 오늘 입은 옷 예쁘다! 좋은일 있었어?",
             ]
 
             question = random.choice(basic_questions_list)
@@ -293,4 +308,51 @@ class ChatConsumer(WebsocketConsumer):
         if finish_reason is None:
             finish_reason = "incomplete"
         self.send(json.dumps({"event": "conversation",
-                              "data": { "character": "child", "message": message, "finish_reason": finish_reason}}))
+                              "data": {"message": message, "finish_reason": finish_reason}}))
+
+    # 채팅방 종료 시 요약 및 이미지 생성
+    def end_conversation(self):
+        # 대화 요약 생성
+        summary = self.generate_summary(self.conversation)
+
+        # DALL-E 이미지 생성
+        image_url = self.generate_image(summary)
+
+        # 클라이언트에 결과 전송
+        self.send(json.dumps({
+            "event": "chat_end",
+            "summary": summary,
+            "image_url": image_url
+        }))
+
+    # gpt한테 요약 요청
+    def generate_summary(self, content):
+        content_str = "\n".join(content)
+        summary_request = ('You have to write a picture diary based on the conversation. It\'s going to be in your child\'s picture diary. Please write 180 characters or less. And you only speak in Korean')
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "system",
+                    "content": summary_request
+                },
+                {
+                    "role": "user",
+                    "content": content_str
+                },
+            ],
+        )
+        return response.choices[0].message.content
+    # 달리 이미지 생성 로직보
+    def generate_image(self, summary):
+
+        response = client.images.generate(
+            model="dall-e-3",
+            prompt=summary,
+            size="1024x1024",
+            quality="standard",
+            n=1,
+            style="natural",
+        )
+        image_url = response.data[0].url
+        return image_url
