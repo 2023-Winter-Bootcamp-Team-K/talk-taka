@@ -9,44 +9,34 @@ from django.http import Http404
 class DiaryCreateView(APIView):
 
     @swagger_auto_schema(
-        operation_id="일기 생성 및 업데이트",
+        operation_id="일기 생성",
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'diaryId': openapi.Schema(type=openapi.TYPE_STRING, description='일기 ID (업데이트 시 필요)'),
                 'mood': openapi.Schema(type=openapi.TYPE_STRING, description='일기의 감정')
             },
-            required=['mood']  # `required` 속성을 전체 스키마 레벨로 이동
+            required=['mood']
         ),
-        responses={
-            201: openapi.Response(description="일기 생성 또는 업데이트 성공")
-        }
+        responses={201: openapi.Response(description="일기 생성 성공")}
     )
     def post(self, request, format=None):
         if not request.user.is_authenticated:
             return Response({"status": "401", "message": "인증되지 않은 사용자"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        diary_id = request.data.get('diaryId')
         mood = request.data.get('mood')
+        valid_moods = ['joy', 'sad', 'angry']
 
-        if diary_id:
-            try:
-                diary = Diary.objects.get(id=diary_id, user=request.user)
-            except Diary.DoesNotExist:
-                return Response({"error": "일기를 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
-            diary.mood = mood
-            diary.save()
-            message = "일기 업데이트 성공"
-        else:
-            diary = Diary.objects.create(user=request.user, mood=mood)
-            message = "일기 생성 성공"
+        if mood not in valid_moods:
+            return Response({"status": "400", "message": "유효하지 않은 mood 값입니다"}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 새로운 일기 생성
+        diary = Diary.objects.create(user=request.user, mood=mood)
 
         return Response({
             "status": "201",
-            "message": message,
+            "message": "일기 생성 성공",
             "diaryId": str(diary.id)
         }, status=status.HTTP_201_CREATED)
-
 
 
 

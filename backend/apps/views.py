@@ -1,6 +1,5 @@
 from datetime import timezone
 import os
-import openai
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from dotenv import load_dotenv
@@ -10,15 +9,12 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.parsers import JSONParser
+from rest_framework.parsers import JSONParser, MultiPartParser
+from storage import get_file_url
 
 from .chat_consumer import ChatConsumer
-from users.models import User
 from .models import ChatRoom
 from .serializers import ChatRoomSerializer
-from diary.views import DiaryCreateView
-
-from diary.models import Diary
 
 load_dotenv()
 from .models import GPTQuestion, UserAnswer
@@ -129,16 +125,23 @@ class ChatRoomCloseView(APIView):
         summary = consumer.generate_summary(conversation)
         image_url = consumer.generate_image(summary)
 
+        # 요약 및 이미지 URL 저장
+        chat_room.summary = summary
+        chat_room.image_url = image_url
         chat_room.delete_at = timezone.now()
         chat_room.save()
 
-        # 다이어리 생성 요청
-        diary = Diary.objects.create(user=request.user)
         return Response({
-            "status": "201",
-            "message": "채팅방 종료 및 다이어리 생성 성공",
-            "diaryId": str(diary.id)
-        }, status=status.HTTP_201_CREATED)
+            "status": "200",
+            "message": "대화방 종료",
+            "summary": summary,
+            "image_url": image_url
+        }, status=status.HTTP_200_OK)
+
+    def get_conversation(self, chat_room):
+        questions = GPTQuestion.objects.filter(chatroom_id=chat_room)
+        conversation = [question.content for question in questions]
+        return conversation
 
     def get_conversation(self, chat_room):
         questions = GPTQuestion.objects.filter(chatroom_id=chat_room)
@@ -146,5 +149,71 @@ class ChatRoomCloseView(APIView):
         return conversation
 
 
+class ChatRoomListView(APIView):
+    @swagger_auto_schema(
+        operation_description="채팅방 조회",
+        operation_id="채팅방 조회",
+        responses={200: openapi.Response('채팅방 정보', ChatRoomSerializer)},
+        manual_parameters=[
+            openapi.Parameter('chat_room_id', openapi.IN_PATH, description="채팅방 ID", type=openapi.TYPE_INTEGER)
+        ]
+    )
+    def get(self, request, chat_room_id):
+        chat_room = get_object_or_404(ChatRoom, id=chat_room_id)
+        gpt_questions = GPTQuestion.objects.filter(chatroom_id=chat_room_id)
+        user_answers = UserAnswer.objects.filter(question_id__chatroom_id=chat_room_id)
+
+        # 대화 내용을 배열로 구성
+        conversation = []
+        for question in gpt_questions:
+            # 각 질문에 대한 항목 추가
+            conversation.append({"Question": question.content})
+            # 해당 질문에 대한 답변 찾기 및 추가
+            answer = user_answers.filter(question_id=question.id).first()
+            if answer:
+                conversation.append({"child": answer.content})
+
+        # 응답 데이터 구성
+        data = {
+            "status": "200",
+            "message": "대화 조회 성공",
+            "content": conversation,  # 배열로 대화 내용 전달
+            "picture": chat_room.image_url
+        }
+        return Response(data)
 
 
+
+class ChatRoomImageUploadView(APIView):
+    parser_classes = [MultiPartParser]
+    @swagger_auto_schema(
+        operation_description="프로필 사진 업로드",
+        operation_id="캡쳐 사진 업로드",
+        manual_parameters=[
+            openapi.Parameter(
+                name='picture',
+                in_=openapi.IN_FORM,
+                description='업로드할 이미지 파일',
+                type=openapi.TYPE_FILE,
+                required=True
+            )
+        ],
+        responses={201: openapi.Response(description="이미지 업로드 성공")}
+    )
+    def post(self, request, chat_room_id):
+        try:
+            image_file = request.FILES.get("picture")
+            if not image_file:
+                return Response({"error": "이미지 파일이 필요합니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+            image_file_url = get_file_url("image", image_file)
+
+            chat_room = ChatRoom.objects.get(id=chat_room_id)
+            chat_room.image_url = image_file_url
+            chat_room.save()
+
+            return Response({"message": "이미지 업로드 성공", "url": image_file_url}, status=status.HTTP_201_CREATED)
+        except ChatRoom.DoesNotExist:
+            return Response({"error": "채팅방을 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
