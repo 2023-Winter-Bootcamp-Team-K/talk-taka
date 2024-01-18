@@ -11,7 +11,7 @@ export default function IntroPage() {
     <BackGround>
       <div style={{ position: 'relative', top: '90%', height: '2.3125rem' }}>
         <Button
-          $borderr="0.5625rem"
+          borderr="0.5625rem"
           title="바로 시작하기"
           onClick={goToMain}
           width="22.1875rem"
