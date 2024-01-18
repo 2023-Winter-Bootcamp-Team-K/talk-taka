@@ -14,8 +14,8 @@ def speech_to_text(data):
     lang = "Kor"  # 언어 코드 ( Kor, Jpn, Eng, Chn )
     url = "https://naveropenapi.apigw.ntruss.com/recog/v1/stt?lang=" + lang
     headers = {
-        "X-NCP-APIGW-API-KEY-ID": 'qr2yjt6dz5',
-        "X-NCP-APIGW-API-KEY": 'qewhS3DwFeEuObSfLgl2jpWj97qavcKKjBFelAqH',
+        "X-NCP-APIGW-API-KEY-ID": os.getenv('CLOVA_STT_ID'),
+        "X-NCP-APIGW-API-KEY": os.getenv('CLOVA_STT_SECRET'),
         "Content-Type": "application/octet-stream"
     }
     response = requests.post(url, data=data, headers=headers)
@@ -32,8 +32,8 @@ def get_file_url(file_type, file):
     # AWS SDK 클라이언트 생성:
     s3_client = boto3.client(
         's3',
-        aws_access_key_id='AKIAT3C554Z7U6CDFWHF',
-        aws_secret_access_key='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',
+        aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'),
+        aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'),
     )
     #  boto3는 AWS 서비스와 상호작용하는 데 사용되는 파이썬 라이브러리. 클라이언트는 AWS의 s3 서비스에 연결시켜줌
 
@@ -47,9 +47,9 @@ def get_file_url(file_type, file):
 
 
     # 파일을 S3 버킷에 업로드
-    s3_client.put_object(Body=file, Bucket='teamkbucket', Key=file_key) #ContentType=content_type
+    s3_client.put_object(Body=file, Bucket= os.getenv('AWS_STORAGE_BUCKET_NAME'), Key=file_key) #ContentType=content_type
     # 업로드된 파일의 URL을 구성 = FILE_URL + 앞서 생성된 파일 키를 결합하여 만들어짐
-    url = 'https://teamkbucket.s3.ap-northeast-2.amazonaws.com' + "/" + file_key
+    url = os.getenv('FILE_URL'), + "/" + file_key
 
     # URL 문자열에서 공백을 "_"로 대체
     url = url.replace(" ", "_")

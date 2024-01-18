@@ -22,7 +22,7 @@ from django.utils import timezone
 
 
 load_dotenv()
-OPENAI_API_KEY = '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'
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 client = OpenAI(api_key=OPENAI_API_KEY)
 logger = logging.getLogger(__name__)
 

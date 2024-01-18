@@ -121,8 +121,5 @@ class DeleteUserView(generics.DestroyAPIView):
         user.delete()
         return Response({'message': '회원탈퇴 성공'}, status=status.HTTP_204_NO_CONTENT)
 
-def hello(request):
-    data = {'message': 'hello world'}
-    return JsonResponse(data)
 
 
