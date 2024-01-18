@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { create } from 'zustand';
+import { Navigate, useNavigate } from 'react-router-dom';
 import {
   CalendarContainer,
   HeaderContainer,
@@ -32,6 +33,10 @@ type CalenderProps = {
   data: calenderType[];
 };
 const Calender = ({ data }: CalenderProps) => {
+  const navigate = useNavigate();
+  const goDiary = () => {
+    navigate('/bookcover');
+  };
   const [currentDate, setCurrentDate] = useState(new Date());
   const [sampleFeelings, setSampleFeelings] = useState<{
     [key: string]: FeelingType[];
@@ -59,6 +64,10 @@ const Calender = ({ data }: CalenderProps) => {
         mood: moodToImageUrl[item.mood],
       });
       setSampleFeelings(acc);
+      console.log(sampleFeelings['2024-01-18'][0].diaryId);
+
+      // console.log(sampleFeelings[dateKey]);
+
       return acc;
     }, {});
   }, [data]);
@@ -117,12 +126,14 @@ const Calender = ({ data }: CalenderProps) => {
 
       return (
         <DaysCol
+          // key={sampleFeelings[dateKey][0]?.diaryId}
           key={`current-${day}`}
           className="current"
           style={{
             position: 'relative',
             overflow: 'hidden',
           }}
+          onClick={goDiary}
         >
           {sampleFeelings[dateKey] && (
             <img
