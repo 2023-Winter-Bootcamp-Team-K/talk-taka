@@ -13,7 +13,7 @@ class DiaryCreateView(APIView):
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
             properties={
-                'mood': openapi.Schema(type=openapi.TYPE_STRING)
+                'mood': openapi.Schema(type=openapi.TYPE_STRING, description='일기의 감정')
             },
             required=['mood']
         ),
@@ -23,27 +23,20 @@ class DiaryCreateView(APIView):
         if not request.user.is_authenticated:
             return Response({"status": "401", "message": "인증되지 않은 사용자"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        # Access mood parameter from request.query_params
         mood = request.data.get('mood')
-        #유효한 mood 값 정의
-        valid_moods=['joy','sad','angry']
+        valid_moods = ['joy', 'sad', 'angry']
 
-        #제공된 mood가 유효한지 확인
         if mood not in valid_moods:
             return Response({"status": "400", "message": "유효하지 않은 mood 값입니다"}, status=status.HTTP_400_BAD_REQUEST)
-        # 일기 생성
-        diary = Diary.objects.create(
-            user=request.user,
-            mood=mood
-        )
+
+        # 새로운 일기 생성
+        diary = Diary.objects.create(user=request.user, mood=mood)
 
         return Response({
             "status": "201",
             "message": "일기 생성 성공",
             "diaryId": str(diary.id)
         }, status=status.HTTP_201_CREATED)
-
-
 
 
 

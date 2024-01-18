@@ -14,11 +14,14 @@ class ChatRoom(models.Model):
         (ANGRY, 'Angry'),
     ]
     id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey(User, on_delete=models.CASCADE,db_column="user_id")  # 모델의 1:N 관계를 나타내기 위해 사용
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE, db_column="user_id")  # 모델의 1:N 관계를 나타내기 위해 사용
     mood = models.CharField(max_length=10, choices=MOOD_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     delete_at = models.DateTimeField(null=True)
+    summary = models.CharField(max_length=300, null=True)
+    image_url = models.CharField(null=True, blank=True, max_length=500)  # 채팅방 이미지 URL 필드 추가
+
 
     def add_mood(self, mood):
         if mood == 'Joy':
