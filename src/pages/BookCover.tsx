@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
-
+import { getDiary } from '../api/diary';
+import { useQuery } from 'react-query';
 type BookCoverProps = {
   year: string;
   name: string;
@@ -11,7 +12,14 @@ export default function BookCover({ year, name, img }) {
   const [isOpen, setIsOpen] = useState(false);
   const [showRight, setShowRight] = useState(false);
   const navigate = useNavigate();
-  
+  const selectedDiaryId = window.localStorage.getItem('selectedDiaryId');
+  const { data: diaryData } = useQuery(
+    ['selectedDiaryId', selectedDiaryId],
+    () => getDiary(selectedDiaryId || '')
+  );
+  const diaryContent = diaryData;
+  console.log(diaryContent);
+
   useEffect(() => {
     openBook();
   }, []);
@@ -23,7 +31,8 @@ export default function BookCover({ year, name, img }) {
     }, 1200);
     setTimeout(() => {
       navigate('/diary');
-    }, 1400);
+    }, 100);
+    // }, 1400);
   };
   return (
     <>
