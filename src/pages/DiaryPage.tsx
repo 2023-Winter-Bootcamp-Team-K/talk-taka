@@ -2,13 +2,17 @@ import styled from 'styled-components';
 import Calender from '../components/calender/Calender';
 import Diary from '../components/common/Diary';
 import { useQuery } from 'react-query';
-import { getDiary } from '../api/diary';
+import { getDiary} from '../api/diary';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { BackIconSvg } from '../assets/SVG';
+import { getCookie } from '../utils/cookie';
+import { getDiaries } from '../api/calender/calender';
 
 export default function DiaryPage() {
   const diaryId = window.localStorage.getItem('diaryId');
+  const { data: DiariesData } = useQuery('sales', () => getDiaries(token));
+  const diaries = DiariesData?.data;
 
   const { data: diaryData } = useQuery(['diary', diaryId], () =>
     getDiary(diaryId || '')
@@ -20,7 +24,7 @@ export default function DiaryPage() {
     : ['-', '-', '-'];
   const mood = diaryData?.mood;
   const navigate = useNavigate();
-
+ const token = getCookie("token")
   const GoToMain = () => {
     navigate('/main');
   };
@@ -66,7 +70,7 @@ export default function DiaryPage() {
           <>
             <Book>
               <Left>
-                <Calender />
+                <Calender data = {diaries} />
               </Left>
               <Right>
                 <Diary
@@ -216,6 +220,8 @@ const ViewChatBtn = styled.button`
   @media all and (min-width: 391px) {
     bottom: 9rem;
     right: 12rem;
+    padding-bottom: 1rem;
+    padding-right: 15rem;
   }
   @media all and (max-width: 390px) {
     bottom: 7rem;
