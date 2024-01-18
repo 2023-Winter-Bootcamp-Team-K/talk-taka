@@ -49,7 +49,7 @@ def get_file_url(file_type, file):
     # 파일을 S3 버킷에 업로드
     s3_client.put_object(Body=file, Bucket= os.getenv('AWS_STORAGE_BUCKET_NAME'), Key=file_key) #ContentType=content_type
     # 업로드된 파일의 URL을 구성 = FILE_URL + 앞서 생성된 파일 키를 결합하여 만들어짐
-    url = os.getenv('FILE_URL'), + "/" + file_key
+    url = os.getenv('FILE_URL') + "/" + file_key
 
     # URL 문자열에서 공백을 "_"로 대체
     url = url.replace(" ", "_")

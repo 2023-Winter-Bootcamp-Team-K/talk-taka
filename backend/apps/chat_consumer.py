@@ -22,8 +22,9 @@ from django.utils import timezone
 
 
 load_dotenv()
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-client = OpenAI(api_key=OPENAI_API_KEY)
+
+OPENAI_API_KEY=os.getenv('OPENAI_API_KEY')
+client=OpenAI(api_key=OPENAI_API_KEY)
 logger = logging.getLogger(__name__)
 
 class ChatConsumer(WebsocketConsumer):
