@@ -97,6 +97,7 @@ class ChatConsumer(WebsocketConsumer):
                 audio_blob = data["audioBlob"]
                 audio_data = base64.b64decode(audio_blob)
 
+
                 # 오디오 파일로 변환
                 audio_file = ContentFile(audio_data)
 
@@ -105,14 +106,11 @@ class ChatConsumer(WebsocketConsumer):
                 self.default_audio_file_urls.append(audio_file_url)
                 ## 여기까진 잘됨.
                 # 오디오 파일 STT로 텍스트 변환
-
                 # 비동기 작업 완료 후 실행될 콜백 함수
-
                 # 비동기 작업 실행
                 task = speech_to_text_task.delay(audio_data)
-                print("test")
                 task.then(self.on_task_completion(task,audio_file_url))
-                print("test2222")# 작업 완료 후 콜백 함수 연결
+                # 작업 완료 후 콜백 함수 연결
 
 
             elif event == "conversation_end":
@@ -284,6 +282,12 @@ class ChatConsumer(WebsocketConsumer):
         self.send(json.dumps({"event": "conversation",
                               "data": {"message": message, "finish_reason": finish_reason}}))
 
+    def gpt_text_send(self, message,finish_reason):
+        if finish_reason is None:
+            finish_reason = "incomplete"
+        self.send(json.dumps({"event": "conversation",
+                              "data": { "character": "quokka", "message": message, "finish_reason": finish_reason}}))
+
     def user_text_send(self, message,finish_reason):
         if finish_reason is None:
             finish_reason = "incomplete"
@@ -295,12 +299,14 @@ class ChatConsumer(WebsocketConsumer):
         text_result = result.get(timeout=10)  # 결과를 기다림
         self.child_conversation(text_result)
         self.add_answer(text_result)
-
+        print("333")#여기까지 실행됨
         # STT 결과를 기반으로 후속 처리 진행
-        question = self.continue_conversation(self.chatroom)
+        question = self.continue_conversation(self.chatroom) #실패지점 !
+        print("444")
         self.audio_send(question)
         self.add_question(question=question)
         self.save_user_answer(question=self.present_question, content=text_result, url=audio_file_url)
+        print("555")
 
 
 
