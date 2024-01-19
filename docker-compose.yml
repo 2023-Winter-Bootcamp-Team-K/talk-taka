@@ -10,6 +10,8 @@ services:
       MYSQL_PASSWORD: ${DB_USER_PASSWORD}
     ports:
       - "3307:3306"
+    env_file:
+      - .env
 
   web:
     build: ./backend
@@ -26,7 +28,7 @@ services:
     depends_on:
       - db
     env_file:
-      - backend/.env
+      - .env
 
   rabbitmq:
     image: "rabbitmq:3-management"

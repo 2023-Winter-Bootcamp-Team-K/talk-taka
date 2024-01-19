@@ -129,8 +129,6 @@ class ChatConsumer(WebsocketConsumer):
                 # 작업 완료 후 콜백 함수 연결
                 task.then(self.on_task_completion(task,upload_task))
 
-
-
             elif event == "conversation_end":
                 self.send(json.dumps({"message": "", "finish_reason": ""}))
                 self.close()
