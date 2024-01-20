@@ -16,7 +16,7 @@ scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
   - job_name: 'cadvisor'
     static_configs:
-      - targets: [ 'cadvisor:8080' ]
+      - targets: [ 'cadvisor:8081' ]
 
   - job_name: 'node-exporter'
     static_configs:
