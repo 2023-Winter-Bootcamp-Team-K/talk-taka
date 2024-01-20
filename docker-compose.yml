@@ -10,6 +10,8 @@ services:
       MYSQL_PASSWORD: ${DB_USER_PASSWORD}
     ports:
       - "3307:3306"
+    env_file:
+      - .env
 
   web:
     build: ./backend
@@ -27,3 +29,22 @@ services:
       - db
     env_file:
       - .env
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+
+  celery:
+    container_name: celery
+    build:
+      context: backend  # Celery를 빌드할 컨텍스트를 backend 디렉토리로 지정
+    command: "celery -A config.celery worker --loglevel=info --pool=prefork" #worker추가
+    depends_on:
+      - rabbitmq  # Celery는 RabbitMQ에 의존하므로 여기에 명시
+    volumes:
+      - ./backend:/app  # 현재 디렉토리를 backend로 변경하여, backend 코드를 컨테이너의 /app으로 마운트
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings  # Django 설정 환경 변수 추가

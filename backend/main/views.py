@@ -6,7 +6,6 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from storage import get_file_url
 
 def main_page(request):
     return HttpResponse("메인페이지입니다!")
