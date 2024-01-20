@@ -98,55 +98,55 @@ class ChatRoomCreateView(APIView):
         return Response(response_data, status=status.HTTP_201_CREATED)
 
 
-class ChatRoomCloseView(APIView):
-    @swagger_auto_schema(
-        operation_id="채팅방 종료",
-        request_body=openapi.Schema(
-            type=openapi.TYPE_OBJECT,
-            properties={
-                'chat_room_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='채팅방 ID'),
-            },
-            required=['chat_room_id']
-        ),
-        responses={
-            200: openapi.Response(description="채팅방 종료 및 결과 반환"),
-            400: "Bad request",
-        }
-    )
-    def post(self, request, *args, **kwargs):
-        chat_room_id = request.data.get('chat_room_id')
-        if not chat_room_id:
-            return Response({"error": "채팅방이 생성되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
-
-        chat_room = get_object_or_404(ChatRoom, pk=chat_room_id)
-        conversation = self.get_conversation(chat_room)
-
-        consumer = ChatConsumer()
-        summary = consumer.generate_summary(conversation)
-        image_url = consumer.generate_image(summary)
-
-        # 요약 및 이미지 URL 저장
-        chat_room.summary = summary
-        chat_room.image_url = image_url
-        chat_room.delete_at = timezone.now()
-        chat_room.save()
-
-        return Response({
-            "status": "200",
-            "message": "대화방 종료",
-            "summary": summary,
-            "image_url": image_url
-        }, status=status.HTTP_200_OK)
-
-    def get_conversation(self, chat_room):
-        questions = GPTQuestion.objects.filter(chatroom_id=chat_room)
-        conversation = [question.content for question in questions]
-        return conversation
-
-    def get_conversation(self, chat_room):
-        questions = GPTQuestion.objects.filter(chatroom_id=chat_room)
-        conversation = [question.content for question in questions]
-        return conversation
+# class ChatRoomCloseView(APIView):
+#     @swagger_auto_schema(
+#         operation_id="채팅방 종료",
+#         request_body=openapi.Schema(
+#             type=openapi.TYPE_OBJECT,
+#             properties={
+#                 'chat_room_id': openapi.Schema(type=openapi.TYPE_INTEGER, description='채팅방 ID'),
+#             },
+#             required=['chat_room_id']
+#         ),
+#         responses={
+#             200: openapi.Response(description="채팅방 종료 및 결과 반환"),
+#             400: "Bad request",
+#         }
+#     )
+#     def post(self, request, *args, **kwargs):
+#         chat_room_id = request.data.get('chat_room_id')
+#         if not chat_room_id:
+#             return Response({"error": "채팅방이 생성되지 않았습니다."}, status=status.HTTP_400_BAD_REQUEST)
+#
+#         chat_room = get_object_or_404(ChatRoom, pk=chat_room_id)
+#         conversation = self.get_conversation(chat_room)
+#
+#         consumer = ChatConsumer()
+#         summary = consumer.generate_summary(conversation)
+#         image_url = consumer.generate_image(summary)
+#
+#         # 요약 및 이미지 URL 저장
+#         chat_room.summary = summary
+#         chat_room.image_url = image_url
+#         chat_room.delete_at = timezone.now()
+#         chat_room.save()
+#
+#         return Response({
+#             "status": "200",
+#             "message": "대화방 종료",
+#             "summary": summary,
+#             "image_url": image_url
+#         }, status=status.HTTP_200_OK)
+#
+#     def get_conversation(self, chat_room):
+#         questions = GPTQuestion.objects.filter(chatroom_id=chat_room)
+#         conversation = [question.content for question in questions]
+#         return conversation
+#
+#     def get_conversation(self, chat_room):
+#         questions = GPTQuestion.objects.filter(chatroom_id=chat_room)
+#         conversation = [question.content for question in questions]
+#         return conversation
 
 
 class ChatRoomListView(APIView):

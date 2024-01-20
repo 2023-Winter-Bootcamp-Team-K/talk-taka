@@ -313,48 +313,48 @@ class ChatConsumer(WebsocketConsumer):
                               "data": {"message": message, "finish_reason": finish_reason}}))
 
     # 채팅방 종료 시 요약 및 이미지 생성
-    def end_conversation(self):
-        # 대화 요약 생성
-        summary = self.generate_summary(self.conversation)
+    # def end_conversation(self):
+    #     # 대화 요약 생성
+    #     summary = self.generate_summary(self.conversation)
+    #
+    #     # DALL-E 이미지 생성
+    #     image_url = self.generate_image(summary)
+    #
+    #     # 클라이언트에 결과 전송
+    #     self.send(json.dumps({
+    #         "event": "chat_end",
+    #         "summary": summary,
+    #         "image_url": image_url
+    #     }))
 
-        # DALL-E 이미지 생성
-        image_url = self.generate_image(summary)
-
-        # 클라이언트에 결과 전송
-        self.send(json.dumps({
-            "event": "chat_end",
-            "summary": summary,
-            "image_url": image_url
-        }))
-
-    # gpt한테 요약 요청
-    def generate_summary(self, content):
-        content_str = "\n".join(content)
-        summary_request = ('You have to write a picture diary based on the conversation. It\'s going to be in your child\'s picture diary. Please write 180 characters or less. And you only speak in Korean')
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {
-                    "role": "system",
-                    "content": summary_request
-                },
-                {
-                    "role": "user",
-                    "content": content_str
-                },
-            ],
-        )
-        return response.choices[0].message.content
-    # 달리 이미지 생성 로직보
-    def generate_image(self, summary):
-
-        response = client.images.generate(
-            model="dall-e-3",
-            prompt=summary,
-            size="1024x1024",
-            quality="standard",
-            n=1,
-            style="natural",
-        )
-        image_url = response.data[0].url
-        return image_url
+# # gpt한테 요약 요청
+# def generate_summary(self, content):
+#     content_str = "\n".join(content)
+#     summary_request = ('You have to write a picture diary based on the conversation. It\'s going to be in your child\'s picture diary. Please write 180 characters or less. And you only speak in Korean')
+#     response = client.chat.completions.create(
+#         model="gpt-3.5-turbo",
+#         messages=[
+#             {
+#                 "role": "system",
+#                 "content": summary_request
+#             },
+#             {
+#                 "role": "user",
+#                 "content": content_str
+#             },
+#         ],
+#     )
+#     return response.choices[0].message.content
+# # 달리 이미지 생성 로직보
+# def generate_image(self, summary):
+#
+#     response = client.images.generate(
+#         model="dall-e-3",
+#         prompt=summary,
+#         size="1024x1024",
+#         quality="standard",
+#         n=1,
+#         style="natural",
+#     )
+#     image_url = response.data[0].url
+#     return image_url
