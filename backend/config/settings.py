@@ -32,6 +32,8 @@ ALLOWED_HOSTS = [
     "52.79.131.251",
 ]
 
+USE_X_FORWARDED_HOST = True
+USE_X_FORWARDED_PORT = True
 
 # Application definition
 
@@ -51,9 +53,6 @@ INSTALLED_APPS = [
     'drf_yasg',
     "django_celery_beat",
     "django_celery_results",
-
-
-
     'users',
     'main',
     'apps',

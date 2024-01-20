@@ -28,3 +28,5 @@ RUN pip install channels
 
 # Copy the project files into the container
 COPY . .
+
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi:application"]
