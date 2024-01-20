@@ -101,7 +101,7 @@ class LogoutView(APIView):
 
             # 로그아웃 성공 시 "로그아웃 성공" 메시지를 포함한 응답을 반환
             return Response({
-                'status': '200',
+                'status': '205',
                 'message': '로그아웃 성공'
             }, status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
@@ -121,8 +121,5 @@ class DeleteUserView(generics.DestroyAPIView):
         user.delete()
         return Response({'message': '회원탈퇴 성공'}, status=status.HTTP_204_NO_CONTENT)
 
-def hello(request):
-    data = {'message': 'hello world'}
-    return JsonResponse(data)
 
 

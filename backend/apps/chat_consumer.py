@@ -4,17 +4,17 @@ import random
 import time
 import base64
 
-import openai
+
 from django.core.files.base import ContentFile
 from django.http import JsonResponse
 from openai import OpenAI
 from channels.generic.websocket import WebsocketConsumer
 from dotenv import load_dotenv
 import asyncio
-from storage import get_file_url
-from stt import speach_to_text
+
 from tts import text_to_speach
 from .models import *
+from .tasks import speech_to_text_task,upload_audio_to_s3_task
 import logging
 from users.models import User
 from django.utils import timezone
@@ -22,8 +22,9 @@ from django.utils import timezone
 
 
 load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=OPENAI_API_KEY)
+
+OPENAI_API_KEY=os.getenv('OPENAI_API_KEY')
+client=OpenAI(api_key=OPENAI_API_KEY)
 logger = logging.getLogger(__name__)
 
 class ChatConsumer(WebsocketConsumer):
@@ -112,34 +113,22 @@ class ChatConsumer(WebsocketConsumer):
                 audio_blob = data["audioBlob"]
                 audio_data = base64.b64decode(audio_blob)
 
+
                 # 오디오 파일로 변환
                 audio_file = ContentFile(audio_data)
 
-                # 오디오 파일 S3에 저장
-                audio_file_url = get_file_url("audio", audio_file)
-                self.default_audio_file_urls.append(audio_file_url)
+                # 오디오 파일을 바이너리 데이터로 변환
+                binary_audio_data = audio_file.read()
 
-                # 오디오 파일 STT로 텍스트 변환
-                answer = speach_to_text(audio_file)
-                
-                # child 텍스트 전송
-                self.child_conversation(answer)
-                
-                # answer을 conversation 저장
-                self.add_answer(answer=answer)
+                # 비동기 태스크 실행
+                upload_task = upload_audio_to_s3_task.delay(binary_audio_data)
 
-                # GPT 질문 생성 및 Text로 전송
-                question = self.continue_conversation(self.chatroom)
 
-                # GPT 질문 음성 파일 전송(mp3)
-                self.audio_send(question)
+                # 비동기 작업 실행
+                task = speech_to_text_task.delay(audio_data)
+                # 작업 완료 후 콜백 함수 연결
+                task.then(self.on_task_completion(task,upload_task))
 
-                # conversation 질문, 답변 저장
-                self.add_question(question=question)
-
-                # UserAnswer DB 저장 (택스트, 오디오 파일 URL)
-                self.save_user_answer(question=self.present_question, content=answer, url=audio_file_url)
-            # 3. 대화 종료
             elif event == "conversation_end":
                 self.send(json.dumps({"message": "", "finish_reason": ""}))
                 self.close()
@@ -209,6 +198,23 @@ class ChatConsumer(WebsocketConsumer):
         self.save_gpt_question(content=messages)
         return messages
 
+    def child_conversation(self, content):
+        messages = ""
+        for index, chunk in enumerate(content):
+            is_last_char = "incomplete"
+            # 현재 글자가 마지막 글자인지 확인
+            if index == len(content) - 1:
+                is_last_char = "stop"
+
+            # 메시지를 클라이언트로 바로 전송
+            self.user_text_send(chunk, is_last_char)
+            # 마지막 글자에 도달하면 루프 종료
+            if is_last_char == "stop":
+                break
+
+            messages += chunk
+            time.sleep(0.05)
+
     def default_conversation(self, chatroom, question_content):
         messages = ""
         # question_content의 index와 원소를 순차적으로 반환하여 스트리밍 형식으로 출력
@@ -229,6 +235,7 @@ class ChatConsumer(WebsocketConsumer):
         # GPTQuestion 객체를 생성하고 데이터베이스에 저장
         question = GPTQuestion.objects.create(content=messages, chatroom_id=chatroom)
         question.save()
+
         
     def child_conversation(self, content):
         messages = ""
@@ -246,6 +253,7 @@ class ChatConsumer(WebsocketConsumer):
 
             messages += chunk
             time.sleep(0.05)
+
 
     def pick_random_question(self, username):
         pick_question = []
@@ -300,6 +308,14 @@ class ChatConsumer(WebsocketConsumer):
             }
         }
         ))
+
+
+    def text_send(self, message, finish_reason):
+        if finish_reason is None:
+            finish_reason = "incomplete"
+        self.send(json.dumps({"event": "conversation",
+                              "data": {"message": message, "finish_reason": finish_reason}}))
+
     def gpt_text_send(self, message,finish_reason):
         if finish_reason is None:
             finish_reason = "incomplete"
@@ -310,7 +326,12 @@ class ChatConsumer(WebsocketConsumer):
         if finish_reason is None:
             finish_reason = "incomplete"
         self.send(json.dumps({"event": "conversation",
-                              "data": {"message": message, "finish_reason": finish_reason}}))
+
+                              "data": { "character": "child", "message": message, "finish_reason": finish_reason}}))
+
+
+
+
 
     # 채팅방 종료 시 요약 및 이미지 생성
     def end_conversation(self):
@@ -358,3 +379,17 @@ class ChatConsumer(WebsocketConsumer):
         )
         image_url = response.data[0].url
         return image_url
+
+
+    def on_task_completion(self, result, audio_file_url):
+        text_result = result.get(timeout=10)  # 결과를 기다림
+        self.child_conversation(text_result)
+        self.add_answer(text_result)
+
+        # STT 결과를 기반으로 후속 처리 진행
+        question = self.continue_conversation(self.chatroom)  # 실패지점 !
+
+        self.audio_send(question)
+        self.add_question(question=question)
+        self.save_user_answer(question=self.present_question, content=text_result, url=audio_file_url)
+

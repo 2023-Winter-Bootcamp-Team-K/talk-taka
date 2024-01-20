@@ -11,13 +11,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import JSONParser, MultiPartParser
 from storage import get_file_url
+from .tasks import generate_image_task
 
 from .chat_consumer import ChatConsumer
-from .models import ChatRoom
+
 from .serializers import ChatRoomSerializer
 
 load_dotenv()
-from .models import GPTQuestion, UserAnswer
+from .models import GPTQuestion, UserAnswer,ChatRoom
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 
 # class GPTAnswerView(APIView):
@@ -98,6 +99,7 @@ class ChatRoomCreateView(APIView):
         return Response(response_data, status=status.HTTP_201_CREATED)
 
 
+
 class ChatRoomCloseView(APIView):
     @swagger_auto_schema(
         operation_id="채팅방 종료",
@@ -123,11 +125,10 @@ class ChatRoomCloseView(APIView):
 
         consumer = ChatConsumer()
         summary = consumer.generate_summary(conversation)
-        image_url = consumer.generate_image(summary)
+        generate_image_task.delay(chat_room_id, summary)  # 비동기적으로 작업 실행
 
         # 요약 및 이미지 URL 저장
         chat_room.summary = summary
-        chat_room.image_url = image_url
         chat_room.delete_at = timezone.now()
         chat_room.save()
 
@@ -135,7 +136,6 @@ class ChatRoomCloseView(APIView):
             "status": "200",
             "message": "대화방 종료",
             "summary": summary,
-            "image_url": image_url
         }, status=status.HTTP_200_OK)
 
     def get_conversation(self, chat_room):
@@ -217,3 +217,4 @@ class ChatRoomImageUploadView(APIView):
             return Response({"error": "채팅방을 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
