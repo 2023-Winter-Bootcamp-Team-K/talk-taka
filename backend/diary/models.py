@@ -22,6 +22,8 @@ class Diary(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
     deleted_at = models.DateTimeField(null=True)
-    mood=models.CharField(max_length=10, choices=MOOD_CHOICES)
+    mood = models.CharField(max_length=10, choices=MOOD_CHOICES)
+    capture_url = models.CharField(max_length=500, null=True, blank=True)
+
 
 

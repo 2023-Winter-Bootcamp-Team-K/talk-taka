@@ -99,7 +99,6 @@ class ChatRoomCreateView(APIView):
         return Response(response_data, status=status.HTTP_201_CREATED)
 
 
-
 class ChatRoomCloseView(APIView):
     @swagger_auto_schema(
         operation_id="채팅방 종료",
@@ -147,7 +146,6 @@ class ChatRoomCloseView(APIView):
         questions = GPTQuestion.objects.filter(chatroom_id=chat_room)
         conversation = [question.content for question in questions]
         return conversation
-
 
 class ChatRoomListView(APIView):
     @swagger_auto_schema(
@@ -217,4 +215,3 @@ class ChatRoomImageUploadView(APIView):
             return Response({"error": "채팅방을 찾을 수 없습니다."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-

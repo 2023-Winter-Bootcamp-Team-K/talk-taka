@@ -329,11 +329,6 @@ class ChatConsumer(WebsocketConsumer):
 
                               "data": { "character": "child", "message": message, "finish_reason": finish_reason}}))
 
-
-
-
-
-    # 채팅방 종료 시 요약 및 이미지 생성
     def end_conversation(self):
         # 대화 요약 생성
         summary = self.generate_summary(self.conversation)
@@ -392,4 +387,3 @@ class ChatConsumer(WebsocketConsumer):
         self.audio_send(question)
         self.add_question(question=question)
         self.save_user_answer(question=self.present_question, content=text_result, url=audio_file_url)
-

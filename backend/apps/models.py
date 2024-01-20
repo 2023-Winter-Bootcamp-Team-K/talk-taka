@@ -32,6 +32,17 @@ class ChatRoom(models.Model):
             self.mood = self.ANGRY
         self.save()
 
+    def get_conversation(self):
+        # ChatRoom과 관련된 GPTQuestion 객체들과 UserAnswer 객체들을 가져옴
+        questions = GPTQuestion.objects.filter(chatroom_id=self.id)
+        answers = UserAnswer.objects.filter(question_id__chatroom_id=self.id)
+        # 여기서 question_id__chatroom_id는 UserAnswer의 question_id 외래키를 통해 ChatRoom에 접근함을 의미
+
+        # 대화 내용을 시간 순서대로 정렬하여 반환
+        conversation = list(questions) + list(answers)
+        conversation.sort(key=lambda x: x.created_at)  # created_at은 각 객체의 생성 시간 필드
+        return [item.content for item in conversation]
+
 
 class GPTQuestion(models.Model):
     id = models.AutoField(primary_key=True)
@@ -50,3 +61,4 @@ class UserAnswer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     delete_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(null=True)
+
