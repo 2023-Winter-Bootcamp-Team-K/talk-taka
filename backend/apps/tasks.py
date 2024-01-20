@@ -1,6 +1,5 @@
 # tasks.py
 import os
-
 from celery import shared_task
 import requests
 from dotenv import load_dotenv
@@ -10,9 +9,7 @@ import uuid
 from openai import OpenAI
 import logging
 from .models import ChatRoom  # ChatRoom 모델을 가져옵니다.
-
 load_dotenv()
-
 
 OPENAI_API_KEY=os.getenv('OPENAI_API_KEY')
 client=OpenAI(api_key=OPENAI_API_KEY)
