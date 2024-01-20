@@ -42,9 +42,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'password', 'age', 'gender')
 
-    def validate_username(self, value):
+    def validate_id(self, value):
         # Check if the username is already in use
-        if User.objects.filter(username=value).exists():
+        if User.objects.filter(id=value).exists():
             raise serializers.ValidationError("이미 존재하는 계정입니다.")
         return value
 
