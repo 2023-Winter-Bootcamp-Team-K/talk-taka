@@ -80,7 +80,7 @@ const Btn = styled.button<{
   font-weight: 800;
 
   /* button */
-  background: ${(props) => (props.disabled ? ' #aeaeae' : '#2c2c2c')};
+  background: ${(props) => (props.$disabled ? ' #aeaeae' : '#2c2c2c')};
 
   border-radius: ${(props) =>
     props.$borderr === 'normal' ? '5rem' : props.$borderr};
