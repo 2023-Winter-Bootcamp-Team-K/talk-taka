@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import { getDiary } from '../api/diary';
@@ -18,7 +18,6 @@ export default function BookCover({ year, name, img }) {
     () => getDiary(selectedDiaryId || '')
   );
   const diaryContent = diaryData;
-  console.log(diaryContent);
 
   useEffect(() => {
     openBook();
@@ -31,8 +30,7 @@ export default function BookCover({ year, name, img }) {
     }, 1200);
     setTimeout(() => {
       navigate('/diary');
-    }, 100);
-    // }, 1400);
+    }, 1400);
   };
   return (
     <>
@@ -44,8 +42,8 @@ export default function BookCover({ year, name, img }) {
           <CoverInner>
             <Front>
               <Year>{2024}</Year>
-              <Title>지은의 다이어리</Title>
-              <img src="" alt="" />
+              <Title>{diaryContent?.username}의 다이어리</Title>
+              <img src={diaryContent?.captureURL} alt="" />
               <button onClick={openBook}>함께 보러가기 </button>
             </Front>
             {showRight && <Back></Back>}

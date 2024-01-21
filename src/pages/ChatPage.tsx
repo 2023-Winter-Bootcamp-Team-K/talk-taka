@@ -36,7 +36,7 @@ export default function ChatPage() {
         }
       );
       if (response.data.status === '201') {
-        window.localStorage.setItem('diaryId', response.data.diaryId);
+        window.localStorage.setItem('selectedDiaryId', response.data.diaryId);
       }
     } catch (error) {
       console.error(error);

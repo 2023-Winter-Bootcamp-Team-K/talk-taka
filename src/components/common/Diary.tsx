@@ -97,7 +97,7 @@ const Day = styled.div`
 `;
 
 const Feeling = styled.img`
-  width: 7%;
+  /* width: 7%; */
   height: auto;
 
   @media all and (min-width: 391px) {
