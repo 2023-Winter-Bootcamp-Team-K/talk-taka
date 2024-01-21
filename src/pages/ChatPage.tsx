@@ -9,11 +9,14 @@ import { toggleStore } from '../stores/toggle';
 import CameraModal from '../components/modal/CameraModal';
 import { baseInstance } from '../api/config';
 import { getCookie } from '../utils/cookie';
+import { useChatStore } from '../stores/chat';
 
 export default function ChatPage() {
   // 웹소켓?
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
+  const { RecordToggle, setRecordToggle, audio, setSendAudio, sendAudio } =
+    useChatStore();
 
   const Mood = window.localStorage.getItem('mood');
 
@@ -48,13 +51,13 @@ export default function ChatPage() {
     const roomId = window.localStorage.getItem('chat_id');
 
     const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomId}/`);
+
     let chatArray = new Array();
 
     ws.onopen = () => {
       // 웹소켓 시작 설정
       setSocketConnected(true);
       setSocket(ws);
-      setclose(true);
     };
     console.log('connected to room' + roomId);
 
@@ -99,7 +102,17 @@ export default function ChatPage() {
         const audioBlob = messageReceived.data.audioBlob;
         let snd = new Audio(`data:audio/x-wav;base64, ${audioBlob}`);
         snd.play();
-        // start record 0.5s
+        snd.addEventListener('loadedmetadata', (event) => {
+          const sndElement = event.currentTarget as HTMLAudioElement;
+          const QuokkaTime = sndElement.duration * 1000;
+          console.log('시간지연 테스트', QuokkaTime);
+          setTimeout(() => {
+            console.log('쿼카 말 끝남');
+            setRecordToggle(true);
+            console.log('RecordToggle: ', RecordToggle);
+            console.log('레코드 시작1');
+          }, QuokkaTime);
+        });
       }
     };
   };
@@ -126,6 +139,22 @@ export default function ChatPage() {
       ws.onclose = () => {
         console.log('disconnect from room ');
       };
+    }
+  };
+
+  //오디오 전달
+  const sendAudioWebSocket = () => {
+    //ERROR : 오디오 전달할 blob이 없어 오류 발생
+    const ws = socket;
+    if (sendAudio === true && ws) {
+      console.log(audio);
+
+      const data = {
+        event: 'user_answer',
+        data: { audioBlob: audio },
+      };
+      ws.send(JSON.stringify(data));
+      setSendAudio(false);
     }
   };
 
@@ -159,6 +188,10 @@ export default function ChatPage() {
   //getItem from local storage
 
   useEffect(() => {
+    sendAudioWebSocket();
+  }, [sendAudio]);
+
+  useEffect(() => {
     connectWebSocket();
     const mediaQuery = window.matchMedia('(max-width: 390px)');
     const handleResize = () => setIsMobile(mediaQuery.matches);
@@ -183,17 +216,9 @@ export default function ChatPage() {
             // 핸드폰 모드
             <ComponentsWrapper>
               {toggle === '1' ? (
-                <CameraBox
-                  isShowChar={handleShowChar}
-                  socket={socket}
-                  socketConnected={socketConnected}
-                />
+                <CameraBox isShowChar={handleShowChar} />
               ) : (
-                <ChatBox
-                  isShowChar={handleShowChar}
-                  socket={socket}
-                  socketConnected={socketConnected}
-                />
+                <ChatBox isShowChar={handleShowChar} />
               )}
             </ComponentsWrapper>
           )
@@ -202,17 +227,9 @@ export default function ChatPage() {
           <ComponentsWrapper>
             <CharComponent />
             {toggle === '1' ? (
-              <CameraBox
-                isShowChar={handleShowChar}
-                socket={socket}
-                socketConnected={socketConnected}
-              />
+              <CameraBox isShowChar={handleShowChar} />
             ) : (
-              <ChatBox
-                isShowChar={handleShowChar}
-                socket={socket}
-                socketConnected={socketConnected}
-              />
+              <ChatBox isShowChar={handleShowChar} />
             )}
           </ComponentsWrapper>
         )}
