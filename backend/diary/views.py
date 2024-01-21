@@ -58,7 +58,7 @@ class DiaryCreateView(APIView):
             return Response({
                 "status": "201",
                 "message": "일기 생성 성공",
-                "diaryId": str(diary.id)
+                "diaryId": str(diary.id),
             }, status=status.HTTP_201_CREATED)
 
         except ChatRoom.DoesNotExist:
@@ -83,7 +83,8 @@ class DiaryView(APIView):
             "created_at": diary.created_at.strftime("%Y-%m-%d"),
             "imageURL": diary.img_url,
             "username": diary.user.username,
-            "captureURL": diary.capture_url
+            "captureURL": diary.capture_url,
+            "mood": diary.mood
         }
         return Response(diary_data)
 class DiaryListView(APIView):
