@@ -20,10 +20,9 @@ export default function AudioRecorder({ isShowChar }: AudioRecorderProps) {
 
   // 버튼 클릭 핸들러
   const handleButtonClick = () => {
-    setRecordToggle(false); // true이면 녹음 시작
-    toggleRecording(); // 이거 뭐지?
+    setRecordToggle(false); // true이면 녹음 시작 false면 중지
+    toggleRecording();
     setSendAudio(true); // 오디오 보내기 상태관리
-    isShowChar(); // 이거 존재 유무 불명
   };
 
   useEffect(() => {
@@ -40,12 +39,15 @@ export default function AudioRecorder({ isShowChar }: AudioRecorderProps) {
       const newMediaRecorder = new MediaRecorder(stream);
       setMediaRecorder(newMediaRecorder);
       newMediaRecorder.start();
+      console.log('녹음 시작 위에 있는 토글 값', RecordToggle);
+
       console.log('녹음 시작');
 
       //
     } else if (RecordToggle === false) {
       if (newMediaRecorder) {
         newMediaRecorder.stop();
+        console.log('녹음 종료');
       }
     }
     //blob처리
@@ -59,7 +61,12 @@ export default function AudioRecorder({ isShowChar }: AudioRecorderProps) {
       //stop 입력이 오면
       newMediaRecorder.addEventListener('stop', () => {
         const audioBlob = new Blob(audioChunks);
+        // test codes
         // console.log('audio recording success:', audioBlob);
+        // const audioUrl = URL.createObjectURL(audioBlob);
+        // const audio = new Audio(audioUrl);
+        // audio.play();
+        //
         const fileReader = new FileReader();
         fileReader.onloadend = () => {
           const base64Audio = fileReader.result as string;

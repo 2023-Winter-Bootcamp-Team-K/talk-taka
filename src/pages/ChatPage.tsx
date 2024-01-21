@@ -110,8 +110,8 @@ export default function ChatPage() {
           console.log('시간지연 테스트', QuokkaTime);
           setTimeout(() => {
             console.log('쿼카 말 끝남');
-            setRecordToggle(true);
-            console.log('RecordToggle: ', RecordToggle);
+            setRecordToggle(true); //true 인데
+            console.log('RecordToggle(true 여야함): ', RecordToggle); //false래 말이 됨?
             console.log('레코드 시작1');
           }, QuokkaTime);
         });
@@ -149,13 +149,18 @@ export default function ChatPage() {
     //ERROR : 오디오 전달할 blob이 없어 오류 발생
     // console.log(audio);
 
+    // console.log('audio recording success:', audioBlob);
+    // const audioUrl = URL.createObjectURL(audioBlob);
+    // const audio = new Audio(audioUrl);
+    // audio.play();
     const ws = socket;
     if (sendAudio === true && ws) {
+      console.log(audio);
+
       const data = {
         event: 'user_answer',
         data: { audioBlob: audio },
       };
-      console.log('2');
 
       ws.send(JSON.stringify(data));
       setSendAudio(false);
