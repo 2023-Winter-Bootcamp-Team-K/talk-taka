@@ -6,6 +6,12 @@ import { useCallback, useState } from 'react';
 import { MaleSvg, FemaleSvg } from '../assets/SVG';
 import { baseInstance } from '../api/config';
 
+// 아이디 중복 확인 API 요청 함수
+const checkIdAvailability = async (id: string) => {
+  const response = await baseInstance.get(`/check/id/availability/?id=${id}`);
+  return response.data;
+};
+
 export default function SignupPage() {
   //회원가입 변수
   const [id, setId] = useState('');
@@ -55,6 +61,21 @@ export default function SignupPage() {
   };
 
   const isConfirmDisabled = isButtonDisabled || genderDisabled();
+
+  // 중복 확인 버튼 클릭 핸들러
+  const onCheckId = async () => {
+    try {
+      const data = await checkIdAvailability(id);
+      if (data.available) {
+        alert("사용 가능한 아이디입니다.");
+      } else {
+        alert("이미 사용 중인 아이디입니다."); 
+      }
+    } catch (error) {
+      console.error('API 요청 중 에러 발생', error);
+      alert('중복 확인 중 오류가 발생했습니다.');
+    }
+  };
 
   //외부 페이지 이동
   const goToLogin = () => {
@@ -175,6 +196,12 @@ export default function SignupPage() {
     }
   };
 
+  const setNextPage = ()=>{
+    if (!isButtonDisabled) {
+      setPage(2)
+    } 
+  }
+
   // 리턴 값
   return (
     <BackGround>
@@ -192,9 +219,10 @@ export default function SignupPage() {
                 placeholder="영문 + 숫자"
                 marginbottom="0.47rem"
                 marginbottomptt="0.06rem"
-              ></LoginInput>
+              />
               <Button
                 title="중복확인"
+                onClick={onCheckId}
                 width="9.1875rem"
                 widthp="5.8125rem"
                 marginl="1.31rem"
@@ -204,8 +232,7 @@ export default function SignupPage() {
                 fonts="1.125rem"
                 fontsp="0.875rem"
                 borderr="0.875rem"
-                onClick={onSubmit}
-              ></Button>
+              />
             </DirectionRow>
             <Left>
               <IdCheck>
@@ -221,7 +248,7 @@ export default function SignupPage() {
               marginbottom="0.47rem"
               marginbottomp="0.09rem"
               marginbottomptt="0.06rem"
-            ></LoginInput>
+            />
             <Left>
               <IdCheck>
                 <CheckMark color={ChangeColorPw}>{passwordMessage}</CheckMark>
@@ -235,7 +262,7 @@ export default function SignupPage() {
               placeholder="한번 더 입력해주세요"
               marginbottom="0.47rem"
               marginbottomptt="0.06rem"
-            ></LoginInput>
+            />
             <Left>
               <IdCheck>
                 <CheckMark color={ChangeColorPwCk}>
@@ -244,13 +271,11 @@ export default function SignupPage() {
               </IdCheck>
             </Left>
             <Button
-              onClick={() => {
-                setPage(2);
-              }}
-              disabled={isButtonDisabled}
+              onClick={setNextPage}
+              disabled= {isButtonDisabled}
               title="다음"
               width="14.24731rem"
-            ></Button>
+            />
             <SignUp onClick={goToLogin}>로그인 하러가기</SignUp>
           </>
         ) : (
@@ -264,7 +289,7 @@ export default function SignupPage() {
               marginbottom="2.25rem"
               marginbottomp="2.2rem"
               marginbottomptt="0.06rem"
-            ></LoginInput>
+            />
             <LoginInput
               value={birth}
               onChange={onChangeAge}
@@ -273,7 +298,7 @@ export default function SignupPage() {
               marginbottom="2.25rem"
               marginbottomp="1.7rem"
               marginbottomptt="0.03rem"
-            ></LoginInput>
+            />
             <GenderLayout>
               <Gender>성별</Gender>
             </GenderLayout>
@@ -294,11 +319,11 @@ export default function SignupPage() {
             <Button
               title="확인"
               disabled={isConfirmDisabled}
+              onClick={goToLoginConfirm}
               width="14.24731rem"
               margint="1.5rem"
               margintp="0.6rem"
-              onClick={goToLoginConfirm}
-            ></Button>
+            />
             <SignUp onClick={goToLogin}>로그인 하러가기</SignUp>
           </>
         )}
