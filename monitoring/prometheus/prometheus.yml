@@ -1,22 +1,31 @@
-groups:
-- name: alert
-  rules:
+global:
+  scrape_interval: 20s
+  scrape_timeout: 10s
 
-  # Alert for any instance that is unreachable for >2 minutes.
-  - alert: service_down
-    expr: up == 0
-    for: 2m
-    labels:
-      severity: page
-    annotations:
-      summary: "Instance {{ $labels.instance }} down"
-      description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 2 minutes."
+rule_files:
+  - "alert.yml"
 
-  - alert: high_load
-    expr: node_load1 > 0.5
-    for: 2m
-    labels:
-      severity: page
-    annotations:
-      summary: "Instance {{ $labels.instance }} under high load"
-      description: "{{ $labels.instance }} of job {{ $labels.job }} is under high load."
+alerting:
+  alertmanagers:
+  - scheme: http
+    static_configs:
+    - targets:
+      - "alertmanager:9093"
+
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: [ 'cadvisor:8080' ]
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: [ 'node-exporter:9100' ]
+
+  - job_name: 'backend'
+    static_configs:
+      - targets: [ 'backend:8000' ]
+
+  - job_name: 'backend-rep'
+    static_configs:
+      - targets: [ 'backend-rep:8001' ]
