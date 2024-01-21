@@ -10,7 +10,6 @@ type AudioRecorderProps = {
 
 // 이게 나가는건데
 export default function AudioRecorder({ isShowChar }: AudioRecorderProps) {
-  // const [recording, setRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
@@ -18,10 +17,6 @@ export default function AudioRecorder({ isShowChar }: AudioRecorderProps) {
   //zustand 상태관리
   const { RecordToggle, setRecordToggle, setAudio, setSendAudio } =
     useChatStore();
-
-  // const { socketConnected } = useChatStore();
-  // const { socket } = useChatStore();
-  // const {isShowChar, setIsShowChar} = useChatStore();
 
   // 버튼 클릭 핸들러
   const handleButtonClick = () => {
@@ -34,58 +29,47 @@ export default function AudioRecorder({ isShowChar }: AudioRecorderProps) {
   useEffect(() => {
     toggleRecording();
     console.log('ToggleRecording useEffect: ', RecordToggle);
-  }, []);
+  }, [RecordToggle]);
 
   // 녹화 토글
   const toggleRecording = async () => {
-    if (RecordToggle && mediaRecorder) {
-      console.log('레코드 시작2');
+    const newMediaRecorder = mediaRecorder;
 
-      mediaRecorder.stop();
-      setRecordToggle(false);
-    } else {
-      console.log('레코드 시작 3'); //ERROR : chatpage 들어오면 바로 실행됨...
-
+    if (RecordToggle === true) {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const newMediaRecorder = new MediaRecorder(stream);
+      setMediaRecorder(newMediaRecorder);
       newMediaRecorder.start();
+      console.log('녹음 시작');
 
-      let audioChunks: Blob[] = [];
+      //
+    } else if (RecordToggle === false) {
+      if (newMediaRecorder) {
+        newMediaRecorder.stop();
+      }
+    }
+    //blob처리
+    let audioChunks: Blob[] = [];
 
+    if (newMediaRecorder) {
+      //blob에 추가
       newMediaRecorder.addEventListener('dataavailable', (event) => {
         audioChunks.push(event.data);
       });
-
+      //stop 입력이 오면
       newMediaRecorder.addEventListener('stop', () => {
         const audioBlob = new Blob(audioChunks);
-
-        // test codes
-        console.log('audio recording success:', audioBlob);
-        // const audioUrl = URL.createObjectURL(audioBlob);
-        // const audio = new Audio(audioUrl);
-        // audio.play();
-
-        // Blob to Base64 string
+        // console.log('audio recording success:', audioBlob);
         const fileReader = new FileReader();
         fileReader.onloadend = () => {
           const base64Audio = fileReader.result as string;
-          console.log('오디오 설정', base64Audio);
-          setAudio(base64Audio);
-          // send to server using Web Socket
-          // if (socketConnected && socket) {
-          //   const data = {
-          //     event: 'audio_message',
-          //     data: {
-          //       audio: base64Audio,
-          //     },
-          //   };
-          //   socket?.send(JSON.stringify(data));
-          // }
+          const resultAudio = base64Audio.split(',')[1];
+
+          // console.log('오디오 설정', resultAudio);
+          setAudio(resultAudio);
         };
         fileReader.readAsDataURL(audioBlob);
       });
-
-      setMediaRecorder(newMediaRecorder);
     }
   };
 

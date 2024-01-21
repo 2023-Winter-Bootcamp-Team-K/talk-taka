@@ -99,6 +99,8 @@ export default function ChatPage() {
           }
         }
       } else if (messageEvent === 'question_tts') {
+        console.log(chatArrayFinal);
+
         const audioBlob = messageReceived.data.audioBlob;
         let snd = new Audio(`data:audio/x-wav;base64, ${audioBlob}`);
         snd.play();
@@ -145,16 +147,19 @@ export default function ChatPage() {
   //오디오 전달
   const sendAudioWebSocket = () => {
     //ERROR : 오디오 전달할 blob이 없어 오류 발생
+    // console.log(audio);
+
     const ws = socket;
     if (sendAudio === true && ws) {
-      console.log(audio);
-
       const data = {
         event: 'user_answer',
         data: { audioBlob: audio },
       };
+      console.log('2');
+
       ws.send(JSON.stringify(data));
       setSendAudio(false);
+      setRecordToggle(false);
     }
   };
 
