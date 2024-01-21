@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import Calender from '../components/calender/Calender';
 import Diary from '../components/common/Diary';
 import { useQuery } from 'react-query';
-import { getDiary} from '../api/diary';
+import { getDiary } from '../api/diary';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { BackIconSvg } from '../assets/SVG';
@@ -10,21 +10,22 @@ import { getCookie } from '../utils/cookie';
 import { getDiaries } from '../api/calender/calender';
 
 export default function DiaryPage() {
-  const diaryId = window.localStorage.getItem('diaryId');
+  const selectedDiaryId = window.localStorage.getItem('selectedDiaryId');
   const { data: DiariesData } = useQuery('sales', () => getDiaries(token));
   const diaries = DiariesData?.data;
 
-  const { data: diaryData } = useQuery(['diary', diaryId], () =>
-    getDiary(diaryId || '')
+  const { data: diaryData } = useQuery(['diary', selectedDiaryId], () =>
+    getDiary(selectedDiaryId || '')
   );
-  const diaryContent = diaryData?.diaryContent;
+  // const diaryContent = diaryData;
+
   const imageURL = diaryData?.imageURL;
   const [YY, MM, DD] = diaryData?.created_at
     ? diaryData.created_at.split('-')
     : ['-', '-', '-'];
   const mood = diaryData?.mood;
   const navigate = useNavigate();
- const token = getCookie("token")
+  const token = getCookie('token');
   const GoToMain = () => {
     navigate('/main');
   };
@@ -56,8 +57,8 @@ export default function DiaryPage() {
                 YY={YY}
                 MM={MM}
                 DD={DD}
-                Text={diaryContent}
-                Image={imageURL}
+                Text={diaryData?.diaryContent}
+                Image={diaryData?.imageURL}
                 mood={mood}
               />
             </Right>
@@ -70,14 +71,14 @@ export default function DiaryPage() {
           <>
             <Book>
               <Left>
-                <Calender data = {diaries} />
+                <Calender data={diaries} />
               </Left>
               <Right>
                 <Diary
                   YY={YY}
                   MM={MM}
                   DD={DD}
-                  Text={diaryContent}
+                  Text={diaryData?.diaryContent}
                   Image={imageURL}
                   mood={mood}
                 />
