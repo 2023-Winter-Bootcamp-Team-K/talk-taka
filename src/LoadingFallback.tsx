@@ -25,6 +25,11 @@ const Background = styled.div`
 
 const BouncingImage = styled.img`
   animation: ${bounce} 1s ease-in-out infinite;
+  width: 30%;
+
+  @media all and (max-width: 390px) {
+    width: 80%; 
+  }
 `;
 
 const TextBox = styled.div`
@@ -34,14 +39,12 @@ const TextBox = styled.div`
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-  margin-top: 20px; 
-
+  margin-top: 20px;
   @media all and (min-width: 391px) {
     font-size: 3rem;
   }
   @media all and (max-width: 390px) {
-    margin-bottom: 0.68rem;
-    font-size: 1rem;
+    font-size: 2rem;
   }
 `;
 
