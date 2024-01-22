@@ -4,18 +4,15 @@ import AudioRecorder from './AudioRecorder';
 
 type CameraBoxProps = {
   isShowChar: () => void;
-
-  socket: WebSocket | null;
-  socketConnected: boolean;
 };
-export default function CameraBox({ isShowChar, socket, socketConnected }: CameraBoxProps) {
+export default function CameraBox({ isShowChar }: CameraBoxProps) {
   return (
     <CameraLayout>
       <CameraBoxLayout>
         <Webcam style={{ borderRadius: '1.75rem' }} mirrored={true} />
       </CameraBoxLayout>
       <TextBox>말을 다하면 나를 눌러줘</TextBox>
-      <AudioRecorder isShowChar={isShowChar} socket={socket} socketConnected={socketConnected}/>
+      <AudioRecorder isShowChar={isShowChar} />
     </CameraLayout>
   );
 }

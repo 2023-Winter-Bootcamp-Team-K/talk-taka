@@ -9,16 +9,16 @@ import { toggleStore } from '../stores/toggle';
 import CameraModal from '../components/modal/CameraModal';
 import { baseInstance } from '../api/config';
 import { getCookie } from '../utils/cookie';
+import { useChatStore } from '../stores/chat';
 
 export default function ChatPage() {
-  // 웹소켓?
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
+  const { RecordToggle, setRecordToggle, audio, setSendAudio, sendAudio } =
+    useChatStore();
 
   const Mood = window.localStorage.getItem('mood');
 
-  //대화 배열
-  // const chatArray: any = [];
   //대화 객체
   const chatArrayFinal = new Array();
 
@@ -28,7 +28,10 @@ export default function ChatPage() {
     try {
       const response = await baseInstance.post(
         `/diary/`,
-        { mood: Mood },
+        {
+          mood: Mood,
+          chat_room_id: window.localStorage.getItem('chat_id'),
+        },
         {
           headers: {
             Authorization: token,
@@ -48,13 +51,13 @@ export default function ChatPage() {
     const roomId = window.localStorage.getItem('chat_id');
 
     const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomId}/`);
+
     let chatArray = new Array();
 
     ws.onopen = () => {
       // 웹소켓 시작 설정
       setSocketConnected(true);
       setSocket(ws);
-      setclose(true);
     };
     console.log('connected to room' + roomId);
 
@@ -96,10 +99,16 @@ export default function ChatPage() {
           }
         }
       } else if (messageEvent === 'question_tts') {
+        console.log(chatArrayFinal);
+
         const audioBlob = messageReceived.data.audioBlob;
         let snd = new Audio(`data:audio/x-wav;base64, ${audioBlob}`);
         snd.play();
-        // start record 0.5s
+        snd.addEventListener('loadedmetadata', (event) => {
+          const sndElement = event.currentTarget as HTMLAudioElement;
+          const QuokkaTime = sndElement.duration * 1000;
+          setTimeout(() => {}, QuokkaTime);
+        });
       }
     };
   };
@@ -126,6 +135,30 @@ export default function ChatPage() {
       ws.onclose = () => {
         console.log('disconnect from room ');
       };
+    }
+  };
+
+  //오디오 전달
+  const sendAudioWebSocket = () => {
+    //ERROR : 오디오 전달할 blob이 없어 오류 발생
+    // console.log(audio);
+
+    // console.log('audio recording success:', audioBlob);
+    // const audioUrl = URL.createObjectURL(audioBlob);
+    // const audio = new Audio(audioUrl);
+    // audio.play();
+    const ws = socket;
+    if (sendAudio === true && ws) {
+      // console.log(audio);
+
+      const data = {
+        event: 'user_answer',
+        data: { audioBlob: audio },
+      };
+
+      ws.send(JSON.stringify(data));
+      setSendAudio(false);
+      setRecordToggle(false);
     }
   };
 
@@ -156,7 +189,9 @@ export default function ChatPage() {
 
   //마이크 테스트
 
-  //getItem from local storage
+  useEffect(() => {
+    sendAudioWebSocket();
+  }, [sendAudio]);
 
   useEffect(() => {
     connectWebSocket();
@@ -183,17 +218,9 @@ export default function ChatPage() {
             // 핸드폰 모드
             <ComponentsWrapper>
               {toggle === '1' ? (
-                <CameraBox
-                  isShowChar={handleShowChar}
-                  socket={socket}
-                  socketConnected={socketConnected}
-                />
+                <CameraBox isShowChar={handleShowChar} />
               ) : (
-                <ChatBox
-                  isShowChar={handleShowChar}
-                  socket={socket}
-                  socketConnected={socketConnected}
-                />
+                <ChatBox isShowChar={handleShowChar} />
               )}
             </ComponentsWrapper>
           )
@@ -202,17 +229,9 @@ export default function ChatPage() {
           <ComponentsWrapper>
             <CharComponent />
             {toggle === '1' ? (
-              <CameraBox
-                isShowChar={handleShowChar}
-                socket={socket}
-                socketConnected={socketConnected}
-              />
+              <CameraBox isShowChar={handleShowChar} />
             ) : (
-              <ChatBox
-                isShowChar={handleShowChar}
-                socket={socket}
-                socketConnected={socketConnected}
-              />
+              <ChatBox isShowChar={handleShowChar} />
             )}
           </ComponentsWrapper>
         )}

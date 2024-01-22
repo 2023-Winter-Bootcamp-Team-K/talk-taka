@@ -6,11 +6,9 @@ import AudioRecorder from './AudioRecorder';
 
 type ChatBoxProps = {
   isShowChar: () => void;
-  socket: WebSocket | null;
-  socketConnected: boolean;
 };
 
-export default function ChatBox({ isShowChar, socket, socketConnected }: ChatBoxProps) {
+export default function ChatBox({ isShowChar }: ChatBoxProps) {
   const [messages, setmessages] = useState([]);
   const [currentTypingId, setCurrentTypingId] = useState(null);
 
@@ -21,7 +19,7 @@ export default function ChatBox({ isShowChar, socket, socketConnected }: ChatBox
         <OpponentMessage chatMessage="안녕" />
       </ChatBoxLayout>
       <TextBox>말을 다하면 나를 눌러줘</TextBox>
-      <AudioRecorder isShowChar={isShowChar} socket={socket} socketConnected={socketConnected} />
+      <AudioRecorder isShowChar={isShowChar} />
     </ChatLayout>
   );
 }

@@ -1,19 +1,37 @@
-import create from 'zustand';
+import { create, StateCreator } from 'zustand';
+import { persist, PersistOptions } from 'zustand/middleware';
 
 type ChatStore = {
-  socket: WebSocket | null;
-  socketConnected: boolean;
-  close: boolean;
-  setSocket: (socket: WebSocket | null) => void;
-  setSocketConnected: (value: boolean) => void;
-  setClose: (value: boolean) => void;
-};
+  RecordToggle: boolean;
+  isShowChar: boolean;
+  audio: string;
+  sendAudio: boolean;
 
-export const useChatStore = create<ChatStore>((set) => ({
-  socket: null,
-  socketConnected: false,
-  close: false,
-  setSocket: (socket) => set({ socket }),
-  setSocketConnected: (value) => set({ socketConnected: value }),
-  setClose: (value) => set({ close: value }),
-}));
+  setIsShowChar: (isShowChar: any) => void;
+  setRecordToggle: (RecordToggle: any) => void;
+  setAudio: (audio: any) => void;
+  setSendAudio: (sendAudio: any) => void;
+};
+type UserPersist = (
+  config: StateCreator<ChatStore>,
+  options: PersistOptions<ChatStore>
+) => StateCreator<ChatStore>;
+
+export const useChatStore = create<ChatStore>(
+  (persist as UserPersist)(
+    (set) => ({
+      RecordToggle: false,
+      isShowChar: false,
+      audio: 'none',
+      sendAudio: false,
+
+      setRecordToggle: (RecordToggle) => set({ RecordToggle: RecordToggle }),
+      setIsShowChar: (isShowChar) => set({ isShowChar: isShowChar }),
+      setAudio: (audio) => set({ audio: audio }),
+      setSendAudio: (sendAudio) => set({ sendAudio: sendAudio }),
+    }),
+    {
+      name: 'chat-StoreName',
+    }
+  )
+);
