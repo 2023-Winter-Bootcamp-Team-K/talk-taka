@@ -31,6 +31,7 @@ ALLOWED_HOSTS = [
     "[::1]",
     "django",
     "52.79.131.251",
+    "0,0,0,0",
 ]
 
 USE_X_FORWARDED_HOST = True
