@@ -107,7 +107,9 @@ export default function ChatPage() {
         snd.addEventListener('loadedmetadata', (event) => {
           const sndElement = event.currentTarget as HTMLAudioElement;
           const QuokkaTime = sndElement.duration * 1000;
-          setTimeout(() => {}, QuokkaTime);
+          setTimeout(() => {
+            setRecordToggle(true);
+          }, QuokkaTime);
         });
       }
     };
