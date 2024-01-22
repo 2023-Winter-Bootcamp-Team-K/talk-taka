@@ -66,15 +66,16 @@ class DiaryCreateView(APIView):
 
 
 class DiaryView(APIView):
-    def get_object(self, pk):
-        try:
-            return Diary.objects.get(pk=pk)
-        except Diary.DoesNotExist:
-            raise Http404
-
     @swagger_auto_schema(operation_id="일기 조회")
     def get(self, request, pk, format=None):
-        diary = self.get_object(pk)
+        try:
+            diary = Diary.objects.get(pk=pk)
+        except Diary.DoesNotExist:
+            # 일기가 아직 준비되지 않았음을 나타내는 응답
+            return Response({
+                "status": "200",
+                "message": "waiting"
+            })
 
         diary_data = {
             "status": "200",
