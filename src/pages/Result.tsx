@@ -1,17 +1,13 @@
 import { styled } from 'styled-components';
 import { useState, useEffect } from 'react';
 import FaceBox from '../components/common/Face';
-
 import ChatBoxResult from '../components/common/ChattingResult';
 import { useNavigate } from 'react-router-dom';
-
 export default function Result() {
   const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
   );
-
   const navigate = useNavigate();
-
   const GoToBefore = () => {
     navigate('/diary');
   };
