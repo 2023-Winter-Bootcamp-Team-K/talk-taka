@@ -14,10 +14,10 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize
     && rm dockerize-linux-amd64-v0.6.1.tar.gz \
     && pip install --upgrade pip
 # Set the working directory in the container
-WORKDIR /backend
+WORKDIR /app
 
 # Copy the requirements file into the container
-COPY requirements.txt /backend/
+COPY requirements.txt .
 
 
 
@@ -29,4 +29,4 @@ RUN pip install channels
 # Copy the project files into the container
 COPY . .
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi:application"]
+CMD ["daphne", "--bind", "0.0.0.0:8000", "backend.wsgi:application"]
