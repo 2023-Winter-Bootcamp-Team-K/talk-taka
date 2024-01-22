@@ -49,11 +49,11 @@ const Calender = ({ data }: CalenderProps) => {
 
   const handleDayClick = (dateKey: string) => {
     const feelings = sampleFeelings[dateKey];
-  
+
     if (feelings && feelings.length > 0) {
       const diaryId = feelings[0].diaryId.toString();
       localStorage.setItem('selectedDiaryId', diaryId);
-      console.log("Selected Diary ID:", diaryId);
+      // console.log("Selected Diary ID:", diaryId);
       navigate('/bookcover');
     } else {
       alert('해당 날짜에는 다이어리가 존재하지 않습니다.');
@@ -62,24 +62,28 @@ const Calender = ({ data }: CalenderProps) => {
 
   useEffect(() => {
     if (data) {
-      const feelingsData = data.reduce<{ [key: string]: FeelingType[] }>((acc, item) => {
-        const date = item.created_at;
-        if (date) {
-          acc[date] = acc[date] || []; 
-          acc[date].push({
-            diaryId: item.diaryId,
-            mood: moodToImageUrl[item.mood],
-            imageUrl: item.imageURL,
-            created_at: item.created_at,
-          });
-        }
-        return acc;
-      }, {});
-  
+      const feelingsData = data.reduce<{ [key: string]: FeelingType[] }>(
+        (acc, item) => {
+          const date = item.created_at;
+
+          if (date) {
+            acc[date] = acc[date] || [];
+            acc[date].push({
+              diaryId: item.diaryId,
+              mood: moodToImageUrl[item.mood],
+              imageUrl: item.imageURL,
+              created_at: item.created_at,
+            });
+          }
+          return acc;
+        },
+        {}
+      );
+
       setSampleFeelings(feelingsData);
     }
   }, [data]);
-  
+  // console.log(sampleFeelings[dateKey]);
 
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   const daysInMonth = new Date(
@@ -128,14 +132,13 @@ const Calender = ({ data }: CalenderProps) => {
       const dateKey = new Date(
         currentDate.getFullYear(),
         currentDate.getMonth(),
-        day
+        day + 1
       )
         .toISOString()
         .split('T')[0];
 
       return (
         <DaysCol
-          // key={sampleFeelings[dateKey][0]?.diaryId}
           key={`current-${day}`}
           className="current"
           style={{
