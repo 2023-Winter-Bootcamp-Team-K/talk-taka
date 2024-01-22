@@ -9,7 +9,7 @@ export default function ChatBoxResult() {
     { Question?: string; child?: string }[]
   >([]);
 
-  const chat_room_id = 4;
+  const chat_room_id = 7;
   useEffect(() => {
     baseInstance
       .get(`/apps/chat_list/${chat_room_id}/`)
