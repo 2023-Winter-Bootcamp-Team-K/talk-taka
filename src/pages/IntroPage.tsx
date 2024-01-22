@@ -41,3 +41,4 @@ const BackGround = styled.div`
     background-image: url('src/assets/img/introP.png');
   }
 `;
+
