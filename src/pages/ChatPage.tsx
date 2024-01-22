@@ -10,10 +10,8 @@ import CameraModal from '../components/modal/CameraModal';
 import { baseInstance } from '../api/config';
 import { getCookie } from '../utils/cookie';
 import { useChatStore } from '../stores/chat';
-import useRefreshStore from '../stores/refresh';
 
 export default function ChatPage() {
-  // 웹소켓?
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
   const { RecordToggle, setRecordToggle, audio, setSendAudio, sendAudio } =
@@ -21,14 +19,6 @@ export default function ChatPage() {
 
   const Mood = window.localStorage.getItem('mood');
 
-  //useEffect 의존성 배열
-  // const { refresh } = useRefreshStore();
-  // useEffect(() => {
-  //   ChatPage;
-  // }, [refresh]);
-
-  //대화 배열
-  // const chatArray: any = [];
   //대화 객체
   const chatArrayFinal = new Array();
 
@@ -117,13 +107,7 @@ export default function ChatPage() {
         snd.addEventListener('loadedmetadata', (event) => {
           const sndElement = event.currentTarget as HTMLAudioElement;
           const QuokkaTime = sndElement.duration * 1000;
-          console.log('시간지연 테스트', QuokkaTime);
-          setTimeout(() => {
-            console.log('쿼카 말 끝남');
-            setRecordToggle(true); //true 인데
-          }, QuokkaTime);
-          console.log('RecordToggle(true 여야함): ', RecordToggle); //false래 말이 됨?
-          console.log('레코드 시작1');
+          setTimeout(() => {}, QuokkaTime);
         });
       }
     };
@@ -165,7 +149,7 @@ export default function ChatPage() {
     // audio.play();
     const ws = socket;
     if (sendAudio === true && ws) {
-      console.log(audio);
+      // console.log(audio);
 
       const data = {
         event: 'user_answer',
@@ -204,8 +188,6 @@ export default function ChatPage() {
   };
 
   //마이크 테스트
-
-  //getItem from local storage
 
   useEffect(() => {
     sendAudioWebSocket();
