@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 interface DiaryProps {
   YY: string;
@@ -6,23 +7,20 @@ interface DiaryProps {
   DD: string;
   Text: string;
   Image: string;
-  mood: string; }
+  mood: string;
+}
 
-export default function Diary({
-  YY,
-  MM,
-  DD,
-  Text,
-  Image,
-  mood,
-}: DiaryProps) {
-
+export default function Diary({ YY, MM, DD, Text, Image, mood }: DiaryProps) {
   const Moods: { [key: string]: string } = {
-        joy: 'https://ifh.cc/g/x7AvPq.png',
+    joy: 'https://ifh.cc/g/x7AvPq.png',
     sad: 'https://ifh.cc/g/B616mY.png',
     angry: 'https://ifh.cc/g/hKwXAP.png',
   };
+  const navigate = useNavigate();
 
+  const GoToResult = () => {
+    navigate('/result');
+  };
   return (
     <DiaryLayout>
       <DayLayout>
@@ -39,18 +37,20 @@ export default function Diary({
           <TextL>{Text}</TextL>
         </DiaryText>
       </DiaryTextLayout>
+      <ViewChatBtn onClick={GoToResult}>
+        <ButtonImage src="src/assets/img/HeartBubble.png" />
+        이날의 대화 기록 보러가기
+      </ViewChatBtn>
     </DiaryLayout>
   );
 }
-
-
 
 const DiaryLayout = styled.div`
   border-radius: 5px;
 
   @media all and (min-width: 391px) {
     width: 30rem;
-    height: 40.25rem;
+    height: 42.75rem;
   }
   @media all and (max-width: 390px) {
     width: 21.5625rem;
@@ -97,7 +97,7 @@ const Day = styled.div`
 `;
 
 const Feeling = styled.img`
-  /* width: 7%; */
+  width: 7%;
   height: auto;
 
   @media all and (min-width: 391px) {
@@ -160,7 +160,8 @@ const DiaryTextLayout = styled.div`
 const DiaryText = styled.div`
   display: flex;
   justify-content: center;
-
+  align-items: center;
+  flex-direction: column;
   width: 100%;
   height: 100%;
 
@@ -188,5 +189,42 @@ const TextL = styled.div`
   @media all and (max-width: 390px) {
     font-size: 0.85rem;
     line-height: 2.1;
+  }
+`;
+const ButtonImage = styled.img`
+  @media all and (min-width: 391px) {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  @media all and (max-width: 390px) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+`;
+
+const ViewChatBtn = styled.button`
+  all: unset;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  cursor: pointer;
+
+  color: #000;
+  text-align: center;
+  font-family: 'Cafe24Dongdong';
+  font-weight: 400;
+  font-size: 1rem;
+  gap: 0.2rem;
+
+  @media all and (min-width: 391px) {
+    bottom: 9rem;
+    right: 12rem;
+    padding-bottom: 1rem;
+    padding-right: 15rem;
+  }
+  @media all and (max-width: 390px) {
+    bottom: 7rem;
+    right: 1.44rem;
   }
 `;

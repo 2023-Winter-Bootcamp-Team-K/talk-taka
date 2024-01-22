@@ -29,9 +29,7 @@ export default function DiaryPage() {
   const GoToMain = () => {
     navigate('/main');
   };
-  const GoToResult = () => {
-    navigate('/result');
-  };
+
   const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
   );
@@ -62,10 +60,6 @@ export default function DiaryPage() {
                 mood={mood}
               />
             </Right>
-            <ViewChatBtn onClick={GoToResult}>
-              <ButtonImage src="src/assets/img/HeartBubble.png" />
-              이날의 대화 기록 보러가기
-            </ViewChatBtn>
           </>
         ) : (
           <>
@@ -84,10 +78,7 @@ export default function DiaryPage() {
                 />
               </Right>
             </Book>
-            <ViewChatBtn onClick={GoToResult}>
-              <ButtonImage src="src/assets/img/HeartBubble.png" />
-              이날의 대화 기록 보러가기
-            </ViewChatBtn>
+
             <QuitLayout>
               <QuitChatBtn onClick={GoToMain}>
                 <ButtonImage src="src/assets/img/QuitIcon.png" />
@@ -203,29 +194,4 @@ const Right = styled.div`
   }
 `;
 
-const ViewChatBtn = styled.button`
-  all: unset;
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  cursor: pointer;
 
-  color: #000;
-  text-align: center;
-  font-family: 'Cafe24Dongdong';
-  font-weight: 400;
-  font-size: 1rem;
-  gap: 0.2rem;
-
-  @media all and (min-width: 391px) {
-    bottom: 9rem;
-    right: 12rem;
-    padding-bottom: 1rem;
-    padding-right: 15rem;
-  }
-  @media all and (max-width: 390px) {
-    bottom: 7rem;
-    right: 1.44rem;
-  }
-`;
