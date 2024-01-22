@@ -10,6 +10,7 @@ import CameraModal from '../components/modal/CameraModal';
 import { baseInstance } from '../api/config';
 import { getCookie } from '../utils/cookie';
 import { useChatStore } from '../stores/chat';
+import useRefreshStore from '../stores/refresh';
 
 export default function ChatPage() {
   // 웹소켓?
@@ -19,6 +20,12 @@ export default function ChatPage() {
     useChatStore();
 
   const Mood = window.localStorage.getItem('mood');
+
+  //useEffect 의존성 배열
+  // const { refresh } = useRefreshStore();
+  // useEffect(() => {
+  //   ChatPage;
+  // }, [refresh]);
 
   //대화 배열
   // const chatArray: any = [];
@@ -31,7 +38,10 @@ export default function ChatPage() {
     try {
       const response = await baseInstance.post(
         `/diary/`,
-        { mood: Mood },
+        {
+          mood: Mood,
+          chat_room_id: window.localStorage.getItem('chat_id'),
+        },
         {
           headers: {
             Authorization: token,
@@ -111,9 +121,9 @@ export default function ChatPage() {
           setTimeout(() => {
             console.log('쿼카 말 끝남');
             setRecordToggle(true); //true 인데
-            console.log('RecordToggle(true 여야함): ', RecordToggle); //false래 말이 됨?
-            console.log('레코드 시작1');
           }, QuokkaTime);
+          console.log('RecordToggle(true 여야함): ', RecordToggle); //false래 말이 됨?
+          console.log('레코드 시작1');
         });
       }
     };

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import MicGIF from '../gif/Mic';
 import { useChatStore } from '../../stores/chat';
-
+import useRefreshStore from '../../stores/refresh';
 // 변수
 type AudioRecorderProps = {
   isShowChar: () => void;
@@ -22,7 +22,6 @@ export default function AudioRecorder({ isShowChar }: AudioRecorderProps) {
   const handleButtonClick = () => {
     setRecordToggle(false); // true이면 녹음 시작 false면 중지
     toggleRecording();
-    setSendAudio(true); // 오디오 보내기 상태관리
   };
 
   useEffect(() => {
@@ -74,6 +73,7 @@ export default function AudioRecorder({ isShowChar }: AudioRecorderProps) {
 
           // console.log('오디오 설정', resultAudio);
           setAudio(resultAudio);
+          setSendAudio(true);
         };
         fileReader.readAsDataURL(audioBlob);
       });
