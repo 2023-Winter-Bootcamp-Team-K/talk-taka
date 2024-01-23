@@ -14,17 +14,15 @@ services:
       - .env
 
   web:
-    build:
-      context: backend/backend
-      dockerfile: Dockerfile
+    build: ./backend
     restart: always
     command: sh -c "dockerize -wait tcp://db:3306 -timeout 1m
       && python manage.py makemigrations users
       && python manage.py makemigrations apps
       && python manage.py makemigrations diary
-      && python manage.py migrate
-      && python manage.py runserver 0.0.0.0:8000"
-#      && gunicorn your_project.wsgi:application -b 0.0.0.0:8000
+      && python manage.py migrate  
+      && python manage.py runserver 0.0.0.0:8000
+      && gunicorn your_project.wsgi:application -b 0.0.0.0:8000"
     volumes:
       - ./backend:/backend
     ports:
@@ -44,16 +42,28 @@ services:
   celery:
     container_name: celery
     build:
-      context: ./backend/backend  # Celery를 빌드할 컨텍스트를 backend 디렉토리로 지정
+      context: backend  # Celery를 빌드할 컨텍스트를 backend 디렉토리로 지정
     command: "celery -A config.celery worker --loglevel=info --pool=prefork" #worker추가
     depends_on:
       - rabbitmq  # Celery는 RabbitMQ에 의존하므로 여기에 명시
     volumes:
-      - ./backend/backend:/app  # 현재 디렉토리를 backend로 변경하여, backend 코드를 컨테이너의 /app으로 마운트
+      - ./backend:/app  # 현재 디렉토리를 backend로 변경하여, backend 코드를 컨테이너의 /app으로 마운트
     environment:
-      - amqp://guest:guest@rabbitmq:5672//  # Django 설정 환경 변수 추가
+      - DJANGO_SETTINGS_MODULE=config.settings  # Django 설정 환경 변수 추가
     env_file:
       - .env
+
+  nginx:
+    container_name: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+     - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf # 호스트의 nginx 폴더와 컨테이너의 /etc/nginx/conf.d 폴더를 공유
+    depends_on:
+      - web
 
 
   cadvisor:
@@ -77,7 +87,7 @@ services:
     links:
       - cadvisor
     volumes:
-      - ./backend/monitoring/prometheus/:/etc/prometheus/
+      - ./monitoring/prometheus/:/etc/prometheus/
     user: root
     depends_on:
       - cadvisor
@@ -90,7 +100,7 @@ services:
 
   grafana:
     build:
-      context: ./backend/monitoring/grafana
+      context: ./monitoring/grafana
     container_name: grafana
     ports:
       - "3000:3000"
@@ -117,25 +127,3 @@ services:
 
 
 
-
-  nginx:
-    container_name: nginx
-    build:
-      context: nginx
-      dockerfile: Dockerfile
-    ports:
-     - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf # 호스트의 nginx 폴더와 컨테이너의 /etc/nginx/conf.d 폴더를 공유
-    depends_on:
-      - web
-
-#  certbot:
-#    image: certbot/certbot
-#    restart: unless-stopped
-#    volumes:
-#      - /certbot/conf:/etc/letsencrypt:ro
-#      - /certbot/www:/var/www/certbot:ro
-#    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-#    depends_on:
-#      - nginx
