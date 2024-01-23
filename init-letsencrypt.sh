@@ -1,15 +1,17 @@
 #!/bin/bash
+# https://github.com/wmnnd/nginx-certbot/blob/master/init-letsencrypt.sh
 
 if ! [ -x "$(command -v docker-compose)" ]; then
   echo 'Error: docker-compose is not installed.' >&2
   exit 1
 fi
 
-domains=(memorycapsule.co.kr)
+domains=(talktaka.site)
 rsa_key_size=4096
-data_path="./backend/certbot"
-email="imk0980@gmail.com" # Adding a valid address is strongly recommended
-staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
+docker_file="docker-compose.deploy.yml"
+data_path="./certbot"
+email="rkdmf9988@gmail.com" # Adding a valid address is strongly recommended
+staging=1 # Set to 1 if you're testing your setup to avoid hitting request limits
 
 if [ -d "$data_path" ]; then
   read -p "Existing data found for ${domains[0]}. Continue and replace existing certificate? (y/N) " decision
@@ -29,7 +31,7 @@ fi
 echo "### Creating dummy certificate for ${domains[0]} ..."
 path="/etc/letsencrypt/live/${domains[0]}"
 mkdir -p "$data_path/conf/live/${domains[0]}"
-docker-compose -f docker-compose.deploy.yml run --rm --entrypoint "\
+docker-compose -f $docker_file run --rm --entrypoint "\
   openssl req -x509 -nodes -newkey rsa:$rsa_key_size -days 1 \
     -keyout '$path/privkey.pem' \
     -out '$path/fullchain.pem' \
@@ -37,11 +39,11 @@ docker-compose -f docker-compose.deploy.yml run --rm --entrypoint "\
 echo
 
 echo "### Starting nginx ..."
-docker-compose -f docker-compose.deploy.yml up --force-recreate -d nginx
+docker-compose -f $docker_file up --force-recreate -d nginx
 echo
 
 echo "### Deleting dummy certificate for ${domains[0]} ..."
-docker-compose -f docker-compose.deploy.yml run --rm --entrypoint "\
+docker-compose -f $docker_file run --rm --entrypoint "\
   rm -Rf /etc/letsencrypt/live/${domains[0]} && \
   rm -Rf /etc/letsencrypt/archive/${domains[0]} && \
   rm -Rf /etc/letsencrypt/renewal/${domains[0]}.conf" certbot
@@ -63,7 +65,7 @@ esac
 # Enable staging mode if needed
 if [ $staging != "0" ]; then staging_arg="--staging"; fi
 
-docker-compose -f docker-compose.deploy.yml run --rm --entrypoint "\
+docker-compose -f $docker_file run --rm --entrypoint "\
   certbot certonly --webroot -w /var/www/certbot \
     $staging_arg \
     $email_arg \
@@ -74,4 +76,4 @@ docker-compose -f docker-compose.deploy.yml run --rm --entrypoint "\
 echo
 
 echo "### Reloading nginx ..."
-docker-compose -f docker-compose.deploy.yml exec nginx nginx -s reload
+docker-compose -f $docker_file exec nginx nginx -s reload
