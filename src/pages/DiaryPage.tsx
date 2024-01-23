@@ -3,7 +3,7 @@ import Calender from '../components/calender/Calender';
 import Diary from '../components/common/Diary';
 import { useQuery } from 'react-query';
 import { getDiary } from '../api/diary';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { BackIconSvg } from '../assets/SVG';
 import { getCookie } from '../utils/cookie';
@@ -24,7 +24,6 @@ export default function DiaryPage() {
     ? diaryData.created_at.split('-')
     : ['-', '-', '-'];
   const mood = diaryData?.mood;
-  const [chatRoomId, setChatRoomId] = useState(null);
   const navigate = useNavigate();
   const token = getCookie('token');
   const GoToMain = () => {
@@ -32,7 +31,7 @@ export default function DiaryPage() {
   };
 
   const GoToResult = () => {
-    navigate('/result', { state: { chatRoomId } });
+    navigate('/result');
   };
   const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
@@ -48,7 +47,7 @@ export default function DiaryPage() {
 
   useEffect(() => {
     if (diaryData) {
-      setChatRoomId(diaryData.chat_room_id);
+      window.localStorage.setItem('chat_id', diaryData.chat_room_id);
     }
   }, [diaryData]);
   

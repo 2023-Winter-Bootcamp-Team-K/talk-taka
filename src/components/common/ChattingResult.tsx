@@ -1,24 +1,13 @@
 import styled from 'styled-components';
-import { useEffect, useState } from 'react';
 import MyMessage from './MyMessage';
 import OpponentMessage from './OpponentMessage';
-import { baseInstance } from '../../api/config';
 
-export default function ChatBoxResult({ chatRoomId }: { chatRoomId: number }) {
-  const [messages, setMessages] = useState<
-    { Question?: string; child?: string }[]
-  >([]);
-
-  useEffect(() => {
-    baseInstance
-      .get(`/apps/chat_list/${chatRoomId}/`)
-      .then((response) => {
-        setMessages(response.data.content);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+export default function ChatBoxResult({
+  content,
+}: {
+  content: { Question?: string; child?: string }[] | undefined;
+}) {
+  const messages = content || [];
 
   return (
     <ChatLayout>

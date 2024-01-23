@@ -1,20 +1,7 @@
-import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { baseInstance } from '../../api/config';
 
-export default function FaceBox({ chatRoomId }: { chatRoomId: number }) {
-  const [imageUrl, setImageUrl] = useState('');
-
-  useEffect(() => {
-    baseInstance
-      .get(`/apps/chat_list/${chatRoomId}/`)
-      .then((response) => {
-        setImageUrl(response.data.picture);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }, []);
+export default function FaceBox({ picture }: { picture: string | undefined }) {
+  const imageUrl = picture || '';
 
   return (
     <CameraLayout>

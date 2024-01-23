@@ -2,26 +2,40 @@ import { styled } from 'styled-components';
 import { useState, useEffect } from 'react';
 import FaceBox from '../components/common/Face';
 import ChatBoxResult from '../components/common/ChattingResult';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { baseInstance } from '../api/config';
+
+interface Data {
+  content: {
+    Question?: string;
+    child?: string;
+  }[];
+  picture: string;
+}
 
 export default function Result() {
-  const location = useLocation();
-  const chatRoomId = location.state.chatRoomId;
-
+  const chatRoomId = window.localStorage.getItem('chat_id');
   const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
   );
+  const [data, setData] = useState<Data | null>(null);
   const navigate = useNavigate();
   const GoToBefore = () => {
     navigate('/diary');
   };
 
+  const content = data?.content;
+  const picture = data?.picture;
+
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 390px)');
-    const handleResize = () => setIsMobile(mediaQuery.matches);
-    mediaQuery.addEventListener('change', handleResize);
-    handleResize();
-    return () => mediaQuery.removeEventListener('change', handleResize);
+    baseInstance
+      .get(`/apps/chat_list/${chatRoomId}/`)
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
 
   return (
@@ -30,14 +44,14 @@ export default function Result() {
         {isMobile ? (
           // 핸드폰 모드
           <ComponentsWrapper>
-            <FaceBox chatRoomId={chatRoomId} />
-            <ChatBoxResult chatRoomId={chatRoomId} />
+            <FaceBox picture={picture} />
+            <ChatBoxResult content={content} />
           </ComponentsWrapper>
         ) : (
           // 컴퓨터 모드
           <ComponentsWrapper>
-            <FaceBox chatRoomId={chatRoomId} />
-            <ChatBoxResult chatRoomId={chatRoomId} />
+            <FaceBox picture={picture} />
+            <ChatBoxResult content={content} />
           </ComponentsWrapper>
         )}
       </Layout>
