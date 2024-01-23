@@ -8,27 +8,27 @@ import { useEffect, useState } from 'react';
 import { BackIconSvg } from '../assets/SVG';
 import { getCookie } from '../utils/cookie';
 import { getDiaries } from '../api/calender/calender';
+import LoadingFallback from '../LoadingFallback';
 
 export default function DiaryPage() {
   const selectedDiaryId = window.localStorage.getItem('selectedDiaryId');
-  const { data: DiariesData } = useQuery('sales', () => getDiaries(token));
-  const diaries = DiariesData?.data;
-
-  const { data: diaryData } = useQuery(['diary', selectedDiaryId], () =>
-    getDiary(selectedDiaryId || '')
-  );
-  // const diaryContent = diaryData;
-
-  const imageURL = diaryData?.imageURL;
-  const [YY, MM, DD] = diaryData?.created_at
-    ? diaryData.created_at.split('-')
-    : ['-', '-', '-'];
-  const mood = diaryData?.mood;
   const navigate = useNavigate();
   const token = getCookie('token');
-  const GoToMain = () => {
-    navigate('/main');
-  };
+  const { data: DiariesData } = useQuery('sales', () => getDiaries(token));
+  const diaries = DiariesData?.data;
+  
+  const { data: diaryData, isLoading, refetch } = useQuery(['diary', selectedDiaryId], () =>
+  getDiary(selectedDiaryId || '')
+);
+const imageURL = diaryData?.imageURL;
+const [YY, MM, DD] = diaryData?.created_at
+  ? diaryData.created_at.split('-')
+  : ['-', '-', '-'];
+const mood = diaryData?.mood;
+
+const GoToMain = () => {
+  navigate('/main');
+};
 
   const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
@@ -41,6 +41,20 @@ export default function DiaryPage() {
     handleResize();
     return () => mediaQuery.removeEventListener('change', handleResize);
   }, []);
+
+  useEffect(() => {
+    const pollingInterval = setInterval(() => {
+      refetch();
+      console.log("폴링이 발생했습니다."); 
+    }, 2000);
+
+    return () => clearInterval(pollingInterval);
+  }, [refetch]);
+
+  if (isLoading) {
+    return <LoadingFallback />;
+  }
+
   return (
     <>
       <BackGround>
@@ -193,5 +207,3 @@ const Right = styled.div`
     box-shadow: 2px 4px 4px 0px rgba(0, 0, 0, 0.5);
   }
 `;
-
-
