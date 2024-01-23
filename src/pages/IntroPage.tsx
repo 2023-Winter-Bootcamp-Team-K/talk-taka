@@ -1,12 +1,15 @@
 import { styled } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/common/Btn';
+import { useEffect } from 'react';
+import { getCookie } from '../utils/cookie';
 
 export default function IntroPage() {
   const navigate = useNavigate();
   const goToMain = () => {
-    navigate('/login'); //추후 추가
+    navigate('/login');
   };
+
   return (
     <BackGround>
       <div style={{ position: 'relative', top: '90%', height: '2.3125rem' }}>
@@ -41,4 +44,3 @@ const BackGround = styled.div`
     background-image: url('src/assets/img/introP.png');
   }
 `;
-

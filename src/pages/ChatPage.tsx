@@ -80,6 +80,8 @@ export default function ChatPage() {
       const messageEvent = messageReceived.event;
       const checkFinish = messageReceived.data.finish_reason;
 
+      console.log(messageReceived);
+
       if (messageEvent === 'conversation') {
         chatArray.push(messageReceived.data.message);
         const chat = chatArray.join('');
