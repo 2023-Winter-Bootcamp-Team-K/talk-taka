@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import MicGIF from '../gif/Mic';
 import { useChatStore } from '../../stores/chat';
-import useRefreshStore from '../../stores/refresh';
 // 변수
 type AudioRecorderProps = {
   isShowChar: () => void;
@@ -26,7 +25,6 @@ export default function AudioRecorder({ isShowChar }: AudioRecorderProps) {
 
   useEffect(() => {
     toggleRecording();
-    console.log('ToggleRecording useEffect: ', RecordToggle);
   }, [RecordToggle]);
 
   // 녹화 토글
@@ -38,15 +36,11 @@ export default function AudioRecorder({ isShowChar }: AudioRecorderProps) {
       const newMediaRecorder = new MediaRecorder(stream);
       setMediaRecorder(newMediaRecorder);
       newMediaRecorder.start();
-      console.log('녹음 시작 위에 있는 토글 값', RecordToggle);
-
-      console.log('녹음 시작');
 
       //
     } else if (RecordToggle === false) {
       if (newMediaRecorder) {
         newMediaRecorder.stop();
-        console.log('녹음 종료');
       }
     }
     //blob처리

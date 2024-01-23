@@ -1,22 +1,39 @@
 import styled from 'styled-components';
 import MyMessage from './MyMessage';
 import OpponentMessage from './OpponentMessage';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AudioRecorder from './AudioRecorder';
 
 type ChatBoxProps = {
   isShowChar: () => void;
+  chatArrayFinal: any[];
 };
 
-export default function ChatBox({ isShowChar }: ChatBoxProps) {
-  const [messages, setmessages] = useState([]);
-  const [currentTypingId, setCurrentTypingId] = useState(null);
+export default function ChatBox({ isShowChar, chatArrayFinal }: ChatBoxProps) {
+  const [messages, setMessages] = useState<
+    { quokka?: string; child?: string }[]
+  >([]);
+
+  useEffect(() => {
+    if (chatArrayFinal !== messages) {
+      setMessages(chatArrayFinal);
+      console.log(chatArrayFinal);
+      console.log('테스트');
+    }
+  }, [messages]);
 
   return (
     <ChatLayout>
       <ChatBoxLayout>
-        <MyMessage chatMessage="안녕" />
-        <OpponentMessage chatMessage="안녕" />
+        {messages.map((message, index) => {
+          if (message.quokka) {
+            return <OpponentMessage key={index} chatMessage={message.quokka} />;
+          }
+          if (message.child) {
+            return <MyMessage key={index} chatMessage={message.child} />;
+          }
+          return null;
+        })}
       </ChatBoxLayout>
       <TextBox>말을 다하면 나를 눌러줘</TextBox>
       <AudioRecorder isShowChar={isShowChar} />
