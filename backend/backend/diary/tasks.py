@@ -1,8 +1,9 @@
 import os
 
 from celery import shared_task
+from dotenv import load_dotenv
 from openai import OpenAI
-from .models import ChatRoom  # ChatRoom 모델을 가져옵니다.
+from .models import Diary
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -27,9 +28,8 @@ def generate_image_task(chat_room_id, summary):
     )
     image_url = response.data[0].url
 
-    # 이미지 URL을 ChatRoom 모델에 저장
-    chat_room = ChatRoom.objects.get(pk=chat_room_id)
-    chat_room.image_url = image_url
-    chat_room.save()
+    diary = Diary.objects.get(pk=chat_room_id)  # 대문자를 소문자로 변경
+    diary.img_url = image_url
+    diary.save()
 
     return image_url

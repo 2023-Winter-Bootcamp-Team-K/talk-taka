@@ -10,6 +10,7 @@ from .models import Diary
 from django.http import Http404
 from .utils import *
 from apps.models import ChatRoom
+from .tasks import generate_image_task
 
 
 class DiaryCreateView(APIView):
@@ -41,16 +42,13 @@ class DiaryCreateView(APIView):
             conversation = chat_room.get_conversation()
 
             summary = generate_summary(conversation)
-            img_url = generate_image(summary)
-            capture_url = chat_room.image_url
+            generate_image_task.delay(chat_room_id, summary)  # 비동기적으로 작업 실행
 
             diary = Diary.objects.create(
                 user=request.user,
                 chat_room=chat_room,
                 mood=mood,
                 content=summary,
-                img_url=img_url,
-                capture_url=capture_url
             )
 
             chat_room.delete_at = timezone.now()
