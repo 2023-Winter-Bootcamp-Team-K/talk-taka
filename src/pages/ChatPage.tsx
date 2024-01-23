@@ -24,8 +24,8 @@ export default function ChatPage() {
     message: string;
   }
 
-  const [chatArrayFinal, setChatArrayFinal] = useState<chatArrayState[]>([]);
-  // const chatArrayFinal = new Array();
+  const chatArrayFinal: Array<chatArrayState> = [];
+  const [sendChatArray, setSendChatArray] = useState<chatArrayState[]>([]);
 
   const onSubmit = async () => {
     const token = getCookie('token');
@@ -52,7 +52,7 @@ export default function ChatPage() {
   };
 
   const [close, setclose] = useState(false);
-  const connectWebSocket = () => {
+  const connectWebSocket = async () => {
     const roomId = window.localStorage.getItem('chat_id');
 
     const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomId}/`);
@@ -93,6 +93,8 @@ export default function ChatPage() {
               message: chat,
             };
             chatArrayFinal.push(data);
+            setSendChatArray(chatArrayFinal);
+            console.log('쿼카 메세지 setSendChatArray');
           }
           //아이 메세지
           if (messageReceived.data.character === 'child') {
@@ -101,10 +103,12 @@ export default function ChatPage() {
               message: chat,
             };
             chatArrayFinal.push(data);
+            setSendChatArray(chatArrayFinal);
+            console.log('아이 메세지 setSendChatArray');
           }
         }
       } else if (messageEvent === 'question_tts') {
-        setChatArrayFinal(chatArrayFinal);
+        console.log('tts 시작');
 
         const audioBlob = messageReceived.data.audioBlob;
         let snd = new Audio(`data:audio/x-wav;base64, ${audioBlob}`);
@@ -220,7 +224,7 @@ export default function ChatPage() {
               ) : (
                 <ChatBox
                   isShowChar={handleShowChar}
-                  chatArrayFinal={chatArrayFinal}
+                  sendChatArray={sendChatArray}
                 />
               )}
             </ComponentsWrapper>
@@ -234,7 +238,7 @@ export default function ChatPage() {
             ) : (
               <ChatBox
                 isShowChar={handleShowChar}
-                chatArrayFinal={chatArrayFinal}
+                sendChatArray={sendChatArray}
               />
             )}
           </ComponentsWrapper>

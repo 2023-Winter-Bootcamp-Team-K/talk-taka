@@ -6,31 +6,33 @@ import AudioRecorder from './AudioRecorder';
 
 type ChatBoxProps = {
   isShowChar: () => void;
-  chatArrayFinal: any[];
+  sendChatArray: any[];
 };
 
-export default function ChatBox({ isShowChar, chatArrayFinal }: ChatBoxProps) {
+export default function ChatBox({ isShowChar, sendChatArray }: ChatBoxProps) {
   const [messages, setMessages] = useState<
-    { quokka?: string; child?: string }[]
+    { character?: string; message?: string }[]
   >([]);
 
+  console.log('왜 목소리 나오고 나옴? 왜 시작할 때는 잘 나왔잖아', messages);
+
   useEffect(() => {
-    if (chatArrayFinal !== messages) {
-      setMessages(chatArrayFinal);
-      console.log(chatArrayFinal);
-      console.log('테스트');
+    if (sendChatArray !== messages) {
+      setMessages(sendChatArray);
     }
-  }, [chatArrayFinal]);
+  }, [sendChatArray]);
 
   return (
     <ChatLayout>
       <ChatBoxLayout>
         {messages.map((message, index) => {
-          if (message.quokka) {
-            return <OpponentMessage key={index} chatMessage={message.quokka} />;
+          if (message.character === 'quokka') {
+            return (
+              <OpponentMessage key={index} chatMessage={message.message} />
+            );
           }
-          if (message.child) {
-            return <MyMessage key={index} chatMessage={message.child} />;
+          if (message.character === 'child') {
+            return <MyMessage key={index} chatMessage={message.message} />;
           }
           return null;
         })}
