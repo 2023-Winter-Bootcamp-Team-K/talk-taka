@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 interface MyMessageProps {
-  chatMessage: string;
+  chatMessage: string | undefined;
 }
 
 const MyMessage: React.FC<MyMessageProps> = ({ chatMessage }) => {
@@ -23,7 +23,6 @@ const MyMessageContainer = styled.div`
   @media all and (max-width: 390px) {
     margin-bottom: 0.37rem;
     padding-right: 1.38rem;
-
   }
 `;
 const StyledMyMessage = styled.div`
