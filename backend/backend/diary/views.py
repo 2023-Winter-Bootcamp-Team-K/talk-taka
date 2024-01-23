@@ -43,12 +43,14 @@ class DiaryCreateView(APIView):
 
             summary = generate_summary(conversation)
             generate_image_task.delay(chat_room_id, summary)  # 비동기적으로 작업 실행
+            capture_url = chat_room.image_url
 
             diary = Diary.objects.create(
                 user=request.user,
                 chat_room=chat_room,
                 mood=mood,
                 content=summary,
+                capture_url=capture_url
             )
 
             chat_room.delete_at = timezone.now()
