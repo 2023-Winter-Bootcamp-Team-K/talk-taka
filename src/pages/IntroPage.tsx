@@ -1,8 +1,6 @@
 import { styled } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/common/Btn';
-import { useEffect } from 'react';
-import { getCookie } from '../utils/cookie';
 
 export default function IntroPage() {
   const navigate = useNavigate();
