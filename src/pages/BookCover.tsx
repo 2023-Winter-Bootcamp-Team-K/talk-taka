@@ -3,12 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import { getDiary } from '../api/diary';
 import { useQuery } from 'react-query';
-type BookCoverProps = {
-  year: string;
-  name: string;
-  img: string;
-};
-export default function BookCover({ year, name, img }) {
+
+export default function BookCover() {
   const [isOpen, setIsOpen] = useState(false);
   const [showRight, setShowRight] = useState(false);
   const navigate = useNavigate();
@@ -36,9 +32,6 @@ export default function BookCover({ year, name, img }) {
     <>
       <BackGround>
         <Cover className={isOpen ? 'open' : ''}>
-          {/* <Year>{year}</Year>
-        <Title>{name}의 다이어리</Title>
-        <img src={img} alt="" /> */}
           <CoverInner>
             <Front>
               <Year>{2024}</Year>
@@ -123,7 +116,7 @@ const Cover = styled.div`
   }
 
   @media (max-width: 1440px) {
-    width: 80%
+    width: 80%;
     height: 70%;
   }
 

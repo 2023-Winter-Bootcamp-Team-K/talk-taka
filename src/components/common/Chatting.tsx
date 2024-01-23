@@ -6,11 +6,10 @@ import AudioRecorder from './AudioRecorder';
 import { useRef } from 'react';
 
 type ChatBoxProps = {
-  isShowChar: () => void;
   sendChatArray: any[];
 };
 
-export default function ChatBox({ isShowChar, sendChatArray }: ChatBoxProps) {
+export default function ChatBox({ sendChatArray }: ChatBoxProps) {
   const [messages, setMessages] = useState<
     { character?: string; message?: string }[]
   >([]);
@@ -48,7 +47,7 @@ export default function ChatBox({ isShowChar, sendChatArray }: ChatBoxProps) {
         })}
       </ChatBoxLayout>
       <TextBox>말을 다하면 나를 눌러줘</TextBox>
-      <AudioRecorder isShowChar={isShowChar} />
+      <AudioRecorder />
     </ChatLayout>
   );
 }

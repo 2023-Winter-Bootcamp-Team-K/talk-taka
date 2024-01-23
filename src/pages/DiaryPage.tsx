@@ -3,7 +3,7 @@ import Calender from '../components/calender/Calender';
 import Diary from '../components/common/Diary';
 import { useQuery } from 'react-query';
 import { getDiary } from '../api/diary';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { BackIconSvg } from '../assets/SVG';
 import { getCookie } from '../utils/cookie';
@@ -193,5 +193,3 @@ const Right = styled.div`
     box-shadow: 2px 4px 4px 0px rgba(0, 0, 0, 0.5);
   }
 `;
-
-

@@ -3,12 +3,8 @@ import styled from 'styled-components';
 import MicGIF from '../gif/Mic';
 import { useChatStore } from '../../stores/chat';
 
-type AudioRecorderProps = {
-  isShowChar: () => void;
-};
-
 // 이게 나가는건데
-export default function AudioRecorder({ isShowChar }: AudioRecorderProps) {
+export default function AudioRecorder() {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
@@ -76,11 +72,7 @@ export default function AudioRecorder({ isShowChar }: AudioRecorderProps) {
 
   return (
     <MicButtonLayout onClick={handleButtonClick}>
-      {RecordToggle ? (
-        <MicGIF />
-      ) : (
-        <Mic src="/src/assets/img/BlackMic.png" />
-      )}
+      {RecordToggle ? <MicGIF /> : <Mic src="/src/assets/img/BlackMic.png" />}
     </MicButtonLayout>
   );
 }

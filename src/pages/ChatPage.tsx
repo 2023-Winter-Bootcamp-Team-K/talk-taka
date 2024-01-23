@@ -1,5 +1,5 @@
 import { styled } from 'styled-components';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from '../components/modal/Modal';
 import CharComponent from '../components/common/CharComponent';
 import CameraBox from '../components/common/Camera';
@@ -119,6 +119,7 @@ export default function ChatPage() {
           const sndElement = event.currentTarget as HTMLAudioElement;
           const QuokkaTime = sndElement.duration * 1000;
           setTimeout(() => {
+            setNewRecordToggle(false);
             setRecordToggle(true);
           }, QuokkaTime);
         });
@@ -163,6 +164,7 @@ export default function ChatPage() {
       ws.send(JSON.stringify(data));
       setSendAudio(false);
       setRecordToggle(false);
+      setNewRecordToggle(true);
     }
   };
 
@@ -172,16 +174,15 @@ export default function ChatPage() {
   const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
   );
-  const [showChar, setShowChar] = useState(false); // 이거 원래 true 임
   const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
 
   const handleModalConfirm = () => {
     setIsModalOpen(false);
     startWebSocket();
   };
-  const handleShowChar = () => {
-    setShowChar(true);
-  };
+  // const handleShowChar = () => {
+  //   setShowChar(true);
+  // };
 
   const handleQuitChat = () => {
     onSubmit();
@@ -193,8 +194,13 @@ export default function ChatPage() {
 
   //마이크 테스트
 
+  const [newRecordToggle, setNewRecordToggle] = useState(true);
+
   useEffect(() => {
     sendAudioWebSocket();
+    setTimeout(() => {
+      // setNewRecordToggle(true);
+    }, 2000);
   }, [sendAudio]);
 
   useEffect(() => {
@@ -214,20 +220,17 @@ export default function ChatPage() {
       <Layout>
         <ChatInfo />
         {isMobile ? (
-          showChar && toggle === '1' ? (
+          // 핸드폰 모드
+          newRecordToggle && toggle === '1' ? (
             <ComponentsWrapper>
               <CharComponent />
             </ComponentsWrapper>
           ) : (
-            // 핸드폰 모드
             <ComponentsWrapper>
               {toggle === '1' ? (
-                <CameraBox isShowChar={handleShowChar} />
+                <CameraBox />
               ) : (
-                <ChatBox
-                  isShowChar={handleShowChar}
-                  sendChatArray={sendChatArray}
-                />
+                <ChatBox sendChatArray={sendChatArray} />
               )}
             </ComponentsWrapper>
           )
@@ -236,12 +239,9 @@ export default function ChatPage() {
           <ComponentsWrapper>
             <CharComponent />
             {toggle === '1' ? (
-              <CameraBox isShowChar={handleShowChar} />
+              <CameraBox />
             ) : (
-              <ChatBox
-                isShowChar={handleShowChar}
-                sendChatArray={sendChatArray}
-              />
+              <ChatBox sendChatArray={sendChatArray} />
             )}
           </ComponentsWrapper>
         )}

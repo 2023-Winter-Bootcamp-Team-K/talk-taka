@@ -24,7 +24,7 @@ export default function SignupPage() {
 
   //회원가입 유효성 검사 변수
   const [isId, setIsId] = useState<boolean>(false);
-  const [isPassword, setIsPassword] = useState<boolean>(false);
+  const [_, setIsPassword] = useState<boolean>(false);
   const [isPasswordConfirm, setIsPasswordConfirm] = useState<boolean>(false);
   const [isAge, setIsAge] = useState<boolean>(false);
   const [isName, setIsName] = useState<boolean>(false);

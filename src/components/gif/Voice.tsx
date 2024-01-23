@@ -1,5 +1,5 @@
 import Lottie from 'lottie-react';
-import loadingLottie from '/src/assets/lottie/Animation - 1704999772308.json';
+import loadingLottie from '../../assets/lottie/Animation - 1704999772308.json';
 import styled from 'styled-components';
 
 export default function Voice() {
