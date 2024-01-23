@@ -1,5 +1,5 @@
 import { styled } from 'styled-components';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Modal from '../components/modal/Modal';
 import CharComponent from '../components/common/CharComponent';
 import CameraBox from '../components/common/Camera';
@@ -14,7 +14,8 @@ import { useChatStore } from '../stores/chat';
 export default function ChatPage() {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
-  const { setRecordToggle, audio, setSendAudio, sendAudio } = useChatStore();
+  const { setRecordToggle, audio, setSendAudio, sendAudio, RecordToggle } =
+    useChatStore();
 
   const Mood = window.localStorage.getItem('mood');
 
@@ -172,16 +173,15 @@ export default function ChatPage() {
   const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
   );
-  const [showChar, setShowChar] = useState(false); // 이거 원래 true 임
   const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
 
   const handleModalConfirm = () => {
     setIsModalOpen(false);
     startWebSocket();
   };
-  const handleShowChar = () => {
-    setShowChar(true);
-  };
+  // const handleShowChar = () => {
+  //   setShowChar(true);
+  // };
 
   const handleQuitChat = () => {
     onSubmit();
@@ -214,7 +214,7 @@ export default function ChatPage() {
       <Layout>
         <ChatInfo />
         {isMobile ? (
-          showChar && toggle === '1' ? (
+          !RecordToggle && toggle === '1' ? (
             <ComponentsWrapper>
               <CharComponent />
             </ComponentsWrapper>
@@ -222,12 +222,9 @@ export default function ChatPage() {
             // 핸드폰 모드
             <ComponentsWrapper>
               {toggle === '1' ? (
-                <CameraBox isShowChar={handleShowChar} />
+                <CameraBox />
               ) : (
-                <ChatBox
-                  isShowChar={handleShowChar}
-                  sendChatArray={sendChatArray}
-                />
+                <ChatBox sendChatArray={sendChatArray} />
               )}
             </ComponentsWrapper>
           )
@@ -236,12 +233,9 @@ export default function ChatPage() {
           <ComponentsWrapper>
             <CharComponent />
             {toggle === '1' ? (
-              <CameraBox isShowChar={handleShowChar} />
+              <CameraBox />
             ) : (
-              <ChatBox
-                isShowChar={handleShowChar}
-                sendChatArray={sendChatArray}
-              />
+              <ChatBox sendChatArray={sendChatArray} />
             )}
           </ComponentsWrapper>
         )}

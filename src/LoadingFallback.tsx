@@ -1,4 +1,3 @@
-import React from 'react';
 import styled, { keyframes } from 'styled-components';
 import SpeakingQuakka from './assets/img/SpeakingQuakka.png';
 import MainBG from './assets/img/MainBG.png';
@@ -28,7 +27,7 @@ const BouncingImage = styled.img`
   width: 30%;
 
   @media all and (max-width: 390px) {
-    width: 80%; 
+    width: 80%;
   }
 `;
 
@@ -51,7 +50,7 @@ const TextBox = styled.div`
 const LoadingFallback = () => (
   <Background>
     <BouncingImage src={SpeakingQuakka} alt="Loading" />
-    <TextBox>잠깐만 기다료봐</TextBox> 
+    <TextBox>잠깐만 기다료봐</TextBox>
   </Background>
 );
 

@@ -1,12 +1,8 @@
 import styled from 'styled-components';
 import MyMessage from './MyMessage';
 import OpponentMessage from './OpponentMessage';
-import { useState } from 'react';
 
 export default function ChatBoxResult() {
-  const [messages, setmessages] = useState([]);
-  const [currentTypingId, setCurrentTypingId] = useState(null);
-
   return (
     <ChatLayout>
       <ChatBoxLayout>
