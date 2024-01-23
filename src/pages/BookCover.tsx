@@ -35,7 +35,7 @@ export default function BookCover() {
           <CoverInner>
             <Front>
               <Year>{2024}</Year>
-              <Title>{diaryContent?.username}의 다이어리</Title>
+              <Title>{diaryContent?.username} 다이어리</Title>
               <img src={diaryContent?.captureURL} alt="" />
               <button onClick={openBook}>함께 보러가기 </button>
             </Front>
