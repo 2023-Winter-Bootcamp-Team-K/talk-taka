@@ -18,19 +18,20 @@ export default function DiaryPage() {
     getDiary(selectedDiaryId || '')
   );
   // const diaryContent = diaryData;
-
+  // console.log(diaryData)
   const imageURL = diaryData?.imageURL;
   const [YY, MM, DD] = diaryData?.created_at
     ? diaryData.created_at.split('-')
     : ['-', '-', '-'];
   const mood = diaryData?.mood;
+  const [chatRoomId, setChatRoomId] = useState(null);
   const navigate = useNavigate();
   const token = getCookie('token');
   const GoToMain = () => {
     navigate('/main');
   };
   const GoToResult = () => {
-    navigate('/result');
+    navigate('/result', { state: { chatRoomId } });
   };
   const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
@@ -43,6 +44,13 @@ export default function DiaryPage() {
     handleResize();
     return () => mediaQuery.removeEventListener('change', handleResize);
   }, []);
+
+  useEffect(() => {
+    if (diaryData) {
+      setChatRoomId(diaryData.chat_room_id);
+    }
+  }, [diaryData]);
+  
   return (
     <>
       <BackGround>

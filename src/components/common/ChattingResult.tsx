@@ -4,15 +4,14 @@ import MyMessage from './MyMessage';
 import OpponentMessage from './OpponentMessage';
 import { baseInstance } from '../../api/config';
 
-export default function ChatBoxResult() {
+export default function ChatBoxResult({ chatRoomId }: { chatRoomId: number }) {
   const [messages, setMessages] = useState<
     { Question?: string; child?: string }[]
   >([]);
 
-  const chat_room_id = 7;
   useEffect(() => {
     baseInstance
-      .get(`/apps/chat_list/${chat_room_id}/`)
+      .get(`/apps/chat_list/${chatRoomId}/`)
       .then((response) => {
         setMessages(response.data.content);
       })

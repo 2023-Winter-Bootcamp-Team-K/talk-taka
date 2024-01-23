@@ -2,13 +2,12 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { baseInstance } from '../../api/config';
 
-export default function FaceBox() {
+export default function FaceBox({ chatRoomId }: { chatRoomId: number }) {
   const [imageUrl, setImageUrl] = useState('');
 
-  const chat_room_id = 7;
   useEffect(() => {
     baseInstance
-      .get(`/apps/chat_list/${chat_room_id}/`)
+      .get(`/apps/chat_list/${chatRoomId}/`)
       .then((response) => {
         setImageUrl(response.data.picture);
       })
@@ -20,7 +19,6 @@ export default function FaceBox() {
   return (
     <CameraLayout>
       <CameraBoxLayout>
-        {/* 여기 이미지 들어오면 넣을거랍니다. */}
         <img src={imageUrl} />
       </CameraBoxLayout>
     </CameraLayout>
