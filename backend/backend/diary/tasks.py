@@ -4,6 +4,8 @@ from celery import shared_task
 from dotenv import load_dotenv
 from openai import OpenAI
 from .models import Diary
+from storage import get_file_url
+import requests
 
 load_dotenv()
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
@@ -27,9 +29,13 @@ def generate_image_task(chat_room_id, summary):
         style="natural",
     )
     image_url = response.data[0].url
+    response = requests.get(image_url)
+    image_data = response.content
 
-    diary = Diary.objects.get(pk=chat_room_id)  # 대문자를 소문자로 변경
-    diary.img_url = image_url
+    s3_url = get_file_url("image", image_data)
+
+    diary = Diary.objects.get(pk=chat_room_id)
+    diary.img_url = s3_url
     diary.save()
 
-    return image_url
+    return s3_url
