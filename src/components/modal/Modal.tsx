@@ -12,10 +12,11 @@ export default function Modal({ modalConfirm }: ModalProps) {
     setSelectedFeel(selectedFeel === feel ? null : feel);
   };
 
-  if (selectedFeel === null) {
-  } else {
+  if (selectedFeel !== null) {
     window.localStorage.setItem('mood', selectedFeel);
   }
+
+  const isConfirmDisabled = selectedFeel === null;
 
   return (
     <>
@@ -51,7 +52,7 @@ export default function Modal({ modalConfirm }: ModalProps) {
               <p>슬픔</p>
             </Feeling>
           </FeelingLayout>
-          <Confirm onClick={modalConfirm}>확인</Confirm>
+          <Confirm onClick={modalConfirm}disabled={isConfirmDisabled}>확인</Confirm>
         </Container>
       </Overlay>
     </>
@@ -187,5 +188,10 @@ const Confirm = styled.button`
   }
   &:active {
     opacity: 0.3;
+  }
+
+  &:disabled {
+    background-color: #ccc; 
+    cursor: not-allowed;    
   }
 `;

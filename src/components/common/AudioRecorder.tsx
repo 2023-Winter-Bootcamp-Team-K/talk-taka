@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import MicGIF from '../gif/Mic';
 import { useChatStore } from '../../stores/chat';
-// 변수
+
 type AudioRecorderProps = {
   isShowChar: () => void;
 };
@@ -76,7 +76,11 @@ export default function AudioRecorder({ isShowChar }: AudioRecorderProps) {
 
   return (
     <MicButtonLayout onClick={handleButtonClick}>
-      <MicGIF />
+      {RecordToggle ? (
+        <MicGIF />
+      ) : (
+        <Mic src="/src/assets/img/BlackMic.png" />
+      )}
     </MicButtonLayout>
   );
 }
@@ -92,4 +96,12 @@ const MicButtonLayout = styled.button`
   &:active {
     opacity: 0.3;
   }
+`;
+
+const Mic = styled.img`
+  all: unset;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+  width: 40px;
+  height: 40px;
 `;
