@@ -20,7 +20,7 @@ export default function ChatBox({ isShowChar, chatArrayFinal }: ChatBoxProps) {
       console.log(chatArrayFinal);
       console.log('테스트');
     }
-  }, [messages]);
+  }, [chatArrayFinal]);
 
   return (
     <ChatLayout>

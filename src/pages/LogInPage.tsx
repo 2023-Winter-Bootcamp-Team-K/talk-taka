@@ -5,13 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import { useInput } from '../hooks/useInput';
 import { baseInstance } from '../api/config';
 import { setCookie } from '../utils/cookie';
+import SignupPage from './SignupPage';
 
 export default function LoginPage() {
   const [id, idHandleChange] = useInput('');
   const [pw, pwHandleChange] = useInput('');
 
   const navigate = useNavigate();
-  const goToMain = () => {
+  const Signup = () => {
     navigate('/signup');
   };
 
@@ -66,10 +67,10 @@ export default function LoginPage() {
             placeholder="6자리 이상"
           ></LoginInput>
           <Button disabled={isButtonDisabled} title="로그인"></Button>
-          <SignUp type="submit" onClick={goToMain}>
-            회원가입 하러가기
-          </SignUp>
         </form>
+        <SignUp type="submit" onClick={Signup}>
+          회원가입 하러가기
+        </SignUp>
       </LoginLayout>
       <Character />
     </BackGround>
