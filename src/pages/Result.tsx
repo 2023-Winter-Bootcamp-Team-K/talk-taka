@@ -1,17 +1,17 @@
 import { styled } from 'styled-components';
 import { useState, useEffect } from 'react';
 import FaceBox from '../components/common/Face';
-
 import ChatBoxResult from '../components/common/ChattingResult';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export default function Result() {
+  const location = useLocation();
+  const chatRoomId = location.state.chatRoomId;
+
   const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
   );
-
   const navigate = useNavigate();
-
   const GoToBefore = () => {
     navigate('/diary');
   };
@@ -30,14 +30,14 @@ export default function Result() {
         {isMobile ? (
           // 핸드폰 모드
           <ComponentsWrapper>
-            <FaceBox />
-            <ChatBoxResult />
+            <FaceBox chatRoomId={chatRoomId} />
+            <ChatBoxResult chatRoomId={chatRoomId} />
           </ComponentsWrapper>
         ) : (
           // 컴퓨터 모드
           <ComponentsWrapper>
-            <FaceBox />
-            <ChatBoxResult />
+            <FaceBox chatRoomId={chatRoomId} />
+            <ChatBoxResult chatRoomId={chatRoomId} />
           </ComponentsWrapper>
         )}
       </Layout>

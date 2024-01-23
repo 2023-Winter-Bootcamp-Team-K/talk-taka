@@ -1,17 +1,39 @@
 import styled from 'styled-components';
+import { useEffect, useState } from 'react';
 import MyMessage from './MyMessage';
 import OpponentMessage from './OpponentMessage';
-import { useState } from 'react';
+import { baseInstance } from '../../api/config';
 
-export default function ChatBoxResult() {
-  const [messages, setmessages] = useState([]);
-  const [currentTypingId, setCurrentTypingId] = useState(null);
+export default function ChatBoxResult({ chatRoomId }: { chatRoomId: number }) {
+  const [messages, setMessages] = useState<
+    { Question?: string; child?: string }[]
+  >([]);
+
+  useEffect(() => {
+    baseInstance
+      .get(`/apps/chat_list/${chatRoomId}/`)
+      .then((response) => {
+        setMessages(response.data.content);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
 
   return (
     <ChatLayout>
       <ChatBoxLayout>
-        <MyMessage chatMessage="안녕" />
-        <OpponentMessage chatMessage="안녕" />
+        {messages.map((message, index) => {
+          if (message.Question) {
+            return (
+              <OpponentMessage key={index} chatMessage={message.Question} />
+            );
+          }
+          if (message.child) {
+            return <MyMessage key={index} chatMessage={message.child} />;
+          }
+          return null;
+        })}
       </ChatBoxLayout>
       <BottomLayout></BottomLayout>
     </ChatLayout>
