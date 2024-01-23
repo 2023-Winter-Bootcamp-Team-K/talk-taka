@@ -14,8 +14,7 @@ import { useChatStore } from '../stores/chat';
 export default function ChatPage() {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
-  const { setRecordToggle, audio, setSendAudio, sendAudio, RecordToggle } =
-    useChatStore();
+  const { setRecordToggle, audio, setSendAudio, sendAudio } = useChatStore();
 
   const Mood = window.localStorage.getItem('mood');
 
@@ -120,6 +119,7 @@ export default function ChatPage() {
           const sndElement = event.currentTarget as HTMLAudioElement;
           const QuokkaTime = sndElement.duration * 1000;
           setTimeout(() => {
+            setNewRecordToggle(false);
             setRecordToggle(true);
           }, QuokkaTime);
         });
@@ -164,6 +164,7 @@ export default function ChatPage() {
       ws.send(JSON.stringify(data));
       setSendAudio(false);
       setRecordToggle(false);
+      setNewRecordToggle(true);
     }
   };
 
@@ -193,8 +194,13 @@ export default function ChatPage() {
 
   //마이크 테스트
 
+  const [newRecordToggle, setNewRecordToggle] = useState(true);
+
   useEffect(() => {
     sendAudioWebSocket();
+    setTimeout(() => {
+      // setNewRecordToggle(true);
+    }, 2000);
   }, [sendAudio]);
 
   useEffect(() => {
@@ -214,12 +220,12 @@ export default function ChatPage() {
       <Layout>
         <ChatInfo />
         {isMobile ? (
-          !RecordToggle && toggle === '1' ? (
+          // 핸드폰 모드
+          newRecordToggle && toggle === '1' ? (
             <ComponentsWrapper>
               <CharComponent />
             </ComponentsWrapper>
           ) : (
-            // 핸드폰 모드
             <ComponentsWrapper>
               {toggle === '1' ? (
                 <CameraBox />
