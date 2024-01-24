@@ -32,6 +32,8 @@ ALLOWED_HOSTS = [
     "django",
     "52.79.131.251",
     "0,0,0,0",
+    "talktaka.site",
+    "43.202.216.251",
 ]
 
 USE_X_FORWARDED_HOST = True
