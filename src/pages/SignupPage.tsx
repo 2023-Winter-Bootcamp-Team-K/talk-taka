@@ -24,7 +24,7 @@ export default function SignupPage() {
 
   //회원가입 유효성 검사 변수
   const [isId, setIsId] = useState<boolean>(false);
-  const [isPassword, setIsPassword] = useState<boolean>(false);
+  const [_, setIsPassword] = useState<boolean>(false);
   const [isPasswordConfirm, setIsPasswordConfirm] = useState<boolean>(false);
   const [isAge, setIsAge] = useState<boolean>(false);
   const [isName, setIsName] = useState<boolean>(false);
@@ -67,9 +67,9 @@ export default function SignupPage() {
     try {
       const data = await checkIdAvailability(id);
       if (data.available) {
-        alert("사용 가능한 아이디입니다.");
+        alert('사용 가능한 아이디입니다.');
       } else {
-        alert("이미 사용 중인 아이디입니다."); 
+        alert('이미 사용 중인 아이디입니다.');
       }
     } catch (error) {
       console.error('API 요청 중 에러 발생', error);
@@ -83,7 +83,7 @@ export default function SignupPage() {
   };
 
   const goToLoginConfirm = () => {
-    if (isgoToLoginDisabled == true) {
+    if (isgoToLoginDisabled === true) {
       onSubmit();
     } else {
       alert('형식에 맞지 않음!');
@@ -196,11 +196,11 @@ export default function SignupPage() {
     }
   };
 
-  const setNextPage = ()=>{
+  const setNextPage = () => {
     if (!isButtonDisabled) {
-      setPage(2)
-    } 
-  }
+      setPage(2);
+    }
+  };
 
   // 리턴 값
   return (
@@ -272,7 +272,7 @@ export default function SignupPage() {
             </Left>
             <Button
               onClick={setNextPage}
-              disabled= {isButtonDisabled}
+              disabled={isButtonDisabled}
               title="다음"
               width="14.24731rem"
             />
