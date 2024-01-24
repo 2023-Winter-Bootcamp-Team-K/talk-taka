@@ -16,6 +16,8 @@ export default function ChatPage() {
   const [socketConnected, setSocketConnected] = useState(false);
   const { setRecordToggle, audio, setSendAudio, sendAudio } = useChatStore();
 
+  const [exitToggle, setExitToggle] = useState(true);
+
   const Mood = window.localStorage.getItem('mood');
 
   //대화 객체
@@ -115,12 +117,14 @@ export default function ChatPage() {
         const audioBlob = messageReceived.data.audioBlob;
         let snd = new Audio(`data:audio/x-wav;base64, ${audioBlob}`);
         snd.play();
+
         snd.addEventListener('loadedmetadata', (event) => {
           const sndElement = event.currentTarget as HTMLAudioElement;
           const QuokkaTime = sndElement.duration * 1000;
           setTimeout(() => {
             setNewRecordToggle(false);
             setRecordToggle(true);
+            setExitToggle(false);
           }, QuokkaTime);
         });
       }
@@ -165,6 +169,7 @@ export default function ChatPage() {
       setSendAudio(false);
       setRecordToggle(false);
       setNewRecordToggle(true);
+      setExitToggle(true);
     }
   };
 
@@ -185,11 +190,17 @@ export default function ChatPage() {
   // };
 
   const handleQuitChat = () => {
-    onSubmit();
-    setclose(true);
-    endWebSocket();
+    console.log(exitToggle);
 
-    setIsCameraModalOpen(true);
+    if (exitToggle === false) {
+      onSubmit();
+      setclose(true);
+      endWebSocket();
+
+      setIsCameraModalOpen(true);
+      setExitToggle(true);
+      console.log('됨');
+    }
   };
 
   //마이크 테스트
@@ -198,9 +209,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     sendAudioWebSocket();
-    setTimeout(() => {
-      // setNewRecordToggle(true);
-    }, 2000);
+    setTimeout(() => {}, 2000);
   }, [sendAudio]);
 
   useEffect(() => {
@@ -247,13 +256,18 @@ export default function ChatPage() {
         )}
       </Layout>
       {isCameraModalOpen && <CameraModal />}
-      <QuitChatBtn onClick={handleQuitChat}>
+      <QuitChatBtn onClick={handleQuitChat} disabled={exitToggle}>
         대화 끝내기
-        <ButtonImage src="src/assets/img/QuitIcon.png" />
+        {exitToggle === true && (
+          <ButtonImage src="src/assets/img/QuitIcon2.png" />
+        )}
+        {exitToggle === false && (
+          <ButtonImage src="src/assets/img/QuitIcon.png" />
+        )}
       </QuitChatBtn>
     </BackGround>
   ) : (
-    <div>다시 시도 하시옹</div>
+    <div>다시 시도 하시옹 뭔가 잘못됬어용</div>
   );
 }
 
@@ -319,15 +333,18 @@ const ComponentsWrapper = styled.div`
   }
 `;
 
-const QuitChatBtn = styled.button`
+const QuitChatBtn = styled.button<{ disabled: boolean }>`
   all: unset;
+
+  /* background:; */
+
   position: absolute;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   cursor: pointer;
-
-  color: #000;
+  color: ${(props) => (props.disabled ? '#aeaeae' : '#2c2c2c')};
+  /* color: #000; */
   text-align: center;
   font-family: 'Cafe24Dongdong';
   font-weight: 400;
