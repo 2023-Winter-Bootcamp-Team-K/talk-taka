@@ -115,11 +115,6 @@ const Cover = styled.div`
     animation: ${openAnimation} 1.5s ease-in-out forwards;
   }
 
-  @media (max-width: 1440px) {
-    width: 80%;
-    height: 70%;
-  }
-
   @media (max-width: 390px) {
     display: none;
   }
