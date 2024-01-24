@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 interface OpponentMessageProps {
-  chatMessage: string;
+  chatMessage: string | undefined;
 }
 
 const OpponentMessage: React.FC<OpponentMessageProps> = ({ chatMessage }) => {

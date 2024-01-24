@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { create } from 'zustand';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   CalendarContainer,
   HeaderContainer,
@@ -53,7 +52,6 @@ const Calender = ({ data }: CalenderProps) => {
     if (feelings && feelings.length > 0) {
       const diaryId = feelings[0].diaryId.toString();
       localStorage.setItem('selectedDiaryId', diaryId);
-      // console.log("Selected Diary ID:", diaryId);
       navigate('/bookcover');
     } else {
       alert('해당 날짜에는 다이어리가 존재하지 않습니다.');

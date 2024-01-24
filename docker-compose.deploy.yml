@@ -34,6 +34,7 @@ services:
     env_file:
       - .env
 
+
   rabbitmq:
     image: "rabbitmq:3-management"
     ports:
@@ -139,3 +140,17 @@ services:
 #    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 #    depends_on:
 #      - nginx
+
+
+  frontend:
+    build: ./frontend
+    restart: always
+    container_name: frontend
+    ports:
+      - "5173:5173"
+#    volumes:
+#      - ./frontend/src:/frontend/src # 가상 네트워크 연결
+#      - build_folder:/frontend/volume:rw
+    tty: true
+    depends_on:
+      - web
