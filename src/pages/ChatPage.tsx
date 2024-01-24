@@ -267,9 +267,19 @@ export default function ChatPage() {
       </QuitChatBtn>
     </BackGround>
   ) : (
-    <div>다시 시도 하시옹 뭔가 잘못됬어용</div>
+    <TryAgain />
   );
 }
+
+const TryAgain = styled.div`
+  background-image: url('src/assets/img/F5.png');
+  background-position-x: 50%;
+  background-position-y: 75%;
+  /* background-size: 100%; */
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+`;
 
 const Layout = styled.div`
   display: flex;
