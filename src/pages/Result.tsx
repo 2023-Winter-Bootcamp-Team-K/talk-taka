@@ -4,6 +4,7 @@ import FaceBox from '../components/common/Face';
 import ChatBoxResult from '../components/common/ChattingResult';
 import { useNavigate } from 'react-router-dom';
 import { baseInstance } from '../api/config';
+import { BackIconSvg } from '../assets/SVG';
 
 interface Data {
   content: {
@@ -42,23 +43,29 @@ export default function Result() {
     <BackGround>
       <Layout>
         {isMobile ? (
-          // 핸드폰 모드
-          <ComponentsWrapper>
-            <FaceBox picture={picture} />
-            <ChatBoxResult content={content} />
-          </ComponentsWrapper>
+          <>
+            <QuitChatBtn onClick={GoToBefore}>
+              <BackIconSvg />
+              뒤로가기
+            </QuitChatBtn>
+            <ComponentsWrapper>
+              <FaceBox picture={picture} />
+              <ChatBoxResult content={content} />
+            </ComponentsWrapper>
+          </>
         ) : (
-          // 컴퓨터 모드
-          <ComponentsWrapper>
-            <FaceBox picture={picture} />
-            <ChatBoxResult content={content} />
-          </ComponentsWrapper>
+          <>
+            <ComponentsWrapper>
+              <FaceBox picture={picture} />
+              <ChatBoxResult content={content} />
+            </ComponentsWrapper>
+            <QuitChatBtn onClick={GoToBefore}>
+              뒤로가기
+              <ButtonImage src="src/assets/img/QuitIcon.png" />
+            </QuitChatBtn>
+          </>
         )}
       </Layout>
-      <QuitChatBtn onClick={GoToBefore}>
-        뒤로가기
-        <ButtonImage src="src/assets/img/QuitIcon.png" />
-      </QuitChatBtn>
     </BackGround>
   );
 }
@@ -106,26 +113,28 @@ const BackGround = styled.div`
 
 const ComponentsWrapper = styled.div`
   display: flex;
-  flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
-  gap: 5.3rem;
   /* margin-top: 10.5rem; */
-
+  
   @media all and (min-width: 391px) {
+    flex-direction: row;
     margin-left: 11.06rem;
     margin-right: 8.62rem;
+    gap: 5.3rem;
   }
   @media all and (max-width: 390px) {
+    flex-direction: column;
     margin-left: auto;
     margin-right: auto;
     margin-top: 4.75rem;
-    margin-bottom: 10.06rem;
+    margin-bottom: 3rem;
     height: 30rem;
+    gap: 1rem;
   }
 `;
 
-const QuitChatBtn = styled.button`
+const QuitChatBtn = styled.div`
   all: unset;
   position: absolute;
   display: flex;
@@ -145,8 +154,9 @@ const QuitChatBtn = styled.button`
     font-size: 1.5rem;
   }
   @media all and (max-width: 390px) {
-    bottom: 1rem;
-    right: 23px;
+    gap: 0.5rem;
+    top: 1rem;
+    left: 1rem;
     height: 1.5rem;
     font-size: 1.125rem;
   }
