@@ -117,6 +117,7 @@ class DiaryListView(APIView):
         return Response(response)
 
 
+
 class DiaryDeleteView(APIView):
     @swagger_auto_schema(
         operation_id="일기 삭제",
