@@ -2,17 +2,14 @@ import styled from 'styled-components';
 import Webcam from 'react-webcam';
 import AudioRecorder from './AudioRecorder';
 
-type CameraBoxProps = {
-  isShowChar: () => void;
-};
-export default function CameraBox({ isShowChar }: CameraBoxProps) {
+export default function CameraBox() {
   return (
     <CameraLayout>
       <CameraBoxLayout>
         <Webcam style={{ borderRadius: '1.75rem' }} mirrored={true} />
       </CameraBoxLayout>
       <TextBox>말을 다하면 나를 눌러줘</TextBox>
-      <AudioRecorder isShowChar={isShowChar} />
+      <AudioRecorder />
     </CameraLayout>
   );
 }

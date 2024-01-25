@@ -1,25 +1,53 @@
 import styled from 'styled-components';
 import MyMessage from './MyMessage';
 import OpponentMessage from './OpponentMessage';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AudioRecorder from './AudioRecorder';
+import { useRef } from 'react';
 
 type ChatBoxProps = {
-  isShowChar: () => void;
+  sendChatArray: any[];
 };
 
-export default function ChatBox({ isShowChar }: ChatBoxProps) {
-  const [messages, setmessages] = useState([]);
-  const [currentTypingId, setCurrentTypingId] = useState(null);
+export default function ChatBox({ sendChatArray }: ChatBoxProps) {
+  const [messages, setMessages] = useState<
+    { character?: string; message?: string }[]
+  >([]);
+  const messageLayOutRef = useRef<HTMLDivElement | null>(null);
+
+  console.log('왜 목소리 나오고 나옴? 왜 시작할 때는 잘 나왔잖아', messages);
+
+  //스크롤부분
+  useEffect(() => {
+    const messageLayOutElement = messageLayOutRef.current;
+    if (messageLayOutElement) {
+      messageLayOutElement.scrollTop = messageLayOutElement.scrollHeight;
+    }
+  });
+
+  useEffect(() => {
+    if (sendChatArray !== messages) {
+      setMessages(sendChatArray);
+    }
+  }, [sendChatArray, messages]);
 
   return (
     <ChatLayout>
-      <ChatBoxLayout>
-        <MyMessage chatMessage="안녕" />
-        <OpponentMessage chatMessage="안녕" />
+      <ChatBoxLayout ref={messageLayOutRef}>
+        {messages.map((message, index) => {
+          if (message.character === 'quokka') {
+            return (
+              <OpponentMessage key={index} chatMessage={message.message} />
+            );
+          }
+          if (message.character === 'child') {
+            return <MyMessage key={index} chatMessage={message.message} />;
+          }
+          return null;
+        })}
       </ChatBoxLayout>
       <TextBox>말을 다하면 나를 눌러줘</TextBox>
-      <AudioRecorder isShowChar={isShowChar} />
+      <AudioRecorder />
     </ChatLayout>
   );
 }

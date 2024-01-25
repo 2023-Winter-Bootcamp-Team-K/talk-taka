@@ -159,7 +159,6 @@ const DiaryTextLayout = styled.div`
 
 const DiaryText = styled.div`
   display: flex;
-  justify-content: center;
   align-items: center;
   flex-direction: column;
   width: 100%;
@@ -184,11 +183,11 @@ const TextL = styled.div`
 
   @media all and (min-width: 391px) {
     font-size: 1.25rem;
-    line-height: 2;
+    line-height: 1.975;
   }
   @media all and (max-width: 390px) {
     font-size: 0.85rem;
-    line-height: 2.1;
+    line-height: 2.12;
   }
 `;
 const ButtonImage = styled.img`

@@ -5,8 +5,9 @@ import Button from '../components/common/Btn';
 export default function IntroPage() {
   const navigate = useNavigate();
   const goToMain = () => {
-    navigate('/login'); //추후 추가
+    navigate('/login');
   };
+
   return (
     <BackGround>
       <div style={{ position: 'relative', top: '90%', height: '2.3125rem' }}>
@@ -41,4 +42,3 @@ const BackGround = styled.div`
     background-image: url('src/assets/img/introP.png');
   }
 `;
-

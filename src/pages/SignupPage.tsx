@@ -24,10 +24,11 @@ export default function SignupPage() {
 
   //회원가입 유효성 검사 변수
   const [isId, setIsId] = useState<boolean>(false);
-  const [isPassword, setIsPassword] = useState<boolean>(false);
+  const [_, setIsPassword] = useState<boolean>(false);
   const [isPasswordConfirm, setIsPasswordConfirm] = useState<boolean>(false);
   const [isAge, setIsAge] = useState<boolean>(false);
   const [isName, setIsName] = useState<boolean>(false);
+  const [isIdChecked, setIsIdChecked] = useState<boolean>(false);
 
   //색상 변수
   const [ChangeColorId, setChangeColorId] = useState('#c42c21');
@@ -64,18 +65,28 @@ export default function SignupPage() {
 
   // 중복 확인 버튼 클릭 핸들러
   const onCheckId = async () => {
+
+    if (!isId) {
+      return;
+    }
+    
     try {
       const data = await checkIdAvailability(id);
       if (data.available) {
-        alert("사용 가능한 아이디입니다.");
+        setIdMessage('✔ 사용 가능한 아이디입니다.');
+        setChangeColorId('#1b8845');
+        setIsIdChecked(true);
       } else {
-        alert("이미 사용 중인 아이디입니다."); 
+        setIdMessage('✖ 중복된 아이디입니다.');
+        setChangeColorId('#c42c21');
+        setIsIdChecked(false);
       }
     } catch (error) {
       console.error('API 요청 중 에러 발생', error);
       alert('중복 확인 중 오류가 발생했습니다.');
+      setIsIdChecked(false);
     }
-  };
+  };  
 
   //외부 페이지 이동
   const goToLogin = () => {
@@ -83,7 +94,7 @@ export default function SignupPage() {
   };
 
   const goToLoginConfirm = () => {
-    if (isgoToLoginDisabled == true) {
+    if (isgoToLoginDisabled === true) {
       onSubmit();
     } else {
       alert('형식에 맞지 않음!');
@@ -98,23 +109,24 @@ export default function SignupPage() {
   //유효성 검사
   ///아이디
   const onChangeId = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const IdRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{0,25}$/; // 조건 넣으면 됨
+    const IdRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{6,25}$/;
     const IdCurrent = e.target.value;
     setId(IdCurrent);
-
+  
     if (!IdRegex.test(IdCurrent)) {
       setIdMessage('✖ 영문+숫자 조합으로 입력해주세요.');
       setChangeColorId('#c42c21');
       setIsId(false);
+      setIsIdChecked(false);
     } else {
-      setIdMessage('✔ 사용가능한 아이디입니다.');
-      setChangeColorId('#1b8845');
       setIsId(true);
+      setIsIdChecked(false);
     }
   }, []);
+  
   ///비밀번호
   const onChangePw = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const PwRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{6,25}$/; // 조건 넣으면 됨
+    const PwRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{6,25}$/;
     const PwCurrent = e.target.value;
     setPw(PwCurrent);
 
@@ -196,12 +208,13 @@ export default function SignupPage() {
     }
   };
 
-  const setNextPage = ()=>{
-    if (!isButtonDisabled) {
-      setPage(2)
-    } 
-  }
-
+  const setNextPage = () => {
+    if (!isButtonDisabled && isIdChecked) {
+      setPage(2);
+    } else {
+      alert('아이디 중복 확인이 필요합니다.');
+    }
+  };
   // 리턴 값
   return (
     <BackGround>
@@ -216,13 +229,14 @@ export default function SignupPage() {
                 width="19.0625rem"
                 widthp="11.569rem"
                 type="아이디"
-                placeholder="영문 + 숫자"
+                placeholder="영문 + 숫자  6자리 이상"
                 marginbottom="0.47rem"
                 marginbottomptt="0.06rem"
               />
               <Button
                 title="중복확인"
                 onClick={onCheckId}
+                disabled={!isId} 
                 width="9.1875rem"
                 widthp="5.8125rem"
                 marginl="1.31rem"
@@ -272,7 +286,7 @@ export default function SignupPage() {
             </Left>
             <Button
               onClick={setNextPage}
-              disabled= {isButtonDisabled}
+              disabled={isButtonDisabled}
               title="다음"
               width="14.24731rem"
             />
