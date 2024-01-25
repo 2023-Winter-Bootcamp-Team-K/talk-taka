@@ -19,7 +19,7 @@ export default function Diary({ YY, MM, DD, Text, Image, mood }: DiaryProps) {
   const navigate = useNavigate();
 
   const GoToResult = () => {
-    navigate('/result');
+    navigate('/result', { state: { YY, MM, DD } });
   };
   return (
     <DiaryLayout>

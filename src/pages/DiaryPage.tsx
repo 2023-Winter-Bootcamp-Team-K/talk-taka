@@ -18,7 +18,7 @@ export default function DiaryPage() {
     getDiary(selectedDiaryId || '')
   );
   // const diaryContent = diaryData;
-
+  // console.log(diaryData)
   const imageURL = diaryData?.imageURL;
   const [YY, MM, DD] = diaryData?.created_at
     ? diaryData.created_at.split('-')
@@ -41,6 +41,13 @@ export default function DiaryPage() {
     handleResize();
     return () => mediaQuery.removeEventListener('change', handleResize);
   }, []);
+
+  useEffect(() => {
+    if (diaryData) {
+      window.localStorage.setItem('chat_id', diaryData.chat_room_id);
+    }
+  }, [diaryData]);
+  
   return (
     <>
       <BackGround>
