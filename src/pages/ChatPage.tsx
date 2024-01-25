@@ -17,8 +17,6 @@ export default function ChatPage() {
 
   const [exitToggle, setExitToggle] = useState(true);
 
-  const Mood = window.localStorage.getItem('mood');
-
   //대화 객체
   interface chatArrayState {
     character: string;
@@ -110,6 +108,7 @@ export default function ChatPage() {
   // 웹소켓 시작
   const startWebSocket = () => {
     const ws = socket;
+    const Mood = window.localStorage.getItem('mood');
     if (socketConnected === true && ws) {
       const data = {
         event: 'conversation_start',
