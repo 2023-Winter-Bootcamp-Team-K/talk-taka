@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { BackIconSvg } from '../assets/SVG';
 import { getCookie } from '../utils/cookie';
 import { getDiaries } from '../api/calender/calender';
-import LoadingFallback from '../LoadingFallback';
+import LoadingModal from '../components/modal/LoadingModal';
 
 export default function DiaryPage() {
   const selectedDiaryId = window.localStorage.getItem('selectedDiaryId');
@@ -16,19 +16,62 @@ export default function DiaryPage() {
   const token = getCookie('token');
   const { data: DiariesData } = useQuery('sales', () => getDiaries(token));
   const diaries = DiariesData?.data;
-  
-  const { data: diaryData, isLoading, refetch } = useQuery(['diary', selectedDiaryId], () =>
-  getDiary(selectedDiaryId || '')
-);
-const imageURL = diaryData?.imageURL;
-const [YY, MM, DD] = diaryData?.created_at
-  ? diaryData.created_at.split('-')
-  : ['-', '-', '-'];
-const mood = diaryData?.mood;
+  const [openModal, setOpenModal] = useState(true);
 
-const GoToMain = () => {
-  navigate('/main');
-};
+  const {
+    data: diaryData,
+    isLoading,
+    refetch,
+  } = useQuery(
+    ['diary', selectedDiaryId],
+    () => getDiary(selectedDiaryId || ''),
+    {
+      enabled: !!selectedDiaryId,
+      refetchInterval: (diaryData) =>
+        diaryData?.message === '일기가 생성 중 입니다.' ? 1000 : false,
+      onSuccess: (data) => {
+        if (data.message === '일기 조회 성공') {
+          setOpenModal(false);
+        }
+      },
+    }
+  );
+
+  // const {
+  //   data: diaryData,
+  //   isLoading,
+  //   refetch,
+  // } = useQuery(['diary', selectedDiaryId], () =>
+  //   getDiary(selectedDiaryId || '')
+  // );
+  // , {
+  //   onSuccess:(diaryData:any) => { if(diaryData.message==='일기가 생성 중 입니다.'){setTimeout(() => refetch(), 2000);}}
+  // };
+
+  // console.log(diaryData.message);
+
+  // useEffect(() => {
+  //   const pollingInterval = setInterval(() => {
+  //     refetch();
+  //     console.log('폴링이 발생했습니다.');
+  //   }, 2000);
+
+  //   return () => clearInterval(pollingInterval);
+  // }, [refetch]);
+
+  // if (isLoading) {
+  //   return <LoadingFallback />;
+  // }
+
+  const imageURL = diaryData?.imageURL;
+  const [YY, MM, DD] = diaryData?.created_at
+    ? diaryData.created_at.split('-')
+    : ['-', '-', '-'];
+  const mood = diaryData?.mood;
+
+  const GoToMain = () => {
+    navigate('/main');
+  };
 
   const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
@@ -42,22 +85,10 @@ const GoToMain = () => {
     return () => mediaQuery.removeEventListener('change', handleResize);
   }, []);
 
-  useEffect(() => {
-    const pollingInterval = setInterval(() => {
-      refetch();
-      console.log("폴링이 발생했습니다."); 
-    }, 2000);
-
-    return () => clearInterval(pollingInterval);
-  }, [refetch]);
-
-  if (isLoading) {
-    return <LoadingFallback />;
-  }
-
   return (
     <>
       <BackGround>
+        {openModal && <LoadingModal />}
         {isMobile ? (
           <>
             <QuitChatBtn onClick={GoToMain}>

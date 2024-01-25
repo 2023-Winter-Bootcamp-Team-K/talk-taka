@@ -71,6 +71,7 @@ const Calender = ({ data }: CalenderProps) => {
               mood: moodToImageUrl[item.mood],
               imageUrl: item.imageURL,
               created_at: item.created_at,
+              
             });
           }
           return acc;
