@@ -10,7 +10,7 @@ const BookCover = lazy(() => import('./pages/BookCover'));
 const MainPage = lazy(() => import('./pages/MainPage'));
 const ChatPage = lazy(() => import('./pages/ChatPage'));
 const Result = lazy(() => import('./pages/Result'));
-const CameraModal = lazy(() => import('./components/modal/CameraModal'));
+const Forbidden = lazy(() => import('./pages/Forbidden'));
 
 const router = createBrowserRouter([
   {
@@ -20,6 +20,7 @@ const router = createBrowserRouter([
         <IntroPage />
       </Suspense>
     ),
+    errorElement: <Forbidden />,
   },
   {
     path: '/login',
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
         <LoginPage />
       </Suspense>
     ),
+    errorElement: <Forbidden />,
   },
   {
     path: '/signup',
@@ -74,14 +76,6 @@ const router = createBrowserRouter([
     element: (
       <Suspense fallback={<LoadingFallback />}>
         <Result />
-      </Suspense>
-    ),
-  },
-  {
-    path: '/test',
-    element: (
-      <Suspense fallback={<LoadingFallback />}>
-        <CameraModal />
       </Suspense>
     ),
   },

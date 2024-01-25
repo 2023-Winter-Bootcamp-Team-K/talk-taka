@@ -14,7 +14,10 @@ import { useChatStore } from '../stores/chat';
 export default function ChatPage() {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
-  const { setRecordToggle, audio, setSendAudio, sendAudio } = useChatStore();
+  const { setPlzWait, setRecordToggle, audio, setSendAudio, sendAudio } =
+    useChatStore();
+
+  const [exitToggle, setExitToggle] = useState(true);
 
   const Mood = window.localStorage.getItem('mood');
 
@@ -110,17 +113,20 @@ export default function ChatPage() {
           }
         }
       } else if (messageEvent === 'question_tts') {
+        setPlzWait(false);
         console.log('tts 시작');
 
         const audioBlob = messageReceived.data.audioBlob;
         let snd = new Audio(`data:audio/x-wav;base64, ${audioBlob}`);
         snd.play();
+
         snd.addEventListener('loadedmetadata', (event) => {
           const sndElement = event.currentTarget as HTMLAudioElement;
           const QuokkaTime = sndElement.duration * 1000;
           setTimeout(() => {
             setNewRecordToggle(false);
             setRecordToggle(true);
+            setExitToggle(false);
           }, QuokkaTime);
         });
       }
@@ -165,6 +171,8 @@ export default function ChatPage() {
       setSendAudio(false);
       setRecordToggle(false);
       setNewRecordToggle(true);
+      setExitToggle(true);
+      setPlzWait(true);
     }
   };
 
@@ -180,16 +188,19 @@ export default function ChatPage() {
     setIsModalOpen(false);
     startWebSocket();
   };
-  // const handleShowChar = () => {
-  //   setShowChar(true);
-  // };
 
   const handleQuitChat = () => {
-    onSubmit();
-    setclose(true);
-    endWebSocket();
+    console.log(exitToggle);
 
-    setIsCameraModalOpen(true);
+    if (exitToggle === false) {
+      onSubmit();
+      setclose(true);
+      endWebSocket();
+
+      setIsCameraModalOpen(true);
+      setExitToggle(true);
+      console.log('됨');
+    }
   };
 
   //마이크 테스트
@@ -198,9 +209,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     sendAudioWebSocket();
-    setTimeout(() => {
-      // setNewRecordToggle(true);
-    }, 2000);
+    setTimeout(() => {}, 2000);
   }, [sendAudio]);
 
   useEffect(() => {
@@ -247,15 +256,30 @@ export default function ChatPage() {
         )}
       </Layout>
       {isCameraModalOpen && <CameraModal />}
-      <QuitChatBtn onClick={handleQuitChat}>
+      <QuitChatBtn onClick={handleQuitChat} disabled={exitToggle}>
         대화 끝내기
-        <ButtonImage src="src/assets/img/QuitIcon.png" />
+        {exitToggle === true && (
+          <ButtonImage src="src/assets/img/QuitIcon2.png" />
+        )}
+        {exitToggle === false && (
+          <ButtonImage src="src/assets/img/QuitIcon.png" />
+        )}
       </QuitChatBtn>
     </BackGround>
   ) : (
-    <div>다시 시도 하시옹</div>
+    <TryAgain />
   );
 }
+
+const TryAgain = styled.div`
+  background-image: url('src/assets/img/F5.png');
+  background-position-x: 50%;
+  background-position-y: 75%;
+  /* background-size: 100%; */
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+`;
 
 const Layout = styled.div`
   display: flex;
@@ -319,15 +343,18 @@ const ComponentsWrapper = styled.div`
   }
 `;
 
-const QuitChatBtn = styled.button`
+const QuitChatBtn = styled.button<{ disabled: boolean }>`
   all: unset;
+
+  /* background:; */
+
   position: absolute;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   cursor: pointer;
-
-  color: #000;
+  color: ${(props) => (props.disabled ? '#aeaeae' : '#2c2c2c')};
+  /* color: #000; */
   text-align: center;
   font-family: 'Cafe24Dongdong';
   font-weight: 400;

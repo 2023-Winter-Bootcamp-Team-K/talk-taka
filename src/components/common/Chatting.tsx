@@ -55,7 +55,6 @@ export default function ChatBox({ sendChatArray }: ChatBoxProps) {
 const ChatLayout = styled.div`
   border-radius: 1.75rem;
   background: rgba(255, 255, 255, 1);
-  box-shadow: 0px 14px 24px rgba(0, 0, 0, 0.13);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,6 +63,7 @@ const ChatLayout = styled.div`
   @media all and (min-width: 391px) {
     width: 31.25rem;
     height: 43.75rem;
+    box-shadow: 0px 14px 24px rgba(0, 0, 0, 0.13);
   }
   @media all and (max-width: 390px) {
     width: 22rem;

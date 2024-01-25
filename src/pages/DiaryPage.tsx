@@ -37,32 +37,6 @@ export default function DiaryPage() {
     }
   );
 
-  // const {
-  //   data: diaryData,
-  //   isLoading,
-  //   refetch,
-  // } = useQuery(['diary', selectedDiaryId], () =>
-  //   getDiary(selectedDiaryId || '')
-  // );
-  // , {
-  //   onSuccess:(diaryData:any) => { if(diaryData.message==='일기가 생성 중 입니다.'){setTimeout(() => refetch(), 2000);}}
-  // };
-
-  // console.log(diaryData.message);
-
-  // useEffect(() => {
-  //   const pollingInterval = setInterval(() => {
-  //     refetch();
-  //     console.log('폴링이 발생했습니다.');
-  //   }, 2000);
-
-  //   return () => clearInterval(pollingInterval);
-  // }, [refetch]);
-
-  // if (isLoading) {
-  //   return <LoadingFallback />;
-  // }
-
   const imageURL = diaryData?.imageURL;
   const [YY, MM, DD] = diaryData?.created_at
     ? diaryData.created_at.split('-')
@@ -84,6 +58,14 @@ export default function DiaryPage() {
     handleResize();
     return () => mediaQuery.removeEventListener('change', handleResize);
   }, []);
+
+
+  useEffect(() => {
+    if (diaryData) {
+      window.localStorage.setItem('chat_id', diaryData.chat_room_id);
+    }
+  }, [diaryData]);
+  
 
   return (
     <>
