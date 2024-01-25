@@ -1,10 +1,11 @@
 import { styled } from 'styled-components';
 import { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import FaceBox from '../components/common/Face';
 import ChatBoxResult from '../components/common/ChattingResult';
-import { useNavigate } from 'react-router-dom';
 import { baseInstance } from '../api/config';
 import { BackIconSvg } from '../assets/SVG';
+import ChatHistoryInfo from '../components/common/ChatHistoryInfo';
 
 interface Data {
   content: {
@@ -27,6 +28,9 @@ export default function Result() {
 
   const content = data?.content;
   const picture = data?.picture;
+  const location = useLocation();
+  const {YY, MM, DD} = location.state;
+  const date = `${YY}년 ${MM}월 ${DD}일`;
 
   useEffect(() => {
     baseInstance
@@ -42,6 +46,7 @@ export default function Result() {
   return (
     <BackGround>
       <Layout>
+        <ChatHistoryInfo date={date} picture={picture} />
         {isMobile ? (
           <>
             <QuitChatBtn onClick={GoToBefore}>
@@ -49,7 +54,6 @@ export default function Result() {
               뒤로가기
             </QuitChatBtn>
             <ComponentsWrapper>
-              <FaceBox picture={picture} />
               <ChatBoxResult content={content} />
             </ComponentsWrapper>
           </>
@@ -169,6 +173,6 @@ const ButtonImage = styled.img`
   }
   @media all and (max-width: 390px) {
     width: 1.5rem;
-    height: 1.5rem;
+    height: 1.5rem;    
   }
 `;

@@ -27,9 +27,10 @@ const CameraLayout = styled.div`
     height: 33.125rem;
   }
   @media all and (max-width: 390px) {
-    width: 21.4375rem;
+    /* width: 21.4375rem;
     height: 17.4375rem;
-    box-shadow: none;
+    box-shadow: none; */
+    display: none;
   }
 `;
 
@@ -46,14 +47,7 @@ const CameraBoxLayout = styled.div`
     border-radius: 1.3125rem;
   }
   @media all and (max-width: 390px) {
-    /* align-items: center;
-    justify-content: center; */
-
-    /* margin-top: 1rem;
-    margin-bottom: 1rem; */
-    width: 18.5625rem;
-    height: 15.8125rem;
-    border-radius: 1.75rem;
+    display: none;
   }
 `;
 

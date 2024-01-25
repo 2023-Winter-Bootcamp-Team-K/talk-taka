@@ -30,9 +30,6 @@ export default function DiaryPage() {
     navigate('/main');
   };
 
-  const GoToResult = () => {
-    navigate('/result');
-  };
   const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
   );
