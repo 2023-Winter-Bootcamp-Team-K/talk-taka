@@ -15,6 +15,8 @@ export default function AudioRecorder() {
 
   // 버튼 클릭 핸들러
   const handleButtonClick = () => {
+    console.log('테스트');
+
     setRecordToggle(false); // true이면 녹음 시작 false면 중지
     toggleRecording();
   };
@@ -71,7 +73,7 @@ export default function AudioRecorder() {
   };
 
   return (
-    <MicButtonLayout onClick={handleButtonClick}>
+    <MicButtonLayout onClick={handleButtonClick} disabled={!RecordToggle}>
       {RecordToggle ? <MicGIF /> : <Mic src="/src/assets/img/BlackMic.png" />}
     </MicButtonLayout>
   );

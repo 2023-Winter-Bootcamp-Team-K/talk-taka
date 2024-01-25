@@ -13,7 +13,7 @@ export default function Voice() {
 const Wrapper = styled.div`
   width: 5rem;
   height: 5rem;
-  margin-bottom: 1.5rem;
+  /* margin-bottom: 1.5rem; */
 
   @media all and (max-width: 390px) {
     width: 2.84131rem;

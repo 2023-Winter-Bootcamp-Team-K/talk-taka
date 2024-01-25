@@ -14,7 +14,8 @@ import { useChatStore } from '../stores/chat';
 export default function ChatPage() {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
-  const { setRecordToggle, audio, setSendAudio, sendAudio } = useChatStore();
+  const { setPlzWait, setRecordToggle, audio, setSendAudio, sendAudio } =
+    useChatStore();
 
   const [exitToggle, setExitToggle] = useState(true);
 
@@ -112,6 +113,7 @@ export default function ChatPage() {
           }
         }
       } else if (messageEvent === 'question_tts') {
+        setPlzWait(false);
         console.log('tts 시작');
 
         const audioBlob = messageReceived.data.audioBlob;
@@ -170,6 +172,7 @@ export default function ChatPage() {
       setRecordToggle(false);
       setNewRecordToggle(true);
       setExitToggle(true);
+      setPlzWait(true);
     }
   };
 
@@ -185,9 +188,6 @@ export default function ChatPage() {
     setIsModalOpen(false);
     startWebSocket();
   };
-  // const handleShowChar = () => {
-  //   setShowChar(true);
-  // };
 
   const handleQuitChat = () => {
     console.log(exitToggle);
