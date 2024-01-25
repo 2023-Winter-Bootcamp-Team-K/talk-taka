@@ -55,7 +55,30 @@ export default function CameraModal() {
           }
         );
         if (response.status === 201) {
-          navigate('/diary');
+          const token = getCookie('token');
+          try {
+            const response = await baseInstance.post(
+              `/diary/`,
+              {
+                mood: window.localStorage.getItem('mood'),
+                chat_room_id: window.localStorage.getItem('chat_id'),
+              },
+              {
+                headers: {
+                  Authorization: token,
+                },
+              }
+            );
+            if (response.data.status === '201') {
+              window.localStorage.setItem(
+                'selectedDiaryId',
+                response.data.diaryId
+              );
+              navigate('/diary');
+            }
+          } catch (error) {
+            console.error(error);
+          }
         }
       } catch (error) {
         console.error('Error during image upload:', error);

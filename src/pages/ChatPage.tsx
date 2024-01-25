@@ -7,8 +7,6 @@ import ChatBox from '../components/common/Chatting';
 import ChatInfo from '../components/common/ChatInfo';
 import { toggleStore } from '../stores/toggle';
 import CameraModal from '../components/modal/CameraModal';
-import { baseInstance } from '../api/config';
-import { getCookie } from '../utils/cookie';
 import { useChatStore } from '../stores/chat';
 
 export default function ChatPage() {
@@ -29,30 +27,6 @@ export default function ChatPage() {
 
   const chatArrayFinal: Array<chatArrayState> = [];
   const [sendChatArray, setSendChatArray] = useState<chatArrayState[]>([]);
-
-  const onSubmit = async () => {
-    const token = getCookie('token');
-
-    try {
-      const response = await baseInstance.post(
-        `/diary/`,
-        {
-          mood: Mood,
-          chat_room_id: window.localStorage.getItem('chat_id'),
-        },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-      if (response.data.status === '201') {
-        window.localStorage.setItem('selectedDiaryId', response.data.diaryId);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const [close, setclose] = useState(false);
   const connectWebSocket = async () => {
@@ -193,7 +167,6 @@ export default function ChatPage() {
     console.log(exitToggle);
 
     if (exitToggle === false) {
-      onSubmit();
       setclose(true);
       endWebSocket();
 
@@ -383,4 +356,3 @@ const ButtonImage = styled.img`
     height: 1.5rem;
   }
 `;
-
