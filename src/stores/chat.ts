@@ -6,11 +6,13 @@ type ChatStore = {
   isShowChar: boolean;
   audio: string;
   sendAudio: boolean;
+  plzWait: boolean;
 
   setIsShowChar: (isShowChar: any) => void;
   setRecordToggle: (RecordToggle: any) => void;
   setAudio: (audio: any) => void;
   setSendAudio: (sendAudio: any) => void;
+  setPlzWait: (plzWait: any) => void;
 };
 type UserPersist = (
   config: StateCreator<ChatStore>,
@@ -24,11 +26,13 @@ export const useChatStore = create<ChatStore>(
       isShowChar: false,
       audio: 'none',
       sendAudio: false,
+      plzWait: false,
 
       setRecordToggle: (RecordToggle) => set({ RecordToggle: RecordToggle }),
       setIsShowChar: (isShowChar) => set({ isShowChar: isShowChar }),
       setAudio: (audio) => set({ audio: audio }),
       setSendAudio: (sendAudio) => set({ sendAudio: sendAudio }),
+      setPlzWait: (plzWait) => set({ plzWait: plzWait }),
     }),
     {
       name: 'chat-StoreName',
