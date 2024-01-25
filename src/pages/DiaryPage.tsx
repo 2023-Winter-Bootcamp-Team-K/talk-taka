@@ -8,24 +8,41 @@ import { useEffect, useState } from 'react';
 import { BackIconSvg } from '../assets/SVG';
 import { getCookie } from '../utils/cookie';
 import { getDiaries } from '../api/calender/calender';
+import LoadingModal from '../components/modal/LoadingModal';
 
 export default function DiaryPage() {
   const selectedDiaryId = window.localStorage.getItem('selectedDiaryId');
+  const navigate = useNavigate();
+  const token = getCookie('token');
   const { data: DiariesData } = useQuery('sales', () => getDiaries(token));
   const diaries = DiariesData?.data;
+  const [openModal, setOpenModal] = useState(true);
 
-  const { data: diaryData } = useQuery(['diary', selectedDiaryId], () =>
-    getDiary(selectedDiaryId || '')
+  const {
+    data: diaryData,
+    isLoading,
+    refetch,
+  } = useQuery(
+    ['diary', selectedDiaryId],
+    () => getDiary(selectedDiaryId || ''),
+    {
+      enabled: !!selectedDiaryId,
+      refetchInterval: (diaryData) =>
+        diaryData?.message === '일기가 생성 중 입니다.' ? 1000 : false,
+      onSuccess: (data) => {
+        if (data.message === '일기 조회 성공') {
+          setOpenModal(false);
+        }
+      },
+    }
   );
-  // const diaryContent = diaryData;
-  // console.log(diaryData)
+
   const imageURL = diaryData?.imageURL;
   const [YY, MM, DD] = diaryData?.created_at
     ? diaryData.created_at.split('-')
     : ['-', '-', '-'];
   const mood = diaryData?.mood;
-  const navigate = useNavigate();
-  const token = getCookie('token');
+
   const GoToMain = () => {
     navigate('/main');
   };
@@ -42,15 +59,18 @@ export default function DiaryPage() {
     return () => mediaQuery.removeEventListener('change', handleResize);
   }, []);
 
+
   useEffect(() => {
     if (diaryData) {
       window.localStorage.setItem('chat_id', diaryData.chat_room_id);
     }
   }, [diaryData]);
   
+
   return (
     <>
       <BackGround>
+        {openModal && <LoadingModal />}
         {isMobile ? (
           <>
             <QuitChatBtn onClick={GoToMain}>
