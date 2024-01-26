@@ -10,7 +10,14 @@ client = OpenAI(api_key=OPENAI_API_KEY)
 # gpt한테 요약 요청
 def generate_summary(content):
     content_str = "\n".join(content)
-    summary_request = ('From now on, you will write child\'s diary instead of child. The content of diary must be the summarize of the conversation you had, with the child and write it as a diary. And the conditions of the diary are 1.It must be at least 160 characters and no more than 180 characters. 2.The sentences in the diary should end with "~했다" or "~했어." 3.Write in the handwriting style of a child aged 7 to 10 years. 4.The child is of South Korean nationality. 5.Do not include a greeting in the summary. Please follow these conditions when making a diary.')
+    summary_request = (
+        'From now on, you will write child\'s diary instead of child. The content of diary must be the summarize of the conversation you had, with the child and write it as a diary. And the conditions of the diary are '
+        '1.It must be at least 160 characters and no more than 180 characters. '
+        '2. Every sentence in the diary should end with "~했다" or "~했어." '
+        '3.Write in the handwriting style of a child aged 7 to 10 years. '
+        '4.The child is of South Korean nationality. '
+        '5.Do not include a greeting in the summary. '
+        'Please follow these conditions when making a diary.')
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -31,8 +38,14 @@ def generate_image(summary):
 
     response = client.images.generate(
         model="dall-e-3",
-        prompt=f'{summary} Please create an illustration based on the following summary: This summary summarizes the conversation between you and the baby.Additionally I would like to recreate an image I previously generated using seed number 3129831613. The image should maintain the same style and characteristics as the one produced with the given seed number. While satisfying these conditions , If there are people in the drawing, please depict them with a light apricot-colored skin tone (#fdece2) and draw black or dark brown hair. The most important thing is do not include any texts in image. ',
-        size="1024x1024",
+        prompt=f'{summary}'
+               f'From now on, you will be drawing illustrations to be included in a child\'s picture diary. Please adhere to the following conditions: '
+               f'1.Draw the illustration based on the summary provided. '
+               f'2.Create an illustration that suits a child\'s picture diary. '
+               f'3.Refer to seed number "3129831613" and draw in a similar style. '
+               f'4.If there are human illustrations, color the skin in #fdece2. '
+               f'5.Do not include any text in the illustration. '
+               f'I would like to recreate an image I previously generated using seed number "3129831613". The image should maintain the same style and characteristics as the one produced with the given seed number',size="1024x1024",
         quality="standard",
         n=1,
         style="natural",
