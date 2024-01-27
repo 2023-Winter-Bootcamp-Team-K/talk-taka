@@ -45,7 +45,7 @@ export default function ChatBox({ sendChatArray, sendChatting }: ChatBoxProps) {
 
     if (sendChatting !== messages) {
       setChat(sendChatting.flat());
-      test2 = sendChatting;
+      test2 = sendChatting.flat();
       console.log('chat', chat);
     }
 
@@ -53,7 +53,11 @@ export default function ChatBox({ sendChatArray, sendChatting }: ChatBoxProps) {
     Middle = Middle.concat(test1);
 
     setEnd(Middle);
-    console.log(End);
+    //로그
+    console.log('test1 로그', test1);
+    console.log('test2 로그', test2);
+    console.log('Middle 로그', Middle);
+    console.log('End 로그', End);
   }, [sendChatArray, sendChatting]);
 
   return (
