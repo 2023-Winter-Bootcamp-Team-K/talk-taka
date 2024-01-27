@@ -10,7 +10,7 @@ export default function AudioRecorder() {
   );
 
   //zustand 상태관리
-  const { RecordToggle, setRecordToggle, setAudio, setSendAudio } =
+  const { RecordToggle, setRecordToggle, setAudio, setSendAudio, exitChat } =
     useChatStore();
 
   // 버튼 클릭 핸들러
@@ -65,7 +65,9 @@ export default function AudioRecorder() {
 
           // console.log('오디오 설정', resultAudio);
           setAudio(resultAudio);
-          setSendAudio(true);
+          if (exitChat === true) {
+            setSendAudio(true);
+          }
         };
         fileReader.readAsDataURL(audioBlob);
       });

@@ -12,8 +12,14 @@ import { useChatStore } from '../stores/chat';
 export default function ChatPage() {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
-  const { setPlzWait, setRecordToggle, audio, setSendAudio, sendAudio } =
-    useChatStore();
+  const {
+    setPlzWait,
+    setRecordToggle,
+    audio,
+    setSendAudio,
+    sendAudio,
+    setExitChat,
+  } = useChatStore();
 
   const [exitToggle, setExitToggle] = useState(true);
 
@@ -23,19 +29,21 @@ export default function ChatPage() {
     message: string;
   }
 
-  const chatArrayFinal: Array<chatArrayState> = [];
+  let chatArrayFinal: Array<chatArrayState> = [];
   const [sendChatArray, setSendChatArray] = useState<chatArrayState[]>([]);
+  const [sendChatting, setSendChatting] = useState<chatArrayState[]>([]);
 
-  const [close, setclose] = useState(false);
   const connectWebSocket = async () => {
     const roomId = window.localStorage.getItem('chat_id');
 
     const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomId}/`);
 
     let chatArray = new Array();
+    let storeArray = new Array();
 
     ws.onopen = () => {
       // 웹소켓 시작 설정
+      setExitChat(true);
       setSocketConnected(true);
       setSocket(ws);
     };
@@ -60,30 +68,70 @@ export default function ChatPage() {
       if (messageEvent === 'conversation') {
         chatArray.push(messageReceived.data.message);
         const chat = chatArray.join('');
-        if (checkFinish === 'stop') {
-          chatArray = [];
 
-          //쿼카 메세지
-          if (messageReceived.data.character === 'quokka') {
-            const data = {
-              character: 'quokka',
-              message: chat,
-            };
-            chatArrayFinal.push(data);
-            setSendChatArray(chatArrayFinal);
-            console.log('쿼카 메세지 setSendChatArray');
+        //쿼카
+        if (messageReceived.data.character === 'quokka') {
+          const data = {
+            character: 'quokka',
+            message: chat,
+          };
+          storeArray.concat(chatArrayFinal);
+
+          chatArrayFinal.push(data);
+          setSendChatArray(chatArrayFinal);
+
+          if (checkFinish === 'stop') {
+            chatArray = [];
+            storeArray.push(chatArrayFinal);
+            setSendChatting(storeArray);
           }
-          //아이 메세지
-          if (messageReceived.data.character === 'child') {
-            const data = {
-              character: 'child',
-              message: chat,
-            };
-            chatArrayFinal.push(data);
-            setSendChatArray(chatArrayFinal);
-            console.log('아이 메세지 setSendChatArray');
-          }
+          console.log('한문장이 들어오나 확인 필', storeArray);
+          chatArrayFinal = [];
         }
+
+        //아이
+        else if (messageReceived.data.character === 'child') {
+          const data = {
+            character: 'child',
+            message: chat,
+          };
+          storeArray.concat(chatArrayFinal);
+
+          chatArrayFinal.push(data);
+          setSendChatArray(chatArrayFinal);
+
+          if (checkFinish === 'stop') {
+            chatArray = [];
+            storeArray.push(chatArrayFinal);
+            setSendChatting(storeArray);
+          }
+          console.log('한문장이 들어오나 확인 필', storeArray);
+          chatArrayFinal = [];
+        }
+        // if (checkFinish === 'stop') {
+        //   chatArray = [];
+
+        //   //쿼카 메세지
+        //   if (messageReceived.data.character === 'quokka') {
+        //     const data = {
+        //       character: 'quokka',
+        //       message: chat,
+        //     };
+        //     chatArrayFinal.push(data);
+        //     setSendChatArray(chatArrayFinal);
+        //     console.log('쿼카 메세지 setSendChatArray');
+        //   }
+        //   //아이 메세지
+        //   if (messageReceived.data.character === 'child') {
+        //     const data = {
+        //       character: 'child',
+        //       message: chat,
+        //     };
+        //     chatArrayFinal.push(data);
+        //     setSendChatArray(chatArrayFinal);
+        //     console.log('아이 메세지 setSendChatArray');
+        //   }
+        // }
       } else if (messageEvent === 'question_tts') {
         setPlzWait(false);
         console.log('tts 시작');
@@ -120,17 +168,6 @@ export default function ChatPage() {
     }
   };
 
-  //웹소켓 종료
-  const endWebSocket = () => {
-    const ws = socket;
-    if (close === true && ws) {
-      ws.close(1000, '해결');
-      ws.onclose = () => {
-        console.log('disconnect from room ');
-      };
-    }
-  };
-
   //오디오 전달
   const sendAudioWebSocket = () => {
     const ws = socket;
@@ -163,14 +200,12 @@ export default function ChatPage() {
   };
 
   const handleQuitChat = () => {
-    console.log(exitToggle);
-
     if (exitToggle === false) {
-      setclose(true);
-      endWebSocket();
-
+      setExitChat(false);
       setIsCameraModalOpen(true);
       setExitToggle(true);
+      setRecordToggle(false); //안정장치
+
       console.log('됨');
     }
   };
@@ -211,7 +246,10 @@ export default function ChatPage() {
               {toggle === '1' ? (
                 <CameraBox />
               ) : (
-                <ChatBox sendChatArray={sendChatArray} />
+                <ChatBox
+                  sendChatArray={sendChatArray}
+                  sendChatting={sendChatting}
+                />
               )}
             </ComponentsWrapper>
           )
@@ -222,7 +260,10 @@ export default function ChatPage() {
             {toggle === '1' ? (
               <CameraBox />
             ) : (
-              <ChatBox sendChatArray={sendChatArray} />
+              <ChatBox
+                sendChatArray={sendChatArray}
+                sendChatting={sendChatting}
+              />
             )}
           </ComponentsWrapper>
         )}
