@@ -19,9 +19,11 @@ export default function ChatBox({ sendChatArray, sendChatting }: ChatBoxProps) {
   );
   const messageLayOutRef = useRef<HTMLDivElement | null>(null);
 
-  console.log('sendChatting 문장이 props로 잘 넘어가나용', sendChatting);
+  const [End, setEnd] = useState<{ character?: string; message?: string }[]>(
+    []
+  );
 
-  // console.log('왜 목소리 나오고 나옴? 왜 시작할 때는 잘 나왔잖아', messages);
+  let Middle = [];
 
   //스크롤부분
   useEffect(() => {
@@ -32,31 +34,32 @@ export default function ChatBox({ sendChatArray, sendChatting }: ChatBoxProps) {
   });
 
   useEffect(() => {
+    let test1 = [];
+    let test2 = [];
+
     if (sendChatArray !== messages) {
       setMessages(sendChatArray);
+      test1 = sendChatArray;
+      console.log('messages', messages);
     }
 
     if (sendChatting !== messages) {
       setChat(sendChatting.flat());
-      console.log('sentence', chat);
+      test2 = sendChatting;
+      console.log('chat', chat);
     }
+
+    Middle = test2.flat();
+    Middle = Middle.concat(test1);
+
+    setEnd(Middle);
+    console.log(End);
   }, [sendChatArray, sendChatting]);
 
   return (
     <ChatLayout>
       <ChatBoxLayout ref={messageLayOutRef}>
-        {chat.length > 1 &&
-          chat.slice(0, chat.length - 1).map((chat, index) => {
-            if (chat.character === 'quokka') {
-              return <OpponentMessage key={index} chatMessage={chat.message} />;
-            }
-            if (chat.character === 'child') {
-              return <MyMessage key={index} chatMessage={chat.message} />;
-            }
-            return null;
-          })}
-
-        {messages.map((message, index) => {
+        {End.slice(0, End.length - 1).map((message, index) => {
           if (message.character === 'quokka') {
             return (
               <OpponentMessage key={index} chatMessage={message.message} />
