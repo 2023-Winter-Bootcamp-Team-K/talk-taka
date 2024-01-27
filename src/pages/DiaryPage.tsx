@@ -28,7 +28,7 @@ export default function DiaryPage() {
     {
       enabled: !!selectedDiaryId,
       refetchInterval: (diaryData) =>
-        diaryData?.message === '일기가 생성 중 입니다.' ? 1000 : false,
+        diaryData?.message === '이미지 생성 중입니다.' ? 1000 : false,
       onSuccess: (data) => {
         if (data.message === '일기 조회 성공') {
           setOpenModal(false);
