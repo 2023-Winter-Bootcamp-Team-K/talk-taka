@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
+import { lazy, Profiler, Suspense } from 'react';
 import LoadingFallback from './LoadingFallback'; // LoadingFallback 컴포넌트 임포트
+import PrivateRoute from './PrivateRoute';
 
 const LoginPage = lazy(() => import('./pages/LogInPage'));
 const SignupPage = lazy(() => import('./pages/SignupPage'));
@@ -42,41 +43,51 @@ const router = createBrowserRouter([
   {
     path: '/bookcover',
     element: (
-      <Suspense fallback={<LoadingFallback />}>
-        <BookCover />
-      </Suspense>
+      <PrivateRoute>
+        <Suspense fallback={<LoadingFallback />}>
+          <BookCover />
+        </Suspense>
+      </PrivateRoute>
     ),
   },
   {
     path: '/diary',
     element: (
-      <Suspense fallback={<LoadingFallback />}>
-        <DiaryPage />
-      </Suspense>
+      <PrivateRoute>
+        <Suspense fallback={<LoadingFallback />}>
+          <DiaryPage />
+        </Suspense>
+      </PrivateRoute>
     ),
   },
   {
     path: '/main',
     element: (
-      <Suspense fallback={<LoadingFallback />}>
-        <MainPage />
-      </Suspense>
+      <PrivateRoute>
+        <Suspense fallback={<LoadingFallback />}>
+          <MainPage />
+        </Suspense>
+      </PrivateRoute>
     ),
   },
   {
     path: '/chat',
     element: (
-      <Suspense fallback={<LoadingFallback />}>
-        <ChatPage />
-      </Suspense>
+      <PrivateRoute>
+        <Suspense fallback={<LoadingFallback />}>
+          <ChatPage />
+        </Suspense>
+      </PrivateRoute>
     ),
   },
   {
     path: '/result',
     element: (
-      <Suspense fallback={<LoadingFallback />}>
-        <Result />
-      </Suspense>
+      <PrivateRoute>
+        <Suspense fallback={<LoadingFallback />}>
+          <Result />
+        </Suspense>
+      </PrivateRoute>
     ),
   },
 ]);
