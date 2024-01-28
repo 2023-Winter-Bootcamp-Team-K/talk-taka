@@ -12,12 +12,12 @@ interface Data {
     Question?: string;
     child?: string;
   }[];
-  picture: string;
+  picture?: string;
 }
 
 export default function Result() {
   const chatRoomId = window.localStorage.getItem('chat_id');
-  const [isMobile, setIsMobile] = useState(
+  const [isMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
   );
   const [data, setData] = useState<Data | null>(null);
@@ -46,7 +46,7 @@ export default function Result() {
   return (
     <BackGround>
       <Layout>
-        <ChatHistoryInfo date={date} picture={picture} />
+      {picture && <ChatHistoryInfo date={date} picture={picture} />}
         {isMobile ? (
           <>
             <QuitChatBtn onClick={GoToBefore}>

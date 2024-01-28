@@ -86,6 +86,30 @@ export default function CameraModal() {
     }
   };
 
+  const handleNoCamera = async () => {
+    const chat_room_id = window.localStorage.getItem('chat_id');
+    try {
+      const response = await baseInstance.post(
+        `/diary/`,
+        {
+          mood: window.localStorage.getItem('mood'),
+          chat_room_id: chat_room_id,
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      if (response.data.status === '201') {
+        window.localStorage.setItem('selectedDiaryId', response.data.diaryId);
+        navigate('/diary');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <Overlay>
@@ -119,7 +143,12 @@ export default function CameraModal() {
               <Confirm onClick={confirmImage}>확인</Confirm>
             </Row>
           ) : (
+          <>
             <Capture onClick={capture}>찰칵!</Capture>
+            <NoCameraButton onClick={handleNoCamera}>
+              카메라가 없어요 ㅠㅠ
+            </NoCameraButton>
+          </>
           )}
         </Container>
       </Overlay>
@@ -156,7 +185,7 @@ const Container = styled.div`
   }
   @media all and (max-width: 390px) {
     width: 21.4375rem;
-    height: 25.6875rem;
+    height: 26rem;
   }
 `;
 
@@ -313,5 +342,18 @@ const Confirm = styled.button`
     height: 2.56875rem;
     background: #ff888c;
     font-size: 1rem;
+  }
+`;
+
+const NoCameraButton = styled(Capture)`
+  background: transparent; 
+  color: grey;
+  margin-top: 0.3rem; 
+  margin-bottom: 0.5rem; 
+  min-width:12rem;
+
+  &:hover {
+    color: #ff888c; 
+    text-decoration: underline; 
   }
 `;
