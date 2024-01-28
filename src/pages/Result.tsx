@@ -17,7 +17,7 @@ interface Data {
 
 export default function Result() {
   const chatRoomId = window.localStorage.getItem('chat_id');
-  const [isMobile, setIsMobile] = useState(
+  const [isMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
   );
   const [data, setData] = useState<Data | null>(null);
