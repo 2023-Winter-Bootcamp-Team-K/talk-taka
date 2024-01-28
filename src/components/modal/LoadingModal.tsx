@@ -5,13 +5,13 @@ export default function LoadingModal() {
     <>
       <Overlay>
         <Container>
-          <p>일기를 만들고 있어요</p>
-          <img src="src/assets/img/LoadingQuaka.png" alt="" />
-          <LoadingContainer>
-            <Loading />
-          </LoadingContainer>
-          <br /><br />
-          <p>잠시만 기다려줘</p>
+        <Text className="message-top">일기를 만들고 있어요</Text>
+        <StyledImage src="src/assets/img/LoadingQuaka.png" alt="" />
+        <br /><br />
+        <LoadingContainer>
+          <Loading />
+        </LoadingContainer>
+        <Text className="message-bottom">잠시만 기다려줘</Text>
         </Container>
       </Overlay>
     </>
@@ -46,30 +46,58 @@ const Container = styled.div`
   @media all and (min-width: 391px) {
     width: 30rem;
     height: 30rem;
+    padding-top: 1rem;
+  }
 
-    p {
-      font-family: 'Cafe24Dongdong';
-      font-size: 1.5rem;
-      text-align: center;
-      margin-bottom: 3rem;
+  @media all and (max-width: 390px) {
+    width: 18rem;
+    height: 20rem;
+    padding-top: 2rem;
+
+
+`;
+
+const Text = styled.p`
+  font-family: 'Cafe24Dongdong';
+  text-align: center;
+  margin-bottom: 2rem;
+  font-weight: 600;
+
+  &.message-top {
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+    font-size: 1.5rem;
+
+    @media all and (max-width: 390px) {
+      font-size: 1.2rem;
+      margin-bottom: 2.5rem;
       font-weight: 400;
     }
   }
-  @media all and (max-width: 390px) {
-    width: 21.4375rem;
-    height: 24.8125rem;
+  &.message-bottom {
+    font-size: 1.5rem;
+    margin-bottom: 3.2rem;
 
-    p {
-      font-family: 'Cafe24Dongdong';
-      font-size: 1.125rem;
-      text-align: center;
-      margin-bottom: 2.8rem;
-      font-weight: 600;
+    @media all and (max-width: 390px){
+      font-size: 1.2rem;
+      margin-bottom: 3.2rem;
     }
+  }
+`;
+
+const StyledImage = styled.img`
+
+  @media all and (max-width: 390px) {
+    width: 55%;
+    height: 55%;
   }
 `;
 
 const LoadingContainer = styled.div`
   position: absolute;
-  bottom: 96px;
+  bottom: 110px;
+
+  @media all and (max-width: 390px) {
+    bottom: 72px;
+  }
 `;

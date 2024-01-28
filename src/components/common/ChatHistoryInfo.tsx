@@ -10,6 +10,7 @@ interface ChatHistoryInfoProps {
 
 export default function ChatHistoryInfo({ date, picture }: ChatHistoryInfoProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const imageUrl = picture;
 
   return (
     <InfoWrapper>
@@ -17,7 +18,7 @@ export default function ChatHistoryInfo({ date, picture }: ChatHistoryInfoProps)
       <CamShowBtn onClick={() => setIsModalOpen(!isModalOpen)}>
         <CameraIconSvg />
       </CamShowBtn>
-      {isModalOpen && <ImageModal picture={picture}/>}
+      {isModalOpen && <ImageModal picture={imageUrl}/>}
     </InfoWrapper>
   );
 }
@@ -74,3 +75,4 @@ const CamShowBtn = styled.div`
     height: 1.75rem;
   }
 `;
+

@@ -20,8 +20,6 @@ export default function DiaryPage() {
 
   const {
     data: diaryData,
-    isLoading,
-    refetch,
   } = useQuery(
     ['diary', selectedDiaryId],
     () => getDiary(selectedDiaryId || ''),

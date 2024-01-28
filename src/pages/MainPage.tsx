@@ -69,7 +69,7 @@ export default function MainPage() {
       </MainLayout>
       <GreetingLayout>
         다시 돌아오지 않는 <TodayDate /> <br />
-        길동이의 하루를 기록으로 남겨보세요
+        하루를 기록으로 남겨보세요
       </GreetingLayout>
     </BackGround>
   );
