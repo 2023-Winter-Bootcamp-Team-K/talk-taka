@@ -141,7 +141,7 @@ export default function CameraModal() {
             <Row>
               <ReCapture onClick={recapture}>다시 찍기</ReCapture>
               <Confirm onClick={confirmImage}>확인</Confirm>
-            </Row>
+              </Row>
           ) : (
           <>
             <Capture onClick={capture}>찰칵!</Capture>
@@ -357,3 +357,4 @@ const NoCameraButton = styled(Capture)`
     text-decoration: underline; 
   }
 `;
+

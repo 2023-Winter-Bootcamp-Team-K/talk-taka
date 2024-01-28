@@ -43,3 +43,4 @@ const CapturedImage = styled.img`
   height: 15.8125rem;
   border-radius: 1.25rem;
 `;
+

@@ -13,7 +13,7 @@ export default function Loading() {
 const Wrapper = styled.div`
   width: 11rem;
   height: 11rem;
-
+  
   @media all and (max-width: 390px) {
     width: 7rem; 
     height: 7rem; 

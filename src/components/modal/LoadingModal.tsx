@@ -43,7 +43,6 @@ const Container = styled.div`
   border-radius: 1.4375rem;
   background: #fff;
 
-
   @media all and (min-width: 391px) {
     width: 30rem;
     height: 30rem;
@@ -75,7 +74,6 @@ const Text = styled.p`
       font-weight: 400;
     }
   }
-
   &.message-bottom {
     font-size: 1.5rem;
     margin-bottom: 3.2rem;

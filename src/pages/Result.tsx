@@ -12,12 +12,12 @@ interface Data {
     Question?: string;
     child?: string;
   }[];
-  picture?: string;
+  picture: string;
 }
 
 export default function Result() {
   const chatRoomId = window.localStorage.getItem('chat_id');
-  const [isMobile] = useState(
+  const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
   );
   const [data, setData] = useState<Data | null>(null);
@@ -27,11 +27,12 @@ export default function Result() {
   };
 
   const content = data?.content;
-  const picture = data?.picture;
   const location = useLocation();
   const {YY, MM, DD} = location.state;
   const date = `${YY}년 ${MM}월 ${DD}일`;
-
+  const picture =  data?.picture || 'src/assets/img/DefaultResultImage.png';
+  console.log(picture)
+  
   useEffect(() => {
     baseInstance
       .get(`/apps/chat_list/${chatRoomId}/`)
@@ -46,7 +47,7 @@ export default function Result() {
   return (
     <BackGround>
       <Layout>
-      {picture && <ChatHistoryInfo date={date} picture={picture} />}
+        <ChatHistoryInfo date={date} picture={picture} />
         {isMobile ? (
           <>
             <QuitChatBtn onClick={GoToBefore}>
@@ -176,3 +177,4 @@ const ButtonImage = styled.img`
     height: 1.5rem;    
   }
 `;
+

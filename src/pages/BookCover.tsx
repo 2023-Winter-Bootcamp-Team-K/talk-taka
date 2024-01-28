@@ -28,6 +28,10 @@ export default function BookCover() {
       navigate('/diary');
     }, 1400);
   };
+  const defaultImageStyle = diaryContent?.captureURL ? {} : {
+    height: '25rem',
+    boxShadow: '0 0 0 0'
+  };
   return (
     <>
       <BackGround>
@@ -36,7 +40,7 @@ export default function BookCover() {
             <Front>
               <Year>{2024}</Year>
               <Title>{diaryContent?.username} 다이어리</Title>
-              <img src={diaryContent?.captureURL} alt="" />
+              <img src={diaryContent?.captureURL || 'src/assets/img/DefaultBookCover.png'} alt="Book Cover" style={defaultImageStyle} />
               <button onClick={openBook}>함께 보러가기 </button>
             </Front>
             {showRight && <Back></Back>}
