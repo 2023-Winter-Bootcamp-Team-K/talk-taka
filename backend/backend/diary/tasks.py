@@ -20,7 +20,9 @@ def generate_image_task(chat_room_id, summary):
     try:
         response = client.images.generate(
             model="dall-e-3",
-            prompt=summary,
+            prompt=f'{summary} Generate a cute and adorable illustration with the feel of a drawing by a 4 to 6-year-old child based on the summary'
+                   f' If there are human illustrations in the drawing, you must depict them with a light apricot-colored skin tone (#fff7f2) and draw black or dark brown hair. '
+                   f' You never put any text in the drawing.',
             size="1024x1024",
             quality="standard",
             n=1,
