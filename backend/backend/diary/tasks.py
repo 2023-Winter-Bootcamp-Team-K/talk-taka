@@ -22,7 +22,15 @@ def generate_image_task(chat_room_id, summary):
     # Dall-E 이미지 생성
     response = client.images.generate(
         model="dall-e-3",
-        prompt=summary,
+        prompt=f'{summary}'f'From now on, you will be drawing illustrations to be included in a child\'s picture diary.'
+        f'You should follow the following instructions :'
+        f'Use seed number 3129831613. Do not arbitrarily change the prompt below, but use it as it is to create an image.Create an image that captures the essence of a drawing by a child, influenced by the uploaded reference. The artwork should mimic the style of the child-like sketch, complete with simplistic shapes, bright and primary colors, and the innocent charm of a child\'s artistry.The drawing should look like it\'s done with crayons or markers, with bold lines, and it should have a happy, playful atmosphere.'
+        f'The image should maintain the same style and characteristics as the one produced with the given seed number.'
+        f'1.Draw the illustration based on the summary provided. '
+        f'2.Create an illustration that suits a child\'s picture diary.'
+        f'3.If there are human illustrations, color the skin in #FDECE2.'
+        f'4.You never include any text in the illustration.'
+        f'Remember, you should follow these instructions',
         size="1024x1024",
         quality="standard",
         n=1,

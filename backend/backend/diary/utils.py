@@ -34,21 +34,20 @@ def generate_summary(content):
     )
     return response.choices[0].message.content
 # 달리 이미지 생성 로직보
-def generate_image(summary):
-
-    response = client.images.generate(
-        model="dall-e-3",
-        prompt=f'{summary}'
-               f'From now on, you will be drawing illustrations to be included in a child\'s picture diary. Please adhere to the following conditions: '
-               f'1.Draw the illustration based on the summary provided. '
-               f'2.Create an illustration that suits a child\'s picture diary. '
-               f'3.Refer to seed number "3129831613" and draw in a similar style. '
-               f'4.If there are human illustrations, color the skin in #fdece2. '
-               f'5.Do not include any text in the illustration. '
-               f'I would like to recreate an image I previously generated using seed number "3129831613". The image should maintain the same style and characteristics as the one produced with the given seed number',size="1024x1024",
-        quality="standard",
-        n=1,
-        style="natural",
-    )
-    image_url = response.data[0].url
-    return image_url
+# def generate_image(summary):
+#
+#     response = client.images.generate(
+#         model="dall-e-3",
+#         prompt=f'{summary}'
+#                f'From now on, you will be drawing illustrations to be included in a child\'s picture diary. Please adhere to the following conditions: '
+#                f'Draw the illustration based on the summary provided. '
+#                f'Use seed number 3129831613. Do not arbitrarily change the prompt below, but use it as it is to create an image.Create an image that captures the essence of a drawing by a child, influenced by the uploaded reference. The artwork should mimic the style of the child-like sketch, complete with simplistic shapes, bright and unevenly applied colors, and the innocent charm of a child\'s artistry.The drawing should look like it\'s done with crayons or markers, with bold lines, and it should have a happy, playful atmosphere.'
+#                f'If there are human illustrations, color the skin in #fdece2. '
+#                f'Do not include any text in the illustration. ',
+#
+#         quality="standard",
+#         n=1,
+#         style="natural",
+#     )
+#     image_url = response.data[0].url
+#     return image_url
