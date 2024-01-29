@@ -13,6 +13,7 @@ services:
     env_file:
       - .env
 
+
   web:
     build:
       context: backend/backend
@@ -33,6 +34,8 @@ services:
       - db
     env_file:
       - .env
+    networks:
+      - ai_net
 
   frontend:
     build:
@@ -59,6 +62,8 @@ services:
     build:
       context: ./nginx
       dockerfile: Dockerfile
+    networks:
+      - ai_net
     ports:
       - "80:80"
     volumes:
@@ -73,6 +78,8 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - ai_net
 
 
   celery:
@@ -88,6 +95,8 @@ services:
       - amqp://guest:guest@rabbitmq:5672//  # Django 설정 환경 변수 추가
     env_file:
       - .env
+    networks:
+      - ai_net
 
 
   cadvisor:
@@ -120,6 +129,8 @@ services:
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
+    networks:
+      - ai_net
 
 
   grafana:
@@ -130,6 +141,8 @@ services:
       - "3000:3000"
     depends_on:
       - prometheus
+    networks:
+      - ai_net
 
 
   node-exporter:
@@ -147,9 +160,13 @@ services:
     ports:
       - "9100:9100"
     restart: always
+    networks:
+      - ai_net
 
 
-
+networks:
+  ai_net:
+    external: true
 #  certbot:
 #    image: certbot/certbot
 #    restart: unless-stopped
