@@ -12,6 +12,8 @@ services:
       - "3307:3306"
     env_file:
       - .env
+    networks:
+      - ai_net
 
 
   web:
