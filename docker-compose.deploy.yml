@@ -19,13 +19,7 @@ services:
       context: backend/backend
       dockerfile: Dockerfile
     restart: always
-    command: sh -c "dockerize -wait tcp://db:3306 -timeout 1m
-      && python manage.py makemigrations users
-      && python manage.py makemigrations apps
-      && python manage.py makemigrations diary
-      && python manage.py migrate
-      && python manage.py runserver 0.0.0.0:8000"
-#      && gunicorn your_project.wsgi:application -b 0.0.0.0:8000
+    command:  bash -c "python manage.py makemigrations && python manage.py migrate && daphne -b 0.0.0.0 -p 8000 config.asgi:application"
     volumes:
       - ./backend:/backend
     ports:
