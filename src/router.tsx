@@ -46,7 +46,6 @@ const routes = [
   createRoute('main', MainPage, true),
   createRoute('chat', ChatPage, true),
   createRoute('result', Result, true),
-  { path: '*', element: <Forbidden /> },
 ];
 
 const router = createBrowserRouter([
