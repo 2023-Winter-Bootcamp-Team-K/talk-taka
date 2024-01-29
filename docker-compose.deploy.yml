@@ -166,7 +166,7 @@ services:
 
 networks:
   ai_net:
-    external: true
+    driver: bridge
 #  certbot:
 #    image: certbot/certbot
 #    restart: unless-stopped
