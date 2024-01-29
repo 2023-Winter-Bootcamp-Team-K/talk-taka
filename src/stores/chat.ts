@@ -1,5 +1,4 @@
-import { create, StateCreator } from 'zustand';
-import { persist, PersistOptions } from 'zustand/middleware';
+import { create } from 'zustand';
 
 type ChatStore = {
   RecordToggle: boolean;
