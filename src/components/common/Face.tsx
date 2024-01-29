@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export default function FaceBox({ picture }: { picture: string | undefined }) {
-  const defaultImageUrl = 'src/assets/img/DefaultResultImage.png'; 
+  const defaultImageUrl = 'src/assets/img/DefaultResultImage.png';
   const imageUrl = picture || defaultImageUrl;
   const isDefaultImage = imageUrl === defaultImageUrl;
 
@@ -9,8 +9,14 @@ export default function FaceBox({ picture }: { picture: string | undefined }) {
     <CameraLayout>
       <BubbleLayout src={'src/assets/img/HeartBubble.png'} />
       <CameraBoxLayout isDefaultImage={isDefaultImage}>
-        <img src={imageUrl} alt="Face or Default Image" style={{ width: '100%', height: 'auto' }} />
-        {isDefaultImage && <DefaultImageText>이 날 찍은 사진이 없어요</DefaultImageText>}
+        <img
+          src={imageUrl}
+          alt="Face or Default Image"
+          style={{ width: '100%', height: 'auto' }}
+        />
+        {isDefaultImage && (
+          <DefaultImageText>이 날 찍은 사진이 없어요</DefaultImageText>
+        )}
       </CameraBoxLayout>
     </CameraLayout>
   );
@@ -41,7 +47,7 @@ const CameraBoxLayout = styled.div<{ isDefaultImage?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: ${({ isDefaultImage }) => (isDefaultImage ? 'none' : '#d9d9d9')}; 
+  background: ${({ isDefaultImage }) => (isDefaultImage ? 'none' : '#d9d9d9')};
 
   img {
     margin-top: 1.37rem;
@@ -68,8 +74,8 @@ const DefaultImageText = styled.div`
   font-family: 'Cafe24Dongdong';
   font-style: normal;
   line-height: normal;
-  margin-top: -4rem; 
-  font-size: 1.5rem; 
+  margin-top: -4rem;
+  font-size: 1.5rem;
 `;
 
 const BubbleLayout = styled.img`
@@ -82,4 +88,3 @@ const BubbleLayout = styled.img`
     display: none;
   }
 `;
-

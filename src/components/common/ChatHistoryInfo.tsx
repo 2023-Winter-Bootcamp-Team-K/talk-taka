@@ -2,15 +2,31 @@ import { styled } from 'styled-components';
 import { useState } from 'react';
 import { CameraIconSvg } from '../../assets/SVG';
 import ImageModal from '../modal/ImageModal';
+import { useEffect } from 'react';
 
 interface ChatHistoryInfoProps {
   date: string;
-  picture: string;  
+  picture: string;
 }
 
-export default function ChatHistoryInfo({ date, picture }: ChatHistoryInfoProps) {
+export default function ChatHistoryInfo({
+  date,
+  picture,
+}: ChatHistoryInfoProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const imageUrl = picture;
+
+  //크기에 따른 isModal open 값 변경
+  const handleResize = () => {
+    setIsModalOpen(window.matchMedia('(max-width: 390px)').matches);
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   return (
     <InfoWrapper>
@@ -18,7 +34,7 @@ export default function ChatHistoryInfo({ date, picture }: ChatHistoryInfoProps)
       <CamShowBtn onClick={() => setIsModalOpen(!isModalOpen)}>
         <CameraIconSvg />
       </CamShowBtn>
-      {isModalOpen && <ImageModal picture={imageUrl}/>}
+      {isModalOpen && <ImageModal picture={imageUrl} />}
     </InfoWrapper>
   );
 }
@@ -75,4 +91,3 @@ const CamShowBtn = styled.div`
     height: 1.75rem;
   }
 `;
-
