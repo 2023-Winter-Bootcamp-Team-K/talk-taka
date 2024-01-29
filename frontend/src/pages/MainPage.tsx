@@ -5,7 +5,7 @@ import Calender from '../components/calender/Calender';
 import { useQuery } from 'react-query';
 import { getDiaries } from '../api/calender/calender';
 import { baseInstance } from '../api/config';
-import { getCookie } from '../utils/cookie';
+import { getCookie, removeCookie } from '../utils/cookie';
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export default function MainPage() {
         window.localStorage.setItem('chat_id', response.data.chat_room_id);
         navigate(`/chat`);
       }
-    } catch(error) {
+    } catch (error) {
       console.error(error);
     }
   };
@@ -37,14 +37,15 @@ export default function MainPage() {
 
   const { data: DiariesData } = useQuery('sales', () => getDiaries(token));
   const diaries = DiariesData?.data;
-  
 
   const logout = async () => {
     const refresh = getCookie('refresh_token');
+    removeCookie('token');
+    removeCookie('refresh_token');
 
     try {
       const response = await baseInstance.post('/auth/logout/', {
-        refresh: refresh
+        refresh: refresh,
       });
       if (response.status === 205) {
         console.log(response);
@@ -62,14 +63,14 @@ export default function MainPage() {
         <LogoutIconSvg />
         로그아웃
       </LogoutBtn>
-        <MainLayout>
-          <Calender data={diaries} />
-          <StyledButton onClick={createChatRoom}>대화하러 가기</StyledButton>
-        </MainLayout>
-        <GreetingLayout>
-          다시 돌아오지 않는 <TodayDate /> <br />
-          길동이의 하루를 기록으로 남겨보세요
-        </GreetingLayout>
+      <MainLayout>
+        <Calender data={diaries} />
+        <StyledButton onClick={createChatRoom}>대화하러 가기</StyledButton>
+      </MainLayout>
+      <GreetingLayout>
+        다시 돌아오지 않는 <TodayDate /> <br />
+        하루를 기록으로 남겨보세요
+      </GreetingLayout>
     </BackGround>
   );
 }

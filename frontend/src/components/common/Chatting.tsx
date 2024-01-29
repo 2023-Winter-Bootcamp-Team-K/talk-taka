@@ -7,15 +7,23 @@ import { useRef } from 'react';
 
 type ChatBoxProps = {
   sendChatArray: any[];
+  sendChatting: any[];
 };
 
-export default function ChatBox({ sendChatArray }: ChatBoxProps) {
+export default function ChatBox({ sendChatArray, sendChatting }: ChatBoxProps) {
   const [messages, setMessages] = useState<
     { character?: string; message?: string }[]
   >([]);
+  const [chat, setChat] = useState<{ character?: string; message?: string }[]>(
+    []
+  );
   const messageLayOutRef = useRef<HTMLDivElement | null>(null);
 
-  console.log('왜 목소리 나오고 나옴? 왜 시작할 때는 잘 나왔잖아', messages);
+  const [End, setEnd] = useState<{ character?: string; message?: string }[]>(
+    []
+  );
+
+  let Middle = [];
 
   //스크롤부분
   useEffect(() => {
@@ -26,15 +34,36 @@ export default function ChatBox({ sendChatArray }: ChatBoxProps) {
   });
 
   useEffect(() => {
+    let test1 = [];
+    let test2 = [];
+
     if (sendChatArray !== messages) {
       setMessages(sendChatArray);
+      test1 = sendChatArray;
+      console.log('messages', messages);
     }
-  }, [sendChatArray, messages]);
+
+    if (sendChatting !== messages) {
+      setChat(sendChatting.flat());
+      test2 = sendChatting.flat();
+      console.log('chat', chat);
+    }
+
+    Middle = test2.flat();
+    Middle = Middle.concat(test1);
+
+    setEnd(Middle);
+    //로그
+    console.log('test1 로그', test1);
+    console.log('test2 로그', test2);
+    console.log('Middle 로그', Middle);
+    console.log('End 로그', End);
+  }, [sendChatArray, sendChatting]);
 
   return (
     <ChatLayout>
       <ChatBoxLayout ref={messageLayOutRef}>
-        {messages.map((message, index) => {
+        {End.slice(0, End.length - 1).map((message, index) => {
           if (message.character === 'quokka') {
             return (
               <OpponentMessage key={index} chatMessage={message.message} />
@@ -55,7 +84,6 @@ export default function ChatBox({ sendChatArray }: ChatBoxProps) {
 const ChatLayout = styled.div`
   border-radius: 1.75rem;
   background: rgba(255, 255, 255, 1);
-  box-shadow: 0px 14px 24px rgba(0, 0, 0, 0.13);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -64,6 +92,7 @@ const ChatLayout = styled.div`
   @media all and (min-width: 391px) {
     width: 31.25rem;
     height: 43.75rem;
+    box-shadow: 0px 14px 24px rgba(0, 0, 0, 0.13);
   }
   @media all and (max-width: 390px) {
     width: 22rem;

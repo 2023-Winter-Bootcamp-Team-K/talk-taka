@@ -1,11 +1,16 @@
 import styled from 'styled-components';
 
-export default function FaceBox() {
+export default function FaceBox({ picture }: { picture: string | undefined }) {
+  const defaultImageUrl = 'src/assets/img/DefaultResultImage.png'; 
+  const imageUrl = picture || defaultImageUrl;
+  const isDefaultImage = imageUrl === defaultImageUrl;
+
   return (
     <CameraLayout>
-      <CameraBoxLayout>
-        {/* 여기 이미지 들어오면 넣을거랍니다. */}
-        <img src=""></img>
+      <BubbleLayout src={'src/assets/img/HeartBubble.png'} />
+      <CameraBoxLayout isDefaultImage={isDefaultImage}>
+        <img src={imageUrl} alt="Face or Default Image" style={{ width: '100%', height: 'auto' }} />
+        {isDefaultImage && <DefaultImageText>이 날 찍은 사진이 없어요</DefaultImageText>}
       </CameraBoxLayout>
     </CameraLayout>
   );
@@ -21,31 +26,60 @@ const CameraLayout = styled.div`
   flex-direction: column;
 
   @media all and (min-width: 391px) {
-    width: 31.25rem;
-    height: 43.75rem;
+    width: 30rem;
+    height: 33.125rem;
   }
   @media all and (max-width: 390px) {
-    width: 21.4375rem;
-    height: 32.625rem;
-    box-shadow: none;
+    /* width: 21.4375rem;
+    height: 17.4375rem;
+    box-shadow: none; */
+    display: none;
   }
 `;
 
-const CameraBoxLayout = styled.div`
+const CameraBoxLayout = styled.div<{ isDefaultImage?: boolean }>`
   display: flex;
   flex-direction: column;
-  background: rgba(255, 255, 255, 0.82);
+  align-items: center;
+  background: ${({ isDefaultImage }) => (isDefaultImage ? 'none' : '#d9d9d9')}; 
 
-  @media all and (min-width: 391px) {
-    margin-top: 5rem;
-    margin-bottom: 3.19rem;
-    width: 26.1875rem;
-    height: 25.6875rem;
+  img {
+    margin-top: 1.37rem;
+    margin-bottom: 6.12rem;
+    border-radius: 1.3125rem;
+
+    ${({ isDefaultImage }) =>
+      isDefaultImage &&
+      `
+        width: 20rem;
+        height: auto; 
+        background: none;
+      `}
   }
+
   @media all and (max-width: 390px) {
-    margin-top: 5.31rem;
-    margin-bottom: 2.87rem;
-    width: 18.5625rem;
-    height: 18.1875rem;
+    display: none;
   }
 `;
+
+const DefaultImageText = styled.div`
+  color: #000;
+  text-align: center;
+  font-family: 'Cafe24Dongdong';
+  font-style: normal;
+  line-height: normal;
+  margin-top: -4rem; 
+  font-size: 1.5rem; 
+`;
+
+const BubbleLayout = styled.img`
+  @media all and (min-width: 391px) {
+    width: 4.6875rem;
+    height: 4.6875rem;
+    margin-top: 1.31rem;
+  }
+  @media all and (max-width: 390px) {
+    display: none;
+  }
+`;
+

@@ -10,11 +10,13 @@ export default function AudioRecorder() {
   );
 
   //zustand 상태관리
-  const { RecordToggle, setRecordToggle, setAudio, setSendAudio } =
+  const { RecordToggle, setRecordToggle, setAudio, setSendAudio, exitChat } =
     useChatStore();
 
   // 버튼 클릭 핸들러
   const handleButtonClick = () => {
+    console.log('테스트');
+
     setRecordToggle(false); // true이면 녹음 시작 false면 중지
     toggleRecording();
   };
@@ -63,7 +65,9 @@ export default function AudioRecorder() {
 
           // console.log('오디오 설정', resultAudio);
           setAudio(resultAudio);
-          setSendAudio(true);
+          if (exitChat === true) {
+            setSendAudio(true);
+          }
         };
         fileReader.readAsDataURL(audioBlob);
       });
@@ -71,7 +75,7 @@ export default function AudioRecorder() {
   };
 
   return (
-    <MicButtonLayout onClick={handleButtonClick}>
+    <MicButtonLayout onClick={handleButtonClick} disabled={!RecordToggle}>
       {RecordToggle ? <MicGIF /> : <Mic src="/src/assets/img/BlackMic.png" />}
     </MicButtonLayout>
   );

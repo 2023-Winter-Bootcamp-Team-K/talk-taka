@@ -7,16 +7,21 @@ import ChatBox from '../components/common/Chatting';
 import ChatInfo from '../components/common/ChatInfo';
 import { toggleStore } from '../stores/toggle';
 import CameraModal from '../components/modal/CameraModal';
-import { baseInstance } from '../api/config';
-import { getCookie } from '../utils/cookie';
 import { useChatStore } from '../stores/chat';
 
 export default function ChatPage() {
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [socketConnected, setSocketConnected] = useState(false);
-  const { setRecordToggle, audio, setSendAudio, sendAudio } = useChatStore();
+  const {
+    setPlzWait,
+    setRecordToggle,
+    audio,
+    setSendAudio,
+    sendAudio,
+    setExitChat,
+  } = useChatStore();
 
-  const Mood = window.localStorage.getItem('mood');
+  const [exitToggle, setExitToggle] = useState(true);
 
   //대화 객체
   interface chatArrayState {
@@ -24,43 +29,21 @@ export default function ChatPage() {
     message: string;
   }
 
-  const chatArrayFinal: Array<chatArrayState> = [];
+  let chatArrayFinal: Array<chatArrayState> = [];
   const [sendChatArray, setSendChatArray] = useState<chatArrayState[]>([]);
+  const [sendChatting, setSendChatting] = useState<chatArrayState[]>([]);
 
-  const onSubmit = async () => {
-    const token = getCookie('token');
-
-    try {
-      const response = await baseInstance.post(
-        `/diary/`,
-        {
-          mood: Mood,
-          chat_room_id: window.localStorage.getItem('chat_id'),
-        },
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
-      if (response.data.status === '201') {
-        window.localStorage.setItem('selectedDiaryId', response.data.diaryId);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const [close, setclose] = useState(false);
   const connectWebSocket = async () => {
     const roomId = window.localStorage.getItem('chat_id');
 
     const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomId}/`);
 
     let chatArray = new Array();
+    let storeArray = new Array();
 
     ws.onopen = () => {
       // 웹소켓 시작 설정
+      setExitChat(true);
       setSocketConnected(true);
       setSocket(ws);
     };
@@ -80,47 +63,90 @@ export default function ChatPage() {
       const messageEvent = messageReceived.event;
       const checkFinish = messageReceived.data.finish_reason;
 
-      console.log(messageReceived);
+      // console.log(messageReceived);
 
       if (messageEvent === 'conversation') {
         chatArray.push(messageReceived.data.message);
         const chat = chatArray.join('');
-        if (checkFinish === 'stop') {
-          chatArray = [];
 
-          //쿼카 메세지
-          if (messageReceived.data.character === 'quokka') {
-            const data = {
-              character: 'quokka',
-              message: chat,
-            };
-            chatArrayFinal.push(data);
-            setSendChatArray(chatArrayFinal);
-            console.log('쿼카 메세지 setSendChatArray');
+        //쿼카
+        if (messageReceived.data.character === 'quokka') {
+          const data = {
+            character: 'quokka',
+            message: chat,
+          };
+          storeArray.concat(chatArrayFinal);
+
+          chatArrayFinal.push(data);
+          setSendChatArray(chatArrayFinal);
+
+          if (checkFinish === 'stop') {
+            chatArray = [];
+            storeArray.push(chatArrayFinal);
+            setSendChatting(storeArray);
           }
-          //아이 메세지
-          if (messageReceived.data.character === 'child') {
-            const data = {
-              character: 'child',
-              message: chat,
-            };
-            chatArrayFinal.push(data);
-            setSendChatArray(chatArrayFinal);
-            console.log('아이 메세지 setSendChatArray');
-          }
+          console.log('한문장이 들어오나 확인 필', storeArray);
+          chatArrayFinal = [];
         }
+
+        //아이
+        else if (messageReceived.data.character === 'child') {
+          const data = {
+            character: 'child',
+            message: chat,
+          };
+          storeArray.concat(chatArrayFinal);
+
+          chatArrayFinal.push(data);
+          setSendChatArray(chatArrayFinal);
+
+          if (checkFinish === 'stop') {
+            chatArray = [];
+            storeArray.push(chatArrayFinal);
+            setSendChatting(storeArray);
+          }
+          console.log('한문장이 들어오나 확인 필', storeArray);
+          chatArrayFinal = [];
+        }
+        // if (checkFinish === 'stop') {
+        //   chatArray = [];
+
+        //   //쿼카 메세지
+        //   if (messageReceived.data.character === 'quokka') {
+        //     const data = {
+        //       character: 'quokka',
+        //       message: chat,
+        //     };
+        //     chatArrayFinal.push(data);
+        //     setSendChatArray(chatArrayFinal);
+        //     console.log('쿼카 메세지 setSendChatArray');
+        //   }
+        //   //아이 메세지
+        //   if (messageReceived.data.character === 'child') {
+        //     const data = {
+        //       character: 'child',
+        //       message: chat,
+        //     };
+        //     chatArrayFinal.push(data);
+        //     setSendChatArray(chatArrayFinal);
+        //     console.log('아이 메세지 setSendChatArray');
+        //   }
+        // }
       } else if (messageEvent === 'question_tts') {
+        setPlzWait(false);
         console.log('tts 시작');
 
         const audioBlob = messageReceived.data.audioBlob;
         let snd = new Audio(`data:audio/x-wav;base64, ${audioBlob}`);
         snd.play();
+
         snd.addEventListener('loadedmetadata', (event) => {
           const sndElement = event.currentTarget as HTMLAudioElement;
           const QuokkaTime = sndElement.duration * 1000;
           setTimeout(() => {
             setNewRecordToggle(false);
             setRecordToggle(true);
+            setExitToggle(false);
           }, QuokkaTime);
         });
       }
@@ -130,6 +156,7 @@ export default function ChatPage() {
   // 웹소켓 시작
   const startWebSocket = () => {
     const ws = socket;
+    const Mood = window.localStorage.getItem('mood');
     if (socketConnected === true && ws) {
       const data = {
         event: 'conversation_start',
@@ -138,17 +165,6 @@ export default function ChatPage() {
         },
       };
       ws.send(JSON.stringify(data));
-    }
-  };
-
-  //웹소켓 종료
-  const endWebSocket = () => {
-    const ws = socket;
-    if (close === true && ws) {
-      ws.close(1000, '해결');
-      ws.onclose = () => {
-        console.log('disconnect from room ');
-      };
     }
   };
 
@@ -165,6 +181,8 @@ export default function ChatPage() {
       setSendAudio(false);
       setRecordToggle(false);
       setNewRecordToggle(true);
+      setExitToggle(true);
+      setPlzWait(true);
     }
   };
 
@@ -180,16 +198,16 @@ export default function ChatPage() {
     setIsModalOpen(false);
     startWebSocket();
   };
-  // const handleShowChar = () => {
-  //   setShowChar(true);
-  // };
 
   const handleQuitChat = () => {
-    onSubmit();
-    setclose(true);
-    endWebSocket();
+    if (exitToggle === false) {
+      setExitChat(false);
+      setIsCameraModalOpen(true);
+      setExitToggle(true);
+      setRecordToggle(false); //안정장치
 
-    setIsCameraModalOpen(true);
+      console.log('됨');
+    }
   };
 
   //마이크 테스트
@@ -198,9 +216,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     sendAudioWebSocket();
-    setTimeout(() => {
-      // setNewRecordToggle(true);
-    }, 2000);
+    setTimeout(() => {}, 2000);
   }, [sendAudio]);
 
   useEffect(() => {
@@ -230,7 +246,10 @@ export default function ChatPage() {
               {toggle === '1' ? (
                 <CameraBox />
               ) : (
-                <ChatBox sendChatArray={sendChatArray} />
+                <ChatBox
+                  sendChatArray={sendChatArray}
+                  sendChatting={sendChatting}
+                />
               )}
             </ComponentsWrapper>
           )
@@ -241,21 +260,39 @@ export default function ChatPage() {
             {toggle === '1' ? (
               <CameraBox />
             ) : (
-              <ChatBox sendChatArray={sendChatArray} />
+              <ChatBox
+                sendChatArray={sendChatArray}
+                sendChatting={sendChatting}
+              />
             )}
           </ComponentsWrapper>
         )}
       </Layout>
       {isCameraModalOpen && <CameraModal />}
-      <QuitChatBtn onClick={handleQuitChat}>
+      <QuitChatBtn onClick={handleQuitChat} disabled={exitToggle}>
         대화 끝내기
-        <ButtonImage src="src/assets/img/QuitIcon.png" />
+        {exitToggle === true && (
+          <ButtonImage src="src/assets/img/QuitIcon2.png" />
+        )}
+        {exitToggle === false && (
+          <ButtonImage src="src/assets/img/QuitIcon.png" />
+        )}
       </QuitChatBtn>
     </BackGround>
   ) : (
-    <div>다시 시도 하시옹</div>
+    <TryAgain />
   );
 }
+
+const TryAgain = styled.div`
+  background-image: url('src/assets/img/F5.png');
+  background-position-x: 50%;
+  background-position-y: 75%;
+  /* background-size: 100%; */
+  width: 100vw;
+  height: 100vh;
+  background-repeat: no-repeat;
+`;
 
 const Layout = styled.div`
   display: flex;
@@ -319,15 +356,18 @@ const ComponentsWrapper = styled.div`
   }
 `;
 
-const QuitChatBtn = styled.button`
+const QuitChatBtn = styled.button<{ disabled: boolean }>`
   all: unset;
+
+  /* background:; */
+
   position: absolute;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   cursor: pointer;
-
-  color: #000;
+  color: ${(props) => (props.disabled ? '#aeaeae' : '#2c2c2c')};
+  /* color: #000; */
   text-align: center;
   font-family: 'Cafe24Dongdong';
   font-weight: 400;
