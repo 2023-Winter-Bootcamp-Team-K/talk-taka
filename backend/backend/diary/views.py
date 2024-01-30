@@ -4,6 +4,7 @@ from django.utils import timezone
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Diary
@@ -11,6 +12,7 @@ from django.http import Http404
 from .utils import *
 from apps.models import ChatRoom
 from .tasks import generate_image_task
+from django.core.exceptions import PermissionDenied
 
 
 class DiaryCreateView(APIView):
@@ -72,6 +74,14 @@ class DiaryView(APIView):
     def get(self, request, pk, format=None):
         try:
             diary = Diary.objects.get(pk=pk)
+
+            # 요청한 사용자가 일기 작성자와 다를 경우 접근 제한
+            if diary.user != request.user:
+                return Response({
+                    "status": "403",
+                    "message": "접근 권한이 없습니다."
+                }, status=status.HTTP_403_FORBIDDEN)
+
             chat_room_id = diary.chat_room.id if diary.chat_room else None
 
             if diary.image_status == 'processing':
@@ -85,11 +95,10 @@ class DiaryView(APIView):
                 image_url = None
 
         except Diary.DoesNotExist:
-            # 일기가 아직 데이터베이스에 없는 경우, 생성 중임을 알림
             return Response({
-                "status": "200",
-                "message": "일기가 생성 중 입니다."
-            })
+                "status": "404",
+                "message": "일기를 찾을 수 없습니다."
+            }, status=status.HTTP_404_NOT_FOUND)
 
         diary_data = {
             "status": "200",
@@ -104,19 +113,22 @@ class DiaryView(APIView):
         }
         return Response(diary_data)
 class DiaryListView(APIView):
+    permission_classes = [IsAuthenticated]  # 사용자가 로그인한 경우에만 접근 허용
+
     @swagger_auto_schema(
         operation_id="일기 일정 조회"
     )
 
     def get(self, request, format=None):
-        diary_list = Diary.objects.all()
+        # 로그인한 사용자의 일기만 필터링
+        diary_list = Diary.objects.filter(user=request.user)
         data = [
             {
                 "diaryId": str(diary.id),
                 "imageURL": diary.image_url,
                 "created_at": diary.created_at.strftime("%Y-%m-%d"),
                 "mood": diary.mood,
-                "chat_room_id": diary.chat_room.id
+                "chat_room_id": diary.chat_room.id if diary.chat_room else None
             }
             for diary in diary_list
         ]
@@ -127,6 +139,14 @@ class DiaryListView(APIView):
         }
         return Response(response)
 
+    def handle_exception(self, exc):
+        if isinstance(exc, PermissionDenied):
+            response = {
+                "status": "403",
+                "message": "접근 권한이 없습니다."
+            }
+            return Response(response, status=status.HTTP_403_FORBIDDEN)
+        return super().handle_exception(exc)
 
 class DiaryDeleteView(APIView):
     @swagger_auto_schema(
