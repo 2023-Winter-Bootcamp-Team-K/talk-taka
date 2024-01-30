@@ -49,14 +49,17 @@ services:
     ports:
       - "5173:5173"
     volumes:
-#      - ./frontend:/frontend
+      - ./frontend:/frontend
       - ./frontend/dist:/frontend/dist:rw
-#       - ./frontend/dist:/var/www/frontend:rw
+      - /frontend/node_modules
+    #       - ./frontend/dist:/var/www/frontend:rw
     #      - build_folder:/frontend/volume:rw
     tty: true
     stdin_open: true
     depends_on:
       - web
+    networks:
+      - ai_net
 
   nginx:
     container_name: nginx
@@ -73,6 +76,7 @@ services:
     depends_on:
       - web
       - frontend
+
 
   rabbitmq:
     image: "rabbitmq:3-management"
