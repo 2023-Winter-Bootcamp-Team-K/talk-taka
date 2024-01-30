@@ -23,7 +23,7 @@ export default function IntroPage() {
 }
 
 const BackGround = styled.div`
-  background-image: url('/assets/인트로페이지.png');
+  background-image: url('src/assets/img/인트로페이지.png');
   /* margin: auto; */
   width: 100vw;
   height: 100vh;
@@ -39,6 +39,6 @@ const BackGround = styled.div`
   object-fit: fill;
 
   @media (max-width: 391px) {
-    background-image: url('/assets/introP.png');
+    background-image: url('src/assets/img/introP.png');
   }
 `;

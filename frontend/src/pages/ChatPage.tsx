@@ -47,14 +47,14 @@ export default function ChatPage() {
       setSocketConnected(true);
       setSocket(ws);
     };
-    console.log('connected to room' + roomId);
+    // console.log('connected to room' + roomId);
 
     ws.onclose = () => {
-      console.log('disconnect from room :' + roomId);
+      // console.log('disconnect from room :' + roomId);
       setSocketConnected(false);
     };
     ws.onerror = () => {
-      console.log('connection error to' + roomId);
+      // console.log('connection error to' + roomId);
       setSocketConnected(false);
     };
 
@@ -85,7 +85,6 @@ export default function ChatPage() {
             storeArray.push(chatArrayFinal);
             setSendChatting(storeArray);
           }
-          console.log('한문장이 들어오나 확인 필', storeArray);
           chatArrayFinal = [];
         }
 
@@ -105,36 +104,11 @@ export default function ChatPage() {
             storeArray.push(chatArrayFinal);
             setSendChatting(storeArray);
           }
-          console.log('한문장이 들어오나 확인 필', storeArray);
           chatArrayFinal = [];
         }
-        // if (checkFinish === 'stop') {
-        //   chatArray = [];
-
-        //   //쿼카 메세지
-        //   if (messageReceived.data.character === 'quokka') {
-        //     const data = {
-        //       character: 'quokka',
-        //       message: chat,
-        //     };
-        //     chatArrayFinal.push(data);
-        //     setSendChatArray(chatArrayFinal);
-        //     console.log('쿼카 메세지 setSendChatArray');
-        //   }
-        //   //아이 메세지
-        //   if (messageReceived.data.character === 'child') {
-        //     const data = {
-        //       character: 'child',
-        //       message: chat,
-        //     };
-        //     chatArrayFinal.push(data);
-        //     setSendChatArray(chatArrayFinal);
-        //     console.log('아이 메세지 setSendChatArray');
-        //   }
-        // }
       } else if (messageEvent === 'question_tts') {
         setPlzWait(false);
-        console.log('tts 시작');
+        // console.log('tts 시작');
 
         const audioBlob = messageReceived.data.audioBlob;
         let snd = new Audio(`data:audio/x-wav;base64, ${audioBlob}`);
@@ -205,8 +179,6 @@ export default function ChatPage() {
       setIsCameraModalOpen(true);
       setExitToggle(true);
       setRecordToggle(false); //안정장치
-
-      console.log('됨');
     }
   };
 

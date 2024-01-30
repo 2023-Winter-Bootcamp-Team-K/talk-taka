@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import MicGIF from '../gif/Mic';
 import { useChatStore } from '../../stores/chat';
 
-// 이게 나가는건데
 export default function AudioRecorder() {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
@@ -15,8 +14,6 @@ export default function AudioRecorder() {
 
   // 버튼 클릭 핸들러
   const handleButtonClick = () => {
-    console.log('테스트');
-
     setRecordToggle(false); // true이면 녹음 시작 false면 중지
     toggleRecording();
   };
@@ -57,7 +54,7 @@ export default function AudioRecorder() {
         // const audioUrl = URL.createObjectURL(audioBlob);
         // const audio = new Audio(audioUrl);
         // audio.play();
-        //
+
         const fileReader = new FileReader();
         fileReader.onloadend = () => {
           const base64Audio = fileReader.result as string;

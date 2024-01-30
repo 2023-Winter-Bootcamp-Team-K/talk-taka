@@ -97,13 +97,13 @@ const BackGround = styled.div`
   width: 100vw;
   height: 100vh;
   @media all and (min-width: 391px) {
-    background-image: url('/assets/Login_bg.png');
+    background-image: url('src/assets/img/Login_bg.png');
     background-position-x: 50%;
     background-position-y: 75%;
   }
   @media all and (max-width: 390px) {
     background-position: center;
-    background-image: url('/assets/LoginPage_p_bg.png');
+    background-image: url('src/assets/img/LoginPage_p_bg.png');
   }
 `;
 
@@ -202,7 +202,7 @@ const Character = styled.div`
     z-index: 4;
     top: 31%;
     left: 25%;
-    background-image: url('/assets/쿼카.png');
+    background-image: url('src/assets/img/쿼카.png');
     background-repeat: no-repeat;
   }
 `;

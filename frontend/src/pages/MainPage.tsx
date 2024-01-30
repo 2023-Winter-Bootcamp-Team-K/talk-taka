@@ -25,7 +25,7 @@ export default function MainPage() {
         config
       );
       if (response.status === 201) {
-        console.log(response);
+        // console.log(response);
         window.localStorage.setItem('chat_id', response.data.chat_room_id);
         navigate(`/chat`);
       }
@@ -33,9 +33,8 @@ export default function MainPage() {
       console.error(error);
     }
   };
-  const token = getCookie('token');
 
-  const { data: DiariesData } = useQuery('sales', () => getDiaries(token));
+  const { data: DiariesData } = useQuery('sales', () => getDiaries());
   const diaries = DiariesData?.data;
 
   const logout = async () => {
@@ -48,7 +47,7 @@ export default function MainPage() {
         refresh: refresh,
       });
       if (response.status === 205) {
-        console.log(response);
+        // console.log(response);
         window.localStorage.clear();
         navigate('/');
       }
@@ -76,7 +75,7 @@ export default function MainPage() {
 }
 
 const BackGround = styled.div`
-  background-image: url('/assets/Main_bg.png');
+  background-image: url('src/assets/img/Main_bg.png');
   position: relative;
   margin: auto;
   width: 100vw;
@@ -90,7 +89,7 @@ const BackGround = styled.div`
   justify-content: flex-start;
 
   @media (max-width: 391px) {
-    background-image: url('/assets/mainP.png');
+    background-image: url('src/assets/img/mainP.png');
     background-position: center;
     background-position-x: 50%;
     background-position-y: 30%;

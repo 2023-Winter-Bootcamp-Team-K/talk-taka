@@ -3,9 +3,10 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import FaceBox from '../components/common/Face';
 import ChatBoxResult from '../components/common/ChattingResult';
-import { baseInstance } from '../api/config';
 import { BackIconSvg } from '../assets/SVG';
 import ChatHistoryInfo from '../components/common/ChatHistoryInfo';
+import { useQuery } from 'react-query';
+import { getChattings } from '../api/chat';
 
 interface Data {
   content: {
@@ -17,39 +18,51 @@ interface Data {
 
 export default function Result() {
   const chatRoomId = window.localStorage.getItem('chat_id');
-  const [isMobile] = useState(
+  const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
   );
-  const [data, setData] = useState<Data | null>(null);
+  const [_, setData] = useState<Data | null>(null);
   const navigate = useNavigate();
   const GoToBefore = () => {
     navigate('/diary');
   };
 
-  const content = data?.content;
+  const { data: ChattingData } = useQuery('chattings', () =>
+    getChattings(chatRoomId)
+  );
+
+  const content = ChattingData?.content;
   const location = useLocation();
-  const {YY, MM, DD} = location.state;
+  const { YY, MM, DD } = location.state;
   const date = `${YY}년 ${MM}월 ${DD}일`;
-  const picture =  data?.picture || 'src/assets/img/DefaultResultImage.png';
-  console.log(picture)
-  
+  const picture =
+    ChattingData?.picture || 'src/assets/img/DefaultResultImage.png';
+  // console.log(picture);
+
+  //크기 로직
+  const handleResize = () => {
+    setIsMobile(window.matchMedia('(max-width: 390px)').matches);
+  };
+
   useEffect(() => {
-    baseInstance
-      .get(`/apps/chat_list/${chatRoomId}/`)
-      .then((response) => {
-        setData(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    if (ChattingData) {
+      setData(ChattingData);
+    }
+    //크기 로직
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   return (
     <BackGround>
       <Layout>
-        <ChatHistoryInfo date={date} picture={picture} />
         {isMobile ? (
           <>
+            {/* 모바일 버전 */}
+            <ChatHistoryInfo date={date} picture={picture} />
+
             <QuitChatBtn onClick={GoToBefore}>
               <BackIconSvg />
               뒤로가기
@@ -60,6 +73,7 @@ export default function Result() {
           </>
         ) : (
           <>
+            {/* 컴퓨터 버전 */}
             <ComponentsWrapper>
               <FaceBox picture={picture} />
               <ChatBoxResult content={content} />
@@ -121,7 +135,7 @@ const ComponentsWrapper = styled.div`
   justify-content: space-evenly;
   align-items: center;
   /* margin-top: 10.5rem; */
-  
+
   @media all and (min-width: 391px) {
     flex-direction: row;
     margin-left: 11.06rem;
@@ -174,7 +188,6 @@ const ButtonImage = styled.img`
   }
   @media all and (max-width: 390px) {
     width: 1.5rem;
-    height: 1.5rem;    
+    height: 1.5rem;
   }
 `;
-
