@@ -1,11 +1,11 @@
 global:
   resolve_timeout: 1m
-  slack_api_url: 'https://2023-winter-bootcamp.slack.com/'
+  slack_api_url: 'https://hooks.slack.com/services/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'
 
 route:
-  receiver: 'slack-notifications'
+  receiver: 'teamk'
 
 receivers:
-- name: 'slack-notifications'
+- name: 'teamk'
   slack_configs:
     - send_resolved: true
