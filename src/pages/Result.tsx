@@ -21,7 +21,7 @@ export default function Result() {
   const [isMobile, setIsMobile] = useState(
     window.matchMedia('(max-width: 390px)').matches
   );
-  const [data, setData] = useState<Data | null>(null);
+  const [_, setData] = useState<Data | null>(null);
   const navigate = useNavigate();
   const GoToBefore = () => {
     navigate('/diary');

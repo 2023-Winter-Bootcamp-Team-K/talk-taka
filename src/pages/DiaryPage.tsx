@@ -6,21 +6,17 @@ import { getDiary } from '../api/diary';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { BackIconSvg } from '../assets/SVG';
-import { getCookie } from '../utils/cookie';
 import { getDiaries } from '../api/calender/calender';
 import LoadingModal from '../components/modal/LoadingModal';
 
 export default function DiaryPage() {
   const selectedDiaryId = window.localStorage.getItem('selectedDiaryId');
   const navigate = useNavigate();
-  const token = getCookie('token');
-  const { data: DiariesData } = useQuery('sales', () => getDiaries(token));
+  const { data: DiariesData } = useQuery('sales', () => getDiaries());
   const diaries = DiariesData?.data;
   const [openModal, setOpenModal] = useState(true);
 
-  const {
-    data: diaryData,
-  } = useQuery(
+  const { data: diaryData } = useQuery(
     ['diary', selectedDiaryId],
     () => getDiary(selectedDiaryId || ''),
     {
@@ -57,13 +53,11 @@ export default function DiaryPage() {
     return () => mediaQuery.removeEventListener('change', handleResize);
   }, []);
 
-
   useEffect(() => {
     if (diaryData) {
       window.localStorage.setItem('chat_id', diaryData.chat_room_id);
     }
   }, [diaryData]);
-  
 
   return (
     <>

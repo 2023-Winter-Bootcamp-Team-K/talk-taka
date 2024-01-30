@@ -33,7 +33,6 @@ export default function MainPage() {
       console.error(error);
     }
   };
-  const token = getCookie('token');
 
   const { data: DiariesData } = useQuery('sales', () => getDiaries());
   const diaries = DiariesData?.data;
