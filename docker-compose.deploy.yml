@@ -43,7 +43,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    restart: always
+#    restart: always
     container_name: frontend
     command: yarn build
     ports:
