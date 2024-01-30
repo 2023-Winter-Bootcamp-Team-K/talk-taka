@@ -45,7 +45,7 @@ services:
       dockerfile: Dockerfile
 #    restart: always
     container_name: frontend
-    command: yarn build
+#    command: yarn build
     ports:
       - "5173:5173"
     volumes:
