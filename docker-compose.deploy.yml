@@ -51,11 +51,10 @@ services:
     volumes:
 #      - ./frontend:/frontend
 #      - ./frontend/dist:/frontend/dist:rw
-#      - /frontend/node_modules
-       - ./frontend/dist:/frontend/volume:rw
+       - ./frontend/dist:/var/www/frontend:rw
     #      - build_folder:/frontend/volume:rw
     tty: true
-#    stdin_open: true
+    stdin_open: true
     depends_on:
       - web
 
