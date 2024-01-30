@@ -113,13 +113,16 @@ class DiaryView(APIView):
         }
         return Response(diary_data)
 class DiaryListView(APIView):
-    permission_classes = [IsAuthenticated]  # 사용자가 로그인한 경우에만 접근 허용
-
-    @swagger_auto_schema(
-        operation_id="일기 일정 조회"
-    )
+    @swagger_auto_schema(operation_id="일기 일정 조회")
 
     def get(self, request, format=None):
+        # 사용자가 인증되었는지 확인
+        if not request.user.is_authenticated:
+            return Response({
+                "status": "403",
+                "message": "접근 권한이 없습니다."
+            }, status=status.HTTP_403_FORBIDDEN)
+
         # 로그인한 사용자의 일기만 필터링
         diary_list = Diary.objects.filter(user=request.user)
         data = [
@@ -138,15 +141,6 @@ class DiaryListView(APIView):
             "data": data
         }
         return Response(response)
-
-    def handle_exception(self, exc):
-        if isinstance(exc, PermissionDenied):
-            response = {
-                "status": "403",
-                "message": "접근 권한이 없습니다."
-            }
-            return Response(response, status=status.HTTP_403_FORBIDDEN)
-        return super().handle_exception(exc)
 
 class DiaryDeleteView(APIView):
     @swagger_auto_schema(

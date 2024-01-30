@@ -147,6 +147,13 @@ class ChatRoomCreateView(APIView):
 #         conversation = [question.content for question in questions]
 #         return conversation
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+from .models import ChatRoom, GPTQuestion, UserAnswer
+from .serializers import ChatRoomSerializer
+
 class ChatRoomListView(APIView):
     @swagger_auto_schema(
         operation_description="채팅방 조회",
@@ -157,6 +164,15 @@ class ChatRoomListView(APIView):
         ]
     )
     def get(self, request, chat_room_id):
+        chat_room = get_object_or_404(ChatRoom, id=chat_room_id)
+
+        # 채팅방 소유자가 현재 요청한 사용자와 동일한지 확인
+        if chat_room.user_id != request.user:
+            return Response({
+                "status": "403",
+                "message": "접근 권한이 없습니다."
+            }, status=status.HTTP_403_FORBIDDEN)
+
         chat_room = get_object_or_404(ChatRoom, id=chat_room_id)
         gpt_questions = GPTQuestion.objects.filter(chatroom_id=chat_room_id)
         user_answers = UserAnswer.objects.filter(question_id__chatroom_id=chat_room_id)
@@ -179,7 +195,6 @@ class ChatRoomListView(APIView):
             "picture": chat_room.image_url
         }
         return Response(data)
-
 
 
 class ChatRoomImageUploadView(APIView):
