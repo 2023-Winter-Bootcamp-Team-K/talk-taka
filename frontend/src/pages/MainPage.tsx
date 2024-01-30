@@ -76,7 +76,7 @@ export default function MainPage() {
 }
 
 const BackGround = styled.div`
-  background-image: url('src/assets/img/Main_bg.png');
+  background-image: url('/assets/Main_bg.png');
   position: relative;
   margin: auto;
   width: 100vw;
@@ -90,7 +90,7 @@ const BackGround = styled.div`
   justify-content: flex-start;
 
   @media (max-width: 391px) {
-    background-image: url('src/assets/img/mainP.png');
+    background-image: url('/assets/mainP.png');
     background-position: center;
     background-position-x: 50%;
     background-position-y: 30%;
