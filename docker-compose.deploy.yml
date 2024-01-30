@@ -43,7 +43,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-#    restart: always
+    restart: always
     container_name: frontend
 #    command: yarn build
     ports:
@@ -51,9 +51,7 @@ services:
     volumes:
       - ./frontend:/frontend
       - ./frontend/dist:/frontend/dist:rw
-      - /frontend/node_modules
     #       - ./frontend/dist:/var/www/frontend:rw
-    #      - build_folder:/frontend/volume:rw
     tty: true
     stdin_open: true
     depends_on:
