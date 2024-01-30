@@ -44,7 +44,7 @@ const CameraBoxLayout = styled.div<{ $isDefaultImage?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: ${(props) => (props.$isDefaultImage ? 'none' : '#d9d9d9')};
+  background: ${(props) => (props.$isDefaultImage ? 'none' : '#ffffff')};
 
   img {
     margin-top: 1.37rem;
