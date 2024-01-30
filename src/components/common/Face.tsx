@@ -8,7 +8,7 @@ export default function FaceBox({ picture }: { picture: string | undefined }) {
   return (
     <CameraLayout>
       <BubbleLayout src={'src/assets/img/HeartBubble.png'} />
-      <CameraBoxLayout isDefaultImage={isDefaultImage}>
+      <CameraBoxLayout $isDefaultImage={isDefaultImage}>
         <img
           src={imageUrl}
           alt="Face or Default Image"
@@ -36,26 +36,23 @@ const CameraLayout = styled.div`
     height: 33.125rem;
   }
   @media all and (max-width: 390px) {
-    /* width: 21.4375rem;
-    height: 17.4375rem;
-    box-shadow: none; */
     display: none;
   }
 `;
 
-const CameraBoxLayout = styled.div<{ isDefaultImage?: boolean }>`
+const CameraBoxLayout = styled.div<{ $isDefaultImage?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: ${({ isDefaultImage }) => (isDefaultImage ? 'none' : '#d9d9d9')};
+  background: ${(props) => (props.$isDefaultImage ? 'none' : '#d9d9d9')};
 
   img {
     margin-top: 1.37rem;
     margin-bottom: 6.12rem;
     border-radius: 1.3125rem;
 
-    ${({ isDefaultImage }) =>
-      isDefaultImage &&
+    ${(props) =>
+      props.$isDefaultImage &&
       `
         width: 20rem;
         height: auto; 
