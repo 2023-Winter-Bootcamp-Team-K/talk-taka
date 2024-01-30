@@ -14,9 +14,9 @@ export default function ChatBox({ sendChatArray, sendChatting }: ChatBoxProps) {
   const [messages, setMessages] = useState<
     { character?: string; message?: string }[]
   >([]);
-  const [chat, setChat] = useState<{ character?: string; message?: string }[]>(
-    []
-  );
+  // const [chat, setChat] = useState<{ character?: string; message?: string }[]>(
+  //   []
+  // );
   const messageLayOutRef = useRef<HTMLDivElement | null>(null);
 
   const [End, setEnd] = useState<{ character?: string; message?: string }[]>(
@@ -40,13 +40,13 @@ export default function ChatBox({ sendChatArray, sendChatting }: ChatBoxProps) {
     if (sendChatArray !== messages) {
       setMessages(sendChatArray);
       test1 = sendChatArray;
-      console.log('messages', messages);
+      // console.log('messages', messages);
     }
 
     if (sendChatting !== messages) {
-      setChat(sendChatting.flat());
+      // setChat(sendChatting.flat());
       test2 = sendChatting.flat();
-      console.log('chat', chat);
+      // console.log('chat', chat);
     }
 
     Middle = test2.flat();
@@ -54,10 +54,10 @@ export default function ChatBox({ sendChatArray, sendChatting }: ChatBoxProps) {
 
     setEnd(Middle);
     //로그
-    console.log('test1 로그', test1);
-    console.log('test2 로그', test2);
-    console.log('Middle 로그', Middle);
-    console.log('End 로그', End);
+    // console.log('test1 로그', test1);
+    // console.log('test2 로그', test2);
+    // console.log('Middle 로그', Middle);
+    // console.log('End 로그', End);
   }, [sendChatArray, sendChatting]);
 
   return (

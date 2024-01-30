@@ -31,7 +31,7 @@ export default function Result() {
   const { YY, MM, DD } = location.state;
   const date = `${YY}년 ${MM}월 ${DD}일`;
   const picture = data?.picture || 'src/assets/img/DefaultResultImage.png';
-  console.log(picture);
+  // console.log(picture);
 
   //크기 로직
   const handleResize = () => {
@@ -73,7 +73,7 @@ export default function Result() {
           </>
         ) : (
           <>
-            {/* 커퓨터 버전 */}
+            {/* 컴퓨터 버전 */}
             <ComponentsWrapper>
               <FaceBox picture={picture} />
               <ChatBoxResult content={content} />

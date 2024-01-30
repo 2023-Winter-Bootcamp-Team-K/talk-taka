@@ -25,7 +25,7 @@ export default function MainPage() {
         config
       );
       if (response.status === 201) {
-        console.log(response);
+        // console.log(response);
         window.localStorage.setItem('chat_id', response.data.chat_room_id);
         navigate(`/chat`);
       }
@@ -48,7 +48,7 @@ export default function MainPage() {
         refresh: refresh,
       });
       if (response.status === 205) {
-        console.log(response);
+        // console.log(response);
         window.localStorage.clear();
         navigate('/');
       }
