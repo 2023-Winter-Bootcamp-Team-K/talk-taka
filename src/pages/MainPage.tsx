@@ -35,7 +35,7 @@ export default function MainPage() {
   };
   const token = getCookie('token');
 
-  const { data: DiariesData } = useQuery('sales', () => getDiaries(token));
+  const { data: DiariesData } = useQuery('sales', () => getDiaries());
   const diaries = DiariesData?.data;
 
   const logout = async () => {

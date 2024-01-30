@@ -3,9 +3,10 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import FaceBox from '../components/common/Face';
 import ChatBoxResult from '../components/common/ChattingResult';
-import { baseInstance } from '../api/config';
 import { BackIconSvg } from '../assets/SVG';
 import ChatHistoryInfo from '../components/common/ChatHistoryInfo';
+import { useQuery } from 'react-query';
+import { getChattings } from '../api/chat';
 
 interface Data {
   content: {
@@ -26,11 +27,16 @@ export default function Result() {
     navigate('/diary');
   };
 
-  const content = data?.content;
+  const { data: ChattingData } = useQuery('chattings', () =>
+    getChattings(chatRoomId)
+  );
+
+  const content = ChattingData?.content;
   const location = useLocation();
   const { YY, MM, DD } = location.state;
   const date = `${YY}년 ${MM}월 ${DD}일`;
-  const picture = data?.picture || 'src/assets/img/DefaultResultImage.png';
+  const picture =
+    ChattingData?.picture || 'src/assets/img/DefaultResultImage.png';
   // console.log(picture);
 
   //크기 로직
@@ -39,15 +45,9 @@ export default function Result() {
   };
 
   useEffect(() => {
-    baseInstance
-      .get(`/apps/chat_list/${chatRoomId}/`)
-      .then((response) => {
-        setData(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-
+    if (ChattingData) {
+      setData(ChattingData);
+    }
     //크기 로직
     window.addEventListener('resize', handleResize);
     return () => {
