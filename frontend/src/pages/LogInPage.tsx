@@ -202,7 +202,7 @@ const Character = styled.div`
     z-index: 4;
     top: 31%;
     left: 25%;
-    background-image: url('/assets/쿼카.png');
+    background-image: url('https://ifh.cc/g/kbO986.jpg');
     background-repeat: no-repeat;
   }
 `;

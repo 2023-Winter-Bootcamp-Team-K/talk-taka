@@ -23,7 +23,7 @@ export default function IntroPage() {
 }
 
 const BackGround = styled.div`
-  background-image: url('/assets/인트로페이지.png');
+  background-image: url('https://ifh.cc/g/kbO986.jpg');
   /* margin: auto; */
   width: 100vw;
   height: 100vh;
