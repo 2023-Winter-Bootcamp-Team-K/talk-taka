@@ -13,37 +13,45 @@ const ChatPage = lazy(() => import('./pages/ChatPage'));
 const Result = lazy(() => import('./pages/Result'));
 const Forbidden = lazy(() => import('./pages/Forbidden'));
 
-const withSuspense = (Component: React.LazyExoticComponent<React.ComponentType<any>>): ReactElement => 
-    <Suspense fallback={<LoadingFallback />}>
-      <Component />
-    </Suspense>
+const withSuspense = (
+  Component: React.LazyExoticComponent<React.ComponentType<any>>
+): ReactElement => (
+  <Suspense fallback={<LoadingFallback />}>
+    <Component />
+  </Suspense>
+);
 
-const createRoute = (path: string, Component: React.LazyExoticComponent<React.ComponentType<any>>, isPrivate: boolean = false) => {
+const createRoute = (
+  path: string,
+  Component: React.LazyExoticComponent<React.ComponentType<any>>,
+  isPrivate: boolean = false
+) => {
   const WrappedComponent = withSuspense(Component);
   return {
     path,
-    element: isPrivate ? <PrivateRoute>{WrappedComponent}</PrivateRoute> : WrappedComponent,
+    element: isPrivate ? (
+      <PrivateRoute>{WrappedComponent}</PrivateRoute>
+    ) : (
+      WrappedComponent
+    ),
   };
 };
 
 const routes = [
-  createRoute('/', IntroPage),
-  createRoute('/login', LoginPage),
-  createRoute('/signup', SignupPage),
-  createRoute('/bookcover', BookCover, true),
-  createRoute('/diary', DiaryPage, true),
-  createRoute('/main', MainPage, true),
-  createRoute('/chat', ChatPage, true),
-  createRoute('/result', Result, true),
+  createRoute('', IntroPage),
+  createRoute('login', LoginPage),
+  createRoute('signup', SignupPage),
+  createRoute('bookcover', BookCover, true),
+  createRoute('diary', DiaryPage, true),
+  createRoute('main', MainPage, true),
+  createRoute('chat', ChatPage, true),
+  createRoute('result', Result, true),
 ];
 
 const router = createBrowserRouter([
   {
     path: '/',
     children: routes,
-  },
-  {
-    path: '/*',
     errorElement: <Forbidden />,
   },
 ]);
