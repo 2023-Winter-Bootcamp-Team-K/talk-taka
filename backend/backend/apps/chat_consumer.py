@@ -296,7 +296,7 @@ class ChatConsumer(WebsocketConsumer):
             {
                 "role": "system",
                 "content": 'My name is '+user.username+' and My age is '+str(user.age)+' and My gender is ' + user.gender + 'and My mood is '+ mood +'.'
-                           'With these conditions, from now on, you will have a conversation with a child. '
+                           'With these conditions, from now on, you will have a conversation with a child.'
                            'The purpose of your conversation with a child is to find out how child spent child\'s day and how child\'s felt. '
                            'You should ask him simple, clear questions, and use a soft, friendly tone.'
                            "You should offer only one follow-up question that aligns with the context of the child's response."

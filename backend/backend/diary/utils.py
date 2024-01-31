@@ -13,9 +13,8 @@ def generate_summary(content):
     summary_request = ('From now on, you will write child\'s diary instead of child. The content of diary must be the summarize of the conversation you had, with the child and write it as a diary. And the conditions of the diary are '
                        '1.It must be at least 160 characters and no more than 180 characters. '
                        '2. Each sentence in the diary should end with "~했다" or "~했어." '
-                       #'3.Write in the handwriting style of a child aged 7 to 10 years. '
-                       '4.The child is of South Korean nationality. '
-                       '5.Do not include a greeting in the summary. '
+                       '4.The child is of South Korean nationality.'
+                       '5.Do not include a greeting in the summary.'
                        '6.The last sentence of the diary is "오늘의 일기 끝!".'
                        'Please follow these conditions when making a diary.'
                        )
@@ -31,7 +30,7 @@ def generate_summary(content):
                 "content": content_str
             },
         ],
-        max_tokens=230,
+        max_tokens=225,
     )
     return response.choices[0].message.content
 # 달리 이미지 생성 로직보
