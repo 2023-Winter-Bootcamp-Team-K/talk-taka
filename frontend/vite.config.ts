@@ -6,13 +6,12 @@ export default defineConfig({
   plugins: [react()],
   assetsInclude: ['**/*.jpg'],
   server: {
-    port: 5173,
-    host: true,
     proxy: {
       '/api': {
         target: 'https://talktaka.site',
-        changeOrigin: true,
         // target: 'http://localhost:8000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
   },
