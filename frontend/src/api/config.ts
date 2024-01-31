@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const baseInstance = axios.create({
-  baseURL: 'https://talktaka.site/api',
+  baseURL: 'https://talktaka.site/api/v1',
 });
 
 baseInstance.interceptors.response.use(
