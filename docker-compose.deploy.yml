@@ -1,19 +1,19 @@
 version: '3'
 
 services:
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_USER: ${DB_USERNAME}
-      MYSQL_PASSWORD: ${DB_USER_PASSWORD}
-    ports:
-      - "3307:3306"
-    env_file:
-      - .env
-    networks:
-      - ai_net
+#  db:
+#    image: mysql:8.0
+#    environment:
+#      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+#      MYSQL_DATABASE: ${DB_DATABASE}
+#      MYSQL_USER: ${DB_USERNAME}
+#      MYSQL_PASSWORD: ${DB_USER_PASSWORD}
+#    ports:
+#      - "3307:3306"
+#    env_file:
+#      - .env
+#    networks:
+#      - ai_net
 
 
   web:
@@ -32,8 +32,8 @@ services:
       - ./backend:/backend
     ports:
       - "8000:8000"
-    depends_on:
-      - db
+#    depends_on:
+#      - db
     env_file:
       - .env
     networks:
