@@ -10,6 +10,7 @@ export default defineConfig({
       '/api': {
         // target: 'https://talktaka.site',
         target: 'http://localhost:8000',
+        changeOrigin: true,
       },
     },
   },
