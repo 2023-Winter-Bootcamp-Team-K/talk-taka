@@ -6,6 +6,8 @@ export default defineConfig({
   plugins: [react()],
   assetsInclude: ['**/*.jpg'],
   server: {
+    port: 3000,
+    host: true,
     proxy: {
       '/api': {
         target: 'https://talktaka.site',
