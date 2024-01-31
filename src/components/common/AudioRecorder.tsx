@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import MicGIF from '../gif/Mic';
 import { useChatStore } from '../../stores/chat';
+import BlackMic from '../../assets/img/BlackMic.png';
 
 export default function AudioRecorder() {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
@@ -73,7 +74,7 @@ export default function AudioRecorder() {
 
   return (
     <MicButtonLayout onClick={handleButtonClick} disabled={!RecordToggle}>
-      {RecordToggle ? <MicGIF /> : <Mic src="/src/assets/img/BlackMic.png" />}
+      {RecordToggle ? <MicGIF /> : <Mic src={BlackMic} />}
     </MicButtonLayout>
   );
 }

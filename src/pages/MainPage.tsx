@@ -6,6 +6,8 @@ import { useQuery } from 'react-query';
 import { getDiaries } from '../api/calender/calender';
 import { baseInstance } from '../api/config';
 import { getCookie, removeCookie } from '../utils/cookie';
+import MainBg from '../assets/img/Main_bg.png';
+import MainPic from '../assets/img/mainP.png';
 
 export default function MainPage() {
   const navigate = useNavigate();
@@ -75,7 +77,7 @@ export default function MainPage() {
 }
 
 const BackGround = styled.div`
-  background-image: url('src/assets/img/Main_bg.png');
+  background-image: url(${MainBg});
   position: relative;
   margin: auto;
   width: 100vw;
@@ -89,7 +91,7 @@ const BackGround = styled.div`
   justify-content: flex-start;
 
   @media (max-width: 391px) {
-    background-image: url('src/assets/img/mainP.png');
+    background-image: url(${MainPic});
     background-position: center;
     background-position-x: 50%;
     background-position-y: 30%;

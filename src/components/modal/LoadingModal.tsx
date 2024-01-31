@@ -1,17 +1,20 @@
 import styled from 'styled-components';
 import Loading from '../gif/Loading';
+import LoadingQuakka from '../../assets/img/LoadingQuaka.png';
+
 export default function LoadingModal() {
   return (
     <>
       <Overlay>
         <Container>
-        <Text className="message-top">일기를 만들고 있어요</Text>
-        <StyledImage src="src/assets/img/LoadingQuaka.png" alt="" />
-        <br /><br />
-        <LoadingContainer>
-          <Loading />
-        </LoadingContainer>
-        <Text className="message-bottom">잠시만 기다려줘</Text>
+          <Text className="message-top">일기를 만들고 있어요</Text>
+          <StyledImage src={LoadingQuakka} />
+          <br />
+          <br />
+          <LoadingContainer>
+            <Loading />
+          </LoadingContainer>
+          <Text className="message-bottom">잠시만 기다려줘</Text>
         </Container>
       </Overlay>
     </>
@@ -53,8 +56,7 @@ const Container = styled.div`
     width: 18rem;
     height: 20rem;
     padding-top: 2rem;
-
-
+  }
 `;
 
 const Text = styled.p`
@@ -78,7 +80,7 @@ const Text = styled.p`
     font-size: 1.5rem;
     margin-bottom: 3.2rem;
 
-    @media all and (max-width: 390px){
+    @media all and (max-width: 390px) {
       font-size: 1.2rem;
       margin-bottom: 3.2rem;
     }
@@ -86,7 +88,6 @@ const Text = styled.p`
 `;
 
 const StyledImage = styled.img`
-
   @media all and (max-width: 390px) {
     width: 55%;
     height: 55%;

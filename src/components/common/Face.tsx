@@ -1,13 +1,15 @@
 import styled from 'styled-components';
+import DefaultResultPic from '../../assets/img/DefaultResultImage.png';
+import HeartBubble from '../../assets/img/HeartBubble.png';
 
 export default function FaceBox({ picture }: { picture: string | undefined }) {
-  const defaultImageUrl = 'src/assets/img/DefaultResultImage.png';
+  const defaultImageUrl = DefaultResultPic;
   const imageUrl = picture || defaultImageUrl;
   const isDefaultImage = imageUrl === defaultImageUrl;
 
   return (
     <CameraLayout>
-      <BubbleLayout src={'src/assets/img/HeartBubble.png'} />
+      <BubbleLayout src={HeartBubble} />
       <CameraBoxLayout $isDefaultImage={isDefaultImage}>
         <img
           src={imageUrl}

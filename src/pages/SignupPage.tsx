@@ -5,6 +5,8 @@ import Button from '../components/common/Btn';
 import { useCallback, useState } from 'react';
 import { MaleSvg, FemaleSvg } from '../assets/SVG';
 import { baseInstance } from '../api/config';
+import LoginBg from '../assets/img/Login_bg.png';
+import LoginPageMobileBG from '../assets/img/LoginPage_p_bg.png';
 
 // 아이디 중복 확인 API 요청 함수
 const checkIdAvailability = async (id: string) => {
@@ -65,11 +67,10 @@ export default function SignupPage() {
 
   // 중복 확인 버튼 클릭 핸들러
   const onCheckId = async () => {
-
     if (!isId) {
       return;
     }
-    
+
     try {
       const data = await checkIdAvailability(id);
       if (data.available) {
@@ -86,7 +87,7 @@ export default function SignupPage() {
       alert('중복 확인 중 오류가 발생했습니다.');
       setIsIdChecked(false);
     }
-  };  
+  };
 
   //외부 페이지 이동
   const goToLogin = () => {
@@ -112,7 +113,7 @@ export default function SignupPage() {
     const IdRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{6,25}$/;
     const IdCurrent = e.target.value;
     setId(IdCurrent);
-  
+
     if (!IdRegex.test(IdCurrent)) {
       setIdMessage('✖ 영문+숫자 조합으로 입력해주세요.');
       setChangeColorId('#c42c21');
@@ -123,7 +124,7 @@ export default function SignupPage() {
       setIsIdChecked(false);
     }
   }, []);
-  
+
   ///비밀번호
   const onChangePw = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -139,7 +140,7 @@ export default function SignupPage() {
         setPasswordMessage('✔ 사용가능한 비밀번호입니다.');
         setChangeColorPw('#1b8845');
         setIsPassword(true);
-        
+
         // 비밀번호 변경 시 비밀번호 확인 상태 업데이트
         if (PwCurrent !== pwCk) {
           setPasswordConfirmMessage('✖ 비밀번호가 일치하지 않습니다.');
@@ -251,7 +252,7 @@ export default function SignupPage() {
               <Button
                 title="중복확인"
                 onClick={onCheckId}
-                disabled={!isId} 
+                disabled={!isId}
                 width="9.1875rem"
                 widthp="5.8125rem"
                 marginl="1.31rem"
@@ -374,13 +375,13 @@ const BackGround = styled.div`
   height: 100vh;
 
   @media all and (min-width: 791px) {
-    background-image: url('src/assets/img/Login_bg.png');
+    background-image: url(${LoginBg});
     background-position-x: 50%;
     background-position-y: 75%;
   }
   @media all and (max-width: 790px) {
     background-position: center;
-    background-image: url('src/assets/img/LoginPage_p_bg.png');
+    background-image: url(${LoginPageMobileBG});
   }
 `;
 

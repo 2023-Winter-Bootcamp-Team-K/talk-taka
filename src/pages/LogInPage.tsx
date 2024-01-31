@@ -7,6 +7,9 @@ import { baseInstance } from '../api/config';
 import { setCookie } from '../utils/cookie';
 import { useEffect } from 'react';
 import { getCookie } from '../utils/cookie';
+import LoginBg from '../assets/img/Login_bg.png';
+import LoginPageMobildBG from '../assets/img/LoginPage_p_bg.png';
+import Quakka from '../assets/img/쿼카.png';
 
 export default function LoginPage() {
   const [id, idHandleChange] = useInput('');
@@ -97,13 +100,13 @@ const BackGround = styled.div`
   width: 100vw;
   height: 100vh;
   @media all and (min-width: 391px) {
-    background-image: url('src/assets/img/Login_bg.png');
+    background-image: url(${LoginBg});
     background-position-x: 50%;
     background-position-y: 75%;
   }
   @media all and (max-width: 390px) {
     background-position: center;
-    background-image: url('src/assets/img/LoginPage_p_bg.png');
+    background-image: url(${LoginPageMobildBG});
   }
 `;
 
@@ -202,7 +205,7 @@ const Character = styled.div`
     z-index: 4;
     top: 31%;
     left: 25%;
-    background-image: url('src/assets/img/쿼카.png');
+    background-image: url(${Quakka});
     background-repeat: no-repeat;
   }
 `;
