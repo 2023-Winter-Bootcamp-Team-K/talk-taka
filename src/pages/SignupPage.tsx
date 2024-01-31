@@ -125,21 +125,36 @@ export default function SignupPage() {
   }, []);
   
   ///비밀번호
-  const onChangePw = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const PwRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{6,25}$/;
-    const PwCurrent = e.target.value;
-    setPw(PwCurrent);
+  const onChangePw = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const PwRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{6,25}$/;
+      const PwCurrent = e.target.value;
+      setPw(PwCurrent);
 
-    if (!PwRegex.test(PwCurrent)) {
-      setPasswordMessage('✖ 영문+숫자 조합으로 입력해주세요.');
-      setChangeColorPw('#c42c21');
-      setIsPassword(false);
-    } else {
-      setPasswordMessage('✔ 사용가능한 비밀번호입니다.');
-      setChangeColorPw('#1b8845');
-      setIsPassword(true);
-    }
-  }, []);
+      if (!PwRegex.test(PwCurrent)) {
+        setPasswordMessage('✖ 영문+숫자 조합으로 입력해주세요.');
+        setChangeColorPw('#c42c21');
+        setIsPassword(false);
+      } else {
+        setPasswordMessage('✔ 사용가능한 비밀번호입니다.');
+        setChangeColorPw('#1b8845');
+        setIsPassword(true);
+        
+        // 비밀번호 변경 시 비밀번호 확인 상태 업데이트
+        if (PwCurrent !== pwCk) {
+          setPasswordConfirmMessage('✖ 비밀번호가 일치하지 않습니다.');
+          setChangeColorPwCk('#c42c21');
+          setIsPasswordConfirm(false);
+        } else {
+          setPasswordConfirmMessage('✔ 비밀번호가 일치합니다.');
+          setChangeColorPwCk('#1b8845');
+          setIsPasswordConfirm(true);
+        }
+      }
+    },
+    [pwCk]
+  );
+
   ///비밀번호 확인
   const onChangePwCk = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
