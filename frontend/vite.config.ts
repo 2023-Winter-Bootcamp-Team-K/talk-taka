@@ -9,6 +9,7 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'https://talktaka.site',
+        changeOrigin: true,
         // target: 'http://localhost:8000',
       },
     },
