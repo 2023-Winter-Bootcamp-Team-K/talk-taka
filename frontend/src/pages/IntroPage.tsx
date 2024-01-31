@@ -1,6 +1,8 @@
 import { styled } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/common/Btn';
+import IntroImg from '../assets/img/인트로페이지.png';
+import IntroPic from '../assets/img/introP.png';
 
 export default function IntroPage() {
   const navigate = useNavigate();
@@ -23,7 +25,7 @@ export default function IntroPage() {
 }
 
 const BackGround = styled.div`
-  background-image: url('src/assets/img/인트로페이지.png');
+  background-image: url(${IntroImg});
   /* margin: auto; */
   width: 100vw;
   height: 100vh;
@@ -39,6 +41,6 @@ const BackGround = styled.div`
   object-fit: fill;
 
   @media (max-width: 391px) {
-    background-image: url('src/assets/img/introP.png');
+    background-image: url(${IntroPic});
   }
 `;

@@ -8,6 +8,10 @@ import { useEffect, useState } from 'react';
 import { BackIconSvg } from '../assets/SVG';
 import { getDiaries } from '../api/calender/calender';
 import LoadingModal from '../components/modal/LoadingModal';
+import QuitIcon from '../assets/img/QuitIcon.png';
+import ChatBg from '../assets/img/Chat_bg.png';
+import DiaryBg from '../assets/img/Diary_bg.png';
+import BookPic from '../assets/img/book.png';
 
 export default function DiaryPage() {
   const selectedDiaryId = window.localStorage.getItem('selectedDiaryId');
@@ -100,7 +104,7 @@ export default function DiaryPage() {
 
             <QuitLayout>
               <QuitChatBtn onClick={GoToMain}>
-                <ButtonImage src="src/assets/img/QuitIcon.png" />
+                <ButtonImage src={QuitIcon} />
                 뒤로가기
               </QuitChatBtn>
             </QuitLayout>
@@ -174,16 +178,16 @@ const BackGround = styled.div`
   align-items: center;
   justify-content: center;
   @media all and (min-width: 391px) {
-    background-image: url('src/assets/img/Chat_bg.png'); // 이미지 경로 수정
+    background-image: url(${ChatBg}); // 이미지 경로 수정
   }
 
   @media all and (max-width: 390px) {
-    background-image: url('src/assets/img/Diary_bg.png');
+    background-image: url(${DiaryBg});
   }
 `;
 
 const Book = styled.div`
-  background-image: url('src/assets/img/book.png'); // 이미지 경로 수정
+  background-image: url(${BookPic}); // 이미지 경로 수정
   width: 73.75rem;
   height: 53.125rem;
   margin-top: 3rem;

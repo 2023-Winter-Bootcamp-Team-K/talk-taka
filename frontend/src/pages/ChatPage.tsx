@@ -8,6 +8,10 @@ import ChatInfo from '../components/common/ChatInfo';
 import { toggleStore } from '../stores/toggle';
 import CameraModal from '../components/modal/CameraModal';
 import { useChatStore } from '../stores/chat';
+import QuitIcon2 from '../assets/img/QuitIcon2.png';
+import QuitIcon from '../assets/img/QuitIcon.png';
+import F5 from '../assets/img/F5.png';
+import ChatBg from '../assets/img/Chat_bg.png';
 
 export default function ChatPage() {
   const [socket, setSocket] = useState<WebSocket | null>(null);
@@ -243,12 +247,8 @@ export default function ChatPage() {
       {isCameraModalOpen && <CameraModal />}
       <QuitChatBtn onClick={handleQuitChat} disabled={exitToggle}>
         대화 끝내기
-        {exitToggle === true && (
-          <ButtonImage src="src/assets/img/QuitIcon2.png" />
-        )}
-        {exitToggle === false && (
-          <ButtonImage src="src/assets/img/QuitIcon.png" />
-        )}
+        {exitToggle === true && <ButtonImage src={QuitIcon2} />}
+        {exitToggle === false && <ButtonImage src={QuitIcon} />}
       </QuitChatBtn>
     </BackGround>
   ) : (
@@ -257,7 +257,7 @@ export default function ChatPage() {
 }
 
 const TryAgain = styled.div`
-  background-image: url('src/assets/img/F5.png');
+  background-image: url(${F5});
   background-position-x: 50%;
   background-position-y: 75%;
   /* background-size: 100%; */
@@ -286,7 +286,7 @@ const BackGround = styled.div`
   display: flex;
 
   @media all and (min-width: 391px) {
-    background-image: url('src/assets/img/Chat_bg.png');
+    background-image: url(${ChatBg});
     background-position-x: 50%;
     background-position-y: 75%;
     width: 100vw;

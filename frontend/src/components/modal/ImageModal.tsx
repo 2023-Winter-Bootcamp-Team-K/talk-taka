@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import DefaultResultPic from '../../assets/img/DefaultResultImage.png';
 
 interface ImageModalProps {
   picture: string;
@@ -9,7 +10,7 @@ export default function ImageModal({ picture }: ImageModalProps) {
   const [quokkaImage, setquokkaImage] = useState(false);
 
   useEffect(() => {
-    if (picture === 'src/assets/img/DefaultResultImage.png') {
+    if (picture === DefaultResultPic) {
       setquokkaImage(true);
     }
   }, [picture]);
@@ -17,7 +18,7 @@ export default function ImageModal({ picture }: ImageModalProps) {
   return (
     <Overlay>
       <ModalContainer>
-      {quokkaImage ? (
+        {quokkaImage ? (
           <>
             <CapturedQuokkaImage src={picture} />
             <ImageText>이 날 찍은 사진이 없어요</ImageText> {/* 텍스트 추가 */}
@@ -67,10 +68,10 @@ const CapturedQuokkaImage = styled.img`
 `;
 
 const ImageText = styled.div`
-  margin-top: 1rem; 
-  text-align: center; 
-  font-size: 1rem; 
-  color: #000; 
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 1rem;
+  color: #000;
   font-family: 'Cafe24Dongdong';
   font-style: normal;
 `;

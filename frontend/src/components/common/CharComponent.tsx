@@ -2,7 +2,7 @@ import { styled, keyframes } from 'styled-components';
 import Voice from '../gif/Voice';
 import { VoiceSvg } from '../../assets/SVG';
 import { useChatStore } from '../../stores/chat';
-
+import SpeakingQ from '../../assets/img/SpeakingQuakka.png';
 export default function CharComponent() {
   const { RecordToggle, plzWait } = useChatStore();
   // console.log(RecordToggle, 'RecordToggle');
@@ -11,11 +11,11 @@ export default function CharComponent() {
     <Layout>
       {RecordToggle ? (
         <>
-          <SpeakingQuakka src="src/assets/img/SpeakingQuakka.png" />
+          <SpeakingQuakka src={SpeakingQ} />
           <Blank />
         </>
       ) : (
-        <SpeakingQuakkaAnimate src="src/assets/img/SpeakingQuakka.png" />
+        <SpeakingQuakkaAnimate src={SpeakingQ} />
       )}
       {plzWait ? <PlzWait>잠시만 기다려줘</PlzWait> : <Blank />}
       {RecordToggle ? (

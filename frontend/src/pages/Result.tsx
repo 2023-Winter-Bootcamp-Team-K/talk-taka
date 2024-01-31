@@ -7,6 +7,9 @@ import { BackIconSvg } from '../assets/SVG';
 import ChatHistoryInfo from '../components/common/ChatHistoryInfo';
 import { useQuery } from 'react-query';
 import { getChattings } from '../api/chat';
+import DefaultResultImage from '../assets/img/DefaultResultImage.png';
+import QuitIcon from '../assets/img/QuitIcon.png';
+import ChatBg from '../assets/img/Chat_bg.png';
 
 interface Data {
   content: {
@@ -35,8 +38,7 @@ export default function Result() {
   const location = useLocation();
   const { YY, MM, DD } = location.state;
   const date = `${YY}년 ${MM}월 ${DD}일`;
-  const picture =
-    ChattingData?.picture || 'src/assets/img/DefaultResultImage.png';
+  const picture = ChattingData?.picture || DefaultResultImage;
   // console.log(picture);
 
   //크기 로직
@@ -80,7 +82,7 @@ export default function Result() {
             </ComponentsWrapper>
             <QuitChatBtn onClick={GoToBefore}>
               뒤로가기
-              <ButtonImage src="src/assets/img/QuitIcon.png" />
+              <ButtonImage src={QuitIcon} />
             </QuitChatBtn>
           </>
         )}
@@ -109,7 +111,7 @@ const BackGround = styled.div`
   display: flex;
 
   @media all and (min-width: 391px) {
-    background-image: url('src/assets/img/Chat_bg.png');
+    background-image: url(${ChatBg});
     background-position-x: 50%;
     background-position-y: 75%;
     width: 100vw;

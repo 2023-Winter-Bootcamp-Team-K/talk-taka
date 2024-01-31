@@ -1,5 +1,8 @@
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import HeartBubble from '../../assets/img/HeartBubble.png';
+import DiaryTextBG from '../../assets/img/Diary_Text.png';
+import DiaryTextMobile from '../../assets/img/Diary_Text_P.png';
 
 interface DiaryProps {
   YY: string;
@@ -38,7 +41,7 @@ export default function Diary({ YY, MM, DD, Text, Image, mood }: DiaryProps) {
         </DiaryText>
       </DiaryTextLayout>
       <ViewChatBtn onClick={GoToResult}>
-        <ButtonImage src="src/assets/img/HeartBubble.png" />
+        <ButtonImage src={HeartBubble} />
         이날의 대화 기록 보러가기
       </ViewChatBtn>
     </DiaryLayout>
@@ -165,10 +168,10 @@ const DiaryText = styled.div`
   height: 100%;
 
   @media all and (min-width: 391px) {
-    background-image: url('src/assets/img/Diary_Text.png');
+    background-image: url('${DiaryTextBG}');
   }
   @media all and (max-width: 390px) {
-    background-image: url('src/assets/img/Diary_Text_P.png');
+    background-image: url('${DiaryTextMobile}');
   }
 `;
 

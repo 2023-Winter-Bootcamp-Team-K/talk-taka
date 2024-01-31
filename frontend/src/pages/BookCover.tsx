@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import styled, { keyframes } from 'styled-components';
 import { getDiary } from '../api/diary';
 import { useQuery } from 'react-query';
+import DefaultBookCover from '../assets/img/DefaultBookCover.png';
+import ChatBg from '../assets/img/Chat_bg.png';
+import CoverPic from '../assets/img/Cover.png';
+import DiaryRightSide from '../assets/img/diaryRightSide.png';
 
 export default function BookCover() {
   const [isOpen, setIsOpen] = useState(false);
@@ -28,10 +32,12 @@ export default function BookCover() {
       navigate('/diary');
     }, 1400);
   };
-  const defaultImageStyle = diaryContent?.captureURL ? {} : {
-    height: '25rem',
-    boxShadow: '0 0 0 0'
-  };
+  const defaultImageStyle = diaryContent?.captureURL
+    ? {}
+    : {
+        height: '25rem',
+        boxShadow: '0 0 0 0',
+      };
   return (
     <>
       <BackGround>
@@ -40,7 +46,11 @@ export default function BookCover() {
             <Front>
               <Year>{2024}</Year>
               <Title>{diaryContent?.username} 다이어리</Title>
-              <img src={diaryContent?.captureURL || 'src/assets/img/DefaultBookCover.png'} alt="Book Cover" style={defaultImageStyle} />
+              <img
+                src={diaryContent?.captureURL || DefaultBookCover}
+                alt="Book Cover"
+                style={defaultImageStyle}
+              />
               <button onClick={openBook}>함께 보러가기 </button>
             </Front>
             {showRight && <Back></Back>}
@@ -90,7 +100,7 @@ const openAnimation = keyframes`
 `;
 
 const BackGround = styled.div`
-  background-image: url('src/assets/img/Chat_bg.png');
+  background-image: url(${ChatBg});
   margin: auto;
   width: 100vw;
   height: 100vh;
@@ -165,7 +175,7 @@ const Front = styled.div`
   flex-direction: column;
   align-items: center;
   border-radius: 0.75rem;
-  background-image: url('src/assets/img/Cover.png');
+  background-image: url(${CoverPic});
 `;
 
 const Back = styled.div`
@@ -176,7 +186,7 @@ const Back = styled.div`
   background: white;
   transform: rotateY(180deg);
   border-radius: 0.75rem;
-  background-image: url(/src/assets/img/diaryRightSide.png);
+  background-image: url(${DiaryRightSide});
   position: relative;
 `;
 
@@ -199,7 +209,7 @@ const Title = styled.p`
 const Right = styled.div`
   border-radius: 0.75rem;
   background: #ffc6cb;
-  background-image: url(/src/assets/img/diaryRightSide.png);
+  background-image: url(${DiaryRightSide});
   position: absolute;
   width: 36.875rem;
   height: 53.125rem;

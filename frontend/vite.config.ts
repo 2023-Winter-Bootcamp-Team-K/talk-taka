@@ -5,12 +5,4 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   assetsInclude: ['**/*.jpg'],
-  server: {
-    proxy: {
-      '/api': {
-        target: 'https://talktaka.site',
-        // target: 'http://localhost:8000',
-      },
-    },
-  },
 });
