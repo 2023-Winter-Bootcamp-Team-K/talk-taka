@@ -21,8 +21,7 @@ services:
       context: backend/backend
       dockerfile: Dockerfile
     restart: always
-    command: sh -c "dockerize -wait tcp://db:3306 -timeout 1m
-      && python manage.py makemigrations users
+    command: sh -c "python manage.py makemigrations users
       && python manage.py makemigrations apps
       && python manage.py makemigrations diary
       && python manage.py migrate
