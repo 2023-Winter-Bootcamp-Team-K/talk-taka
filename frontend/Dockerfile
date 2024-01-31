@@ -9,5 +9,8 @@ COPY package.json yarn.lock ./
 RUN yarn install
 
 COPY . .
-
+RUN yarn add typescript
 RUN yarn build
+
+
+#yarn add tyscript -g
