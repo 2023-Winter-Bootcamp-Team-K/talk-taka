@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { getCookie } from '../../utils/cookie';
 import { baseInstance } from '../../api/config';
+import LoadingModal from './LoadingModal';
 
 const token = getCookie('token');
 export default function CameraModal() {
@@ -13,6 +14,7 @@ export default function CameraModal() {
   const webcamRef = useRef<Webcam | null>(null);
   const [url, setUrl] = useState<string | undefined>(undefined);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [diaryMake, setDiaryMake] = useState(false);
 
   const capture = useCallback(() => {
     const imageSrc = webcamRef.current?.getScreenshot();
@@ -37,6 +39,7 @@ export default function CameraModal() {
   };
 
   const confirmImage = async () => {
+    setDiaryMake(true);
     const chat_room_id = window.localStorage.getItem('chat_id');
     if (imageFile) {
       const formData = new FormData();
@@ -87,6 +90,7 @@ export default function CameraModal() {
   };
 
   const handleNoCamera = async () => {
+    setDiaryMake(true);
     const chat_room_id = window.localStorage.getItem('chat_id');
     try {
       const response = await baseInstance.post(
@@ -141,17 +145,18 @@ export default function CameraModal() {
             <Row>
               <ReCapture onClick={recapture}>다시 찍기</ReCapture>
               <Confirm onClick={confirmImage}>확인</Confirm>
-              </Row>
+            </Row>
           ) : (
-          <>
-            <Capture onClick={capture}>찰칵!</Capture>
-            <NoCameraButton onClick={handleNoCamera}>
-              카메라가 없어요 ㅠㅠ
-            </NoCameraButton>
-          </>
+            <>
+              <Capture onClick={capture}>찰칵!</Capture>
+              <NoCameraButton onClick={handleNoCamera}>
+                카메라가 없어요 ㅠㅠ
+              </NoCameraButton>
+            </>
           )}
         </Container>
       </Overlay>
+      {diaryMake && <LoadingModal />}
     </>
   );
 }
@@ -346,15 +351,14 @@ const Confirm = styled.button`
 `;
 
 const NoCameraButton = styled(Capture)`
-  background: transparent; 
+  background: transparent;
   color: grey;
-  margin-top: 0.3rem; 
-  margin-bottom: 0.5rem; 
-  min-width:12rem;
+  margin-top: 0.3rem;
+  margin-bottom: 0.5rem;
+  min-width: 12rem;
 
   &:hover {
-    color: #ff888c; 
-    text-decoration: underline; 
+    color: #ff888c;
+    text-decoration: underline;
   }
 `;
-
