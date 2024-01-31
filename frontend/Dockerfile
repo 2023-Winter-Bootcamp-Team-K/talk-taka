@@ -1,7 +1,7 @@
 # 베이스 이미지 설정
 FROM node:18.12.1-alpine
 
-WORKDIR /frontend
+WORKDIR /app
 
 # 소스 코드 복사
 COPY package.json yarn.lock ./
@@ -9,5 +9,6 @@ COPY package.json yarn.lock ./
 RUN yarn install
 
 COPY . .
+RUN yarn add typescript
 
 RUN yarn build

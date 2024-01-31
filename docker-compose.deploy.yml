@@ -48,9 +48,8 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend:/frontend
+#      - ./frontend:/frontend
 #      - ./frontend/dist:/frontend/dist:rw
-      - /frontend/node_modules
       - ./frontend/dist:/var/www/frontend:rw
     tty: true
     stdin_open: true
