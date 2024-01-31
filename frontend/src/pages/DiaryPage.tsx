@@ -6,26 +6,37 @@ import { getDiary } from '../api/diary';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { BackIconSvg } from '../assets/SVG';
-import { getCookie } from '../utils/cookie';
 import { getDiaries } from '../api/calender/calender';
+import LoadingModal from '../components/modal/LoadingModal';
 
 export default function DiaryPage() {
   const selectedDiaryId = window.localStorage.getItem('selectedDiaryId');
-  const { data: DiariesData } = useQuery('sales', () => getDiaries(token));
+  const navigate = useNavigate();
+  const { data: DiariesData } = useQuery('sales', () => getDiaries());
   const diaries = DiariesData?.data;
+  const [openModal, setOpenModal] = useState(true);
 
-  const { data: diaryData } = useQuery(['diary', selectedDiaryId], () =>
-    getDiary(selectedDiaryId || '')
+  const { data: diaryData } = useQuery(
+    ['diary', selectedDiaryId],
+    () => getDiary(selectedDiaryId || ''),
+    {
+      enabled: !!selectedDiaryId,
+      refetchInterval: (diaryData) =>
+        diaryData?.message === '이미지 생성 중입니다.' ? 1000 : false,
+      onSuccess: (data) => {
+        if (data.message === '일기 조회 성공') {
+          setOpenModal(false);
+        }
+      },
+    }
   );
-  // const diaryContent = diaryData;
 
   const imageURL = diaryData?.imageURL;
   const [YY, MM, DD] = diaryData?.created_at
     ? diaryData.created_at.split('-')
     : ['-', '-', '-'];
   const mood = diaryData?.mood;
-  const navigate = useNavigate();
-  const token = getCookie('token');
+
   const GoToMain = () => {
     navigate('/main');
   };
@@ -41,9 +52,17 @@ export default function DiaryPage() {
     handleResize();
     return () => mediaQuery.removeEventListener('change', handleResize);
   }, []);
+
+  useEffect(() => {
+    if (diaryData) {
+      window.localStorage.setItem('chat_id', diaryData.chat_room_id);
+    }
+  }, [diaryData]);
+
   return (
     <>
       <BackGround>
+        {openModal && <LoadingModal />}
         {isMobile ? (
           <>
             <QuitChatBtn onClick={GoToMain}>

@@ -3,14 +3,13 @@ import styled from 'styled-components';
 import MicGIF from '../gif/Mic';
 import { useChatStore } from '../../stores/chat';
 
-// 이게 나가는건데
 export default function AudioRecorder() {
   const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
     null
   );
 
   //zustand 상태관리
-  const { RecordToggle, setRecordToggle, setAudio, setSendAudio } =
+  const { RecordToggle, setRecordToggle, setAudio, setSendAudio, exitChat } =
     useChatStore();
 
   // 버튼 클릭 핸들러
@@ -55,7 +54,7 @@ export default function AudioRecorder() {
         // const audioUrl = URL.createObjectURL(audioBlob);
         // const audio = new Audio(audioUrl);
         // audio.play();
-        //
+
         const fileReader = new FileReader();
         fileReader.onloadend = () => {
           const base64Audio = fileReader.result as string;
@@ -63,7 +62,9 @@ export default function AudioRecorder() {
 
           // console.log('오디오 설정', resultAudio);
           setAudio(resultAudio);
-          setSendAudio(true);
+          if (exitChat === true) {
+            setSendAudio(true);
+          }
         };
         fileReader.readAsDataURL(audioBlob);
       });
@@ -71,7 +72,7 @@ export default function AudioRecorder() {
   };
 
   return (
-    <MicButtonLayout onClick={handleButtonClick}>
+    <MicButtonLayout onClick={handleButtonClick} disabled={!RecordToggle}>
       {RecordToggle ? <MicGIF /> : <Mic src="/src/assets/img/BlackMic.png" />}
     </MicButtonLayout>
   );

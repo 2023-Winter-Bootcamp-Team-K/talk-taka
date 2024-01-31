@@ -55,11 +55,58 @@ export default function CameraModal() {
           }
         );
         if (response.status === 201) {
-          navigate('/diary');
+          const token = getCookie('token');
+          try {
+            const response = await baseInstance.post(
+              `/diary/`,
+              {
+                mood: window.localStorage.getItem('mood'),
+                chat_room_id: window.localStorage.getItem('chat_id'),
+              },
+              {
+                headers: {
+                  Authorization: token,
+                },
+              }
+            );
+            if (response.data.status === '201') {
+              window.localStorage.setItem(
+                'selectedDiaryId',
+                response.data.diaryId
+              );
+              navigate('/diary');
+            }
+          } catch (error) {
+            console.error(error);
+          }
         }
       } catch (error) {
         console.error('Error during image upload:', error);
       }
+    }
+  };
+
+  const handleNoCamera = async () => {
+    const chat_room_id = window.localStorage.getItem('chat_id');
+    try {
+      const response = await baseInstance.post(
+        `/diary/`,
+        {
+          mood: window.localStorage.getItem('mood'),
+          chat_room_id: chat_room_id,
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      if (response.data.status === '201') {
+        window.localStorage.setItem('selectedDiaryId', response.data.diaryId);
+        navigate('/diary');
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -94,9 +141,14 @@ export default function CameraModal() {
             <Row>
               <ReCapture onClick={recapture}>다시 찍기</ReCapture>
               <Confirm onClick={confirmImage}>확인</Confirm>
-            </Row>
+              </Row>
           ) : (
+          <>
             <Capture onClick={capture}>찰칵!</Capture>
+            <NoCameraButton onClick={handleNoCamera}>
+              카메라가 없어요 ㅠㅠ
+            </NoCameraButton>
+          </>
           )}
         </Container>
       </Overlay>
@@ -133,7 +185,7 @@ const Container = styled.div`
   }
   @media all and (max-width: 390px) {
     width: 21.4375rem;
-    height: 25.6875rem;
+    height: 26rem;
   }
 `;
 
@@ -292,3 +344,17 @@ const Confirm = styled.button`
     font-size: 1rem;
   }
 `;
+
+const NoCameraButton = styled(Capture)`
+  background: transparent; 
+  color: grey;
+  margin-top: 0.3rem; 
+  margin-bottom: 0.5rem; 
+  min-width:12rem;
+
+  &:hover {
+    color: #ff888c; 
+    text-decoration: underline; 
+  }
+`;
+
