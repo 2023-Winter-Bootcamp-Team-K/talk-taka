@@ -39,13 +39,9 @@ export default function LoginPage() {
         navigate('/main');
         setCookie('token', response.data.access, {
           path: '/',
-          secure: true,
-          maxAge: 3000,
         });
         setCookie('refresh_token', response.data.refresh, {
           path: '/',
-          secure: true,
-          maxAge: 3000,
         });
       }
     } catch (error) {
