@@ -1,1 +1,0 @@
-import{b as o}from"./config-t_5GBwir.js";import{g as a}from"./index-7gdVoRug.js";const i=async e=>{const r=a("token");try{const t=await o.get(`/diary/${e}/`,{headers:{Authorization:`${r}`}});return t.status===200?t.data:null}catch(t){return console.log("에러 발생",t),null}};export{i as g};
