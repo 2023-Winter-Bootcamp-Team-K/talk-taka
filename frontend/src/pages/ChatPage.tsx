@@ -40,7 +40,7 @@ export default function ChatPage() {
   const connectWebSocket = async () => {
     const roomId = window.localStorage.getItem('chat_id');
 
-    const ws = new WebSocket(`ws://localhost:8000/ws/chat/${roomId}/`);
+    const ws = new WebSocket(`ws://talktaka.site/ws/chat/${roomId}/`);
 
     let chatArray = new Array();
     let storeArray = new Array();

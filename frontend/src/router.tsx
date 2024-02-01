@@ -41,11 +41,11 @@ const routes = [
   createRoute('', IntroPage),
   createRoute('login', LoginPage),
   createRoute('signup', SignupPage),
-  createRoute('bookcover', BookCover, true),
-  createRoute('diary', DiaryPage, true),
-  createRoute('main', MainPage, true),
-  createRoute('chat', ChatPage, true),
-  createRoute('result', Result, true),
+  createRoute('bookcover', BookCover),
+  createRoute('diary', DiaryPage),
+  createRoute('main', MainPage),
+  createRoute('chat', ChatPage),
+  createRoute('result', Result),
 ];
 
 const router = createBrowserRouter([
