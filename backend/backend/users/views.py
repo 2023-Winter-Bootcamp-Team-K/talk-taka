@@ -65,23 +65,27 @@ class CheckIdAvailability(APIView):
 class LoginView(generics.GenericAPIView):
     parser_classes = [JSONParser]
     serializer_class = LoginSerializer
-
-    # 로그인 성공하면 토큰을 발급시켜주는 코드
     @swagger_auto_schema(operation_id="사용자 로그인")
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
         refresh = RefreshToken.for_user(user)
-
-        # refresh token, access token
-        return Response({
+        response = Response({
             'id': user.id,
             'refresh': str(refresh),
             'access': f"Bearer {str(refresh.access_token)}",
             'status': status.HTTP_200_OK,
             'message': '로그인 성공'
         }, status=status.HTTP_200_OK)
+        # SameSite=None과 Secure=True 설정으로 쿠키 설정
+        response.set_cookie(
+            'refresh', str(refresh), httponly=True, samesite='None', secure=True
+        )
+        response.set_cookie(
+            'access', f"Bearer {str(refresh.access_token)}", httponly=True, samesite='None', secure=True
+        )
+        return response
 
 # 로그아웃
 class LogoutView(APIView):

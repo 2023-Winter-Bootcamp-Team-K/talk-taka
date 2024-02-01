@@ -26,12 +26,9 @@ DEBUG = True
 
 # 접속 모두 허용
 ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-    "[::1]",
-    "django",
-    "52.79.131.251",
-    "0,0,0,0",
+    # "[::1]",
+    # "django",
+    # "52.79.131.251",
     "talktaka.site",
     "43.202.216.251",
 ]
@@ -77,9 +74,9 @@ MIDDLEWARE = [
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ORIGIN_WHITELIST = (
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:8000",
+    # "http://localhost:5173",
+    # "http://127.0.0.1:5173",
+    # "http://localhost:8000",
     "http://talktaka.site"
 )
 CORS_ALLOW_ALL_ORIGINS = True
