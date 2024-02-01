@@ -36,7 +36,7 @@ export default function LoginPage() {
     try {
       const response = await baseInstance.post('/auth/login/', data);
       if (response.data.status === 200) {
-        navigate('/main');
+
         setCookie('token', response.data.access, {
           path: '/',
           secure: true,
@@ -47,6 +47,7 @@ export default function LoginPage() {
           secure: true,
           maxAge: 3000,
         });
+        navigate('/main');
       }
     } catch (error) {
       alert('아이디 정보가 올바르지 않습니다.');
