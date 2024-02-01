@@ -62,10 +62,33 @@ class CheckIdAvailability(APIView):
             return Response({'available': True, 'message': '사용 가능한 아이디입니다'}, status=status.HTTP_200_OK)
 
 # 로그인
+# class LoginView(generics.GenericAPIView):
+#     parser_classes = [JSONParser]
+#     serializer_class = LoginSerializer
+#
+#     # 로그인 성공하면 토큰을 발급시켜주는 코드
+#     @swagger_auto_schema(operation_id="사용자 로그인")
+#     def post(self, request, *args, **kwargs):
+#         serializer = self.get_serializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         user = serializer.validated_data["user"]
+#         refresh = RefreshToken.for_user(user)
+#         response = Response({
+#             'id': user.id,
+#             'refresh': str(refresh),
+#             'access': f"Bearer {str(refresh.access_token)}",
+#             'status': status.HTTP_200_OK,
+#             'message': '로그인 성공'
+#         }, status=status.HTTP_200_OK)
+#         # SameSite=None과 Secure=True 설정으로 쿠키 설정
+#         response.set_cookie(
+#             'refresh', str(refresh), httponly=True, samesite='None', secure=True)
+#         response.set_cookie(
+#             'access', f"Bearer {str(refresh.access_token)}", httponly=True, samesite='None', secure=True)
+#         return response
 class LoginView(generics.GenericAPIView):
     parser_classes = [JSONParser]
     serializer_class = LoginSerializer
-
     # 로그인 성공하면 토큰을 발급시켜주는 코드
     @swagger_auto_schema(operation_id="사용자 로그인")
     def post(self, request, *args, **kwargs):
@@ -73,20 +96,14 @@ class LoginView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data["user"]
         refresh = RefreshToken.for_user(user)
-        response = Response({
+        # refresh token, access token
+        return Response({
             'id': user.id,
             'refresh': str(refresh),
             'access': f"Bearer {str(refresh.access_token)}",
             'status': status.HTTP_200_OK,
             'message': '로그인 성공'
         }, status=status.HTTP_200_OK)
-        # SameSite=None과 Secure=True 설정으로 쿠키 설정
-        response.set_cookie(
-            'refresh', str(refresh), httponly=True, samesite='None', secure=True)
-        response.set_cookie(
-            'access', f"Bearer {str(refresh.access_token)}", httponly=True, samesite='None', secure=True)
-        return response
-
 # 로그아웃
 class LogoutView(APIView):
     parser_classes = [JSONParser]
