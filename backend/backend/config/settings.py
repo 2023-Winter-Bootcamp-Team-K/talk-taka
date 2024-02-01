@@ -34,6 +34,9 @@ ALLOWED_HOSTS = [
     "0,0,0,0",
     "talktaka.site",
     "43.202.216.251",
+    "talktaka.store",
+    "43.202.190.188",
+    "www.talktaka.store",
 ]
 
 USE_X_FORWARDED_HOST = True
@@ -81,7 +84,15 @@ CORS_ORIGIN_WHITELIST = (
     "http://127.0.0.1:5173",
     # "http://localhost:8000",
 )
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:8000",
+    "http://localhost",
+    "http://43.202.190.188:5173",
+    "http://talktaka.store",
+    "http://talktaka.site",
+]
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
