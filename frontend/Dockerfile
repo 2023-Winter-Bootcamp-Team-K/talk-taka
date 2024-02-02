@@ -9,5 +9,6 @@ COPY ./package.json ./
 COPY . ./
 
 RUN yarn
+RUN yarn add typescript
 
 CMD ["yarn",  "build"]
