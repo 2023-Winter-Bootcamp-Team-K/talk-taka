@@ -10,5 +10,5 @@ COPY . ./
 
 RUN yarn
 RUN yarn add typescript
-
-CMD ["yarn",  "build"]
+RUN yarn build
+#CMD ["yarn",  "build"]
